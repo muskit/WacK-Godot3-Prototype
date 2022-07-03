@@ -8,6 +8,7 @@ public class Note : Spatial
     private CSGPolygon note;
     public int pos = 0;
     public int size = 1;
+    public int noteIndex = -1;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()

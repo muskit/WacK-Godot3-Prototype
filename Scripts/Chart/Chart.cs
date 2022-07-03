@@ -60,17 +60,20 @@ public class Chart
                         case "16": // untimed
                             notes[currentMeasure].Add((currentBeat, new ChartNote(int.Parse(tokens[5]), int.Parse(tokens[6]), type: NoteType.Untimed)));
                             break;
+                        case "26": // untimed w/ bonus
+                            notes[currentMeasure].Add((currentBeat, new ChartNote(int.Parse(tokens[5]), int.Parse(tokens[6]), type: NoteType.Untimed, bonus: true)));
+                            break;
                         case "9": // hold start
-                            notes[currentMeasure].Add((currentBeat, new ChartNote(int.Parse(tokens[5]), int.Parse(tokens[6]), type: NoteType.HoldStart)));
+                            notes[currentMeasure].Add((currentBeat, new ChartNote(int.Parse(tokens[5]), int.Parse(tokens[6]), holdIndex: int.Parse(tokens[4]), holdNext: int.Parse(tokens[8]), type: NoteType.HoldStart)));
                             break;
                         case "25": // hold start (w/ bonus)
-                            notes[currentMeasure].Add((currentBeat, new ChartNote(int.Parse(tokens[5]), int.Parse(tokens[6]), type: NoteType.HoldStart, bonus: true)));
+                            notes[currentMeasure].Add((currentBeat, new ChartNote(int.Parse(tokens[5]), int.Parse(tokens[6]), holdIndex: int.Parse(tokens[4]), holdNext: int.Parse(tokens[8]), type: NoteType.HoldStart, bonus: true)));
                             break;
                         case "10": // hold middle
-                            notes[currentMeasure].Add((currentBeat, new ChartNote(int.Parse(tokens[5]), int.Parse(tokens[6]), type: NoteType.HoldMid)));
+                            notes[currentMeasure].Add((currentBeat, new ChartNote(int.Parse(tokens[5]), int.Parse(tokens[6]), holdIndex: int.Parse(tokens[4]), holdNext: int.Parse(tokens[8]), type: NoteType.HoldMid)));
                             break;
                         case "11": // hold end
-                            notes[currentMeasure].Add((currentBeat, new ChartNote(int.Parse(tokens[5]), int.Parse(tokens[6]), type: NoteType.HoldEnd)));
+                            notes[currentMeasure].Add((currentBeat, new ChartNote(int.Parse(tokens[5]), int.Parse(tokens[6]), holdIndex: int.Parse(tokens[4]), type: NoteType.HoldEnd)));
                             break;
                         case "3": // swipe in (red)
                             notes[currentMeasure].Add((currentBeat, new ChartNote(int.Parse(tokens[5]), int.Parse(tokens[6]), type: NoteType.SwipeIn)));
@@ -84,6 +87,19 @@ public class Chart
                         case "22": // swipe out w/ bonus
                             notes[currentMeasure].Add((currentBeat, new ChartNote(int.Parse(tokens[5]), int.Parse(tokens[6]), type: NoteType.SwipeOut, bonus: true)));
                             break;
+                        case "7": // swipe CCW
+                            notes[currentMeasure].Add((currentBeat, new ChartNote(int.Parse(tokens[5]), int.Parse(tokens[6]), type: NoteType.SwipeCCW)));
+                            break;
+                        case "8": // swipe CCW w/ bonus
+                            notes[currentMeasure].Add((currentBeat, new ChartNote(int.Parse(tokens[5]), int.Parse(tokens[6]), type: NoteType.SwipeCCW, bonus: true)));
+                            break;
+                        case "5": // swipe CW
+                            notes[currentMeasure].Add((currentBeat, new ChartNote(int.Parse(tokens[5]), int.Parse(tokens[6]), type: NoteType.SwipeCW)));
+                            break;
+                        case "6": // swipe CW w/ bonus
+                            notes[currentMeasure].Add((currentBeat, new ChartNote(int.Parse(tokens[5]), int.Parse(tokens[6]), type: NoteType.SwipeCW, bonus: true)));
+                            break;
+                        
                     }
                     break;
                 case "2": // tempo

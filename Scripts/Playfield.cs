@@ -28,14 +28,16 @@ public class Playfield : Spatial
     public override void _Process(float delta)
     {
         // scroll
-        scroll.Translate(new Vector3(0, 0, -PlayerPrefs.speedMultiplier * 10f * delta));
-        
-        // sync audio for 5s (don't do whole song to avoid jittery feel)
-        if (Misc.songPlayer.GetPlaybackPosition() < 5f)
+        if (!Misc.paused)
         {
+            scroll.Translate(new Vector3(0, 0, -PlayerPrefs.speedMultiplier * 10f * delta));
+
+            // sync if necessary
             float audioTime = (float)(Misc.songPlayer.GetPlaybackPosition() + AudioServer.GetTimeSinceLastMix() - AudioServer.GetOutputLatency());
-            if (Mathf.Abs(audioTime + scroll.Translation.z/PlayerPrefs.speedMultiplier) > 0.05f)
+            var playTime = scroll.Translation.z/PlayerPrefs.speedMultiplier/10;
+            if (Mathf.Abs(playTime + audioTime) > 0.05f)
             {
+                GD.Print("Resynching!");
                 scroll.Translation = new Vector3(0, 0, -PlayerPrefs.speedMultiplier * 10f * audioTime);
             }
         }
