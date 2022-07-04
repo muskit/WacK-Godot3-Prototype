@@ -7,17 +7,19 @@ public class Play : Spatial
     private NodePath npAudioPlayer;
     [Export]
     private NodePath npPauseText;
-    private Label pauseText;
+    
     private AudioStreamPlayer audioPlayer;
+    private Label pauseText;
+    
     public override void _Ready()
     {
+        // Engine.IterationsPerSecond = 120;
         audioPlayer = GetNode<AudioStreamPlayer>(npAudioPlayer);
         Misc.songPlayer = audioPlayer;
         audioPlayer.Stream = Misc.currentAudio;
+        audioPlayer.Play();
 
         pauseText = GetNode<Label>(npPauseText);
-        
-        audioPlayer.Play();
     }
 
     public override void _Process(float delta)

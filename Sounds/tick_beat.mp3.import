@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/tick_beat.mp3-a21bb150458d7827beb9c32af70f40a4.mp3str"
+
+[deps]
+
+source_file="res://Sounds/tick_beat.mp3"
+dest_files=[ "res://.import/tick_beat.mp3-a21bb150458d7827beb9c32af70f40a4.mp3str" ]
+
+[params]
+
+loop=false
+loop_offset=0

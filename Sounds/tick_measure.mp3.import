@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/tick_measure.mp3-e46f2a1a4fca06cec0c4943cd16ed13f.mp3str"
+
+[deps]
+
+source_file="res://Sounds/tick_measure.mp3"
+dest_files=[ "res://.import/tick_measure.mp3-e46f2a1a4fca06cec0c4943cd16ed13f.mp3str" ]
+
+[params]
+
+loop=false
+loop_offset=0

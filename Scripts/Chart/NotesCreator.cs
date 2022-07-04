@@ -1,6 +1,6 @@
 /**
  * NotesCreator.cs
- * Code for object in Play scene that handles placing notes on the Scroll from a Chart.
+ * Code for Node in Play scene that handles placing notes on the Scroll from a Chart.
  *
  * by muskit
  * July 1, 2022
@@ -18,20 +18,22 @@ public class NotesCreator : Node
     private NodePath npScroll;
     private Spatial scroll;
 
-    public bool doneLoading { get; private set; } = false;
+    public static bool doneLoading { get; private set; } = false;
 
     // Preloaded note types
-    PackedScene measureLine = GD.Load<PackedScene>("res://Things/TunnelObjects/MeasureLine.tscn");
-    PackedScene noteTouch = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/Touch.tscn");
-    PackedScene noteHoldStart = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/HoldStart.tscn");
-    PackedScene noteHoldMid = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/HoldMid.tscn");
-    PackedScene noteHoldEnd = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/HoldEnd.tscn");
-    PackedScene noteUntimed = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/Untimed.tscn");
-    PackedScene noteSwipeIn = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/SwipeIn.tscn");
-    PackedScene noteSwipeOut = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/SwipeOut.tscn");
-    PackedScene noteSwipeCW = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/SwipeCW.tscn");
-    PackedScene noteSwipeCCW = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/SwipeCCW.tscn");
-    SpatialMaterial matHoldLine = GD.Load<SpatialMaterial>("res://Materials/HoldLine.tres");
+    private static PackedScene measureLine = GD.Load<PackedScene>("res://Things/TunnelObjects/MeasureLine.tscn");
+    private static PackedScene noteTouch = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/Touch.tscn");
+    private static PackedScene noteHoldStart = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/HoldStart.tscn");
+    private static PackedScene noteHoldMid = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/HoldMid.tscn");
+    private static PackedScene noteHoldEnd = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/HoldEnd.tscn");
+    private static PackedScene noteUntimed = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/Untimed.tscn");
+    private static PackedScene noteSwipeIn = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/SwipeIn.tscn");
+    private static PackedScene noteSwipeOut = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/SwipeOut.tscn");
+    private static PackedScene noteSwipeCW = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/SwipeCW.tscn");
+    private static PackedScene noteSwipeCCW = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/SwipeCCW.tscn");
+    
+    private static PackedScene noteHitDetection = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/HitDetection.tscn");
+    private static SpatialMaterial matHoldLine = GD.Load<SpatialMaterial>("res://Materials/HoldLine.tres");
 
 
     public override void _Ready()
@@ -53,7 +55,6 @@ public class NotesCreator : Node
 
         foreach (var measure in chart.notes) // <measure, List>
         {
-            GD.Print($"Measure {measure.Key}");
             foreach (var chartNote in measure.Value) // List<beat, ChartNote>
             {
                 if (curNote != null)
@@ -77,7 +78,7 @@ public class NotesCreator : Node
                     case NoteType.Touch:
                         curNote = noteTouch.Instance<Note>();
                         break;
-                    case NoteType.HoldStart: // draw hold lines at radius 0.58
+                    case NoteType.HoldStart:
                         curNote = noteHoldStart.Instance<Note>();
                         curNote.noteIndex = chartNote.Item2.holdIndex;
                         nextHoldNote[chartNote.Item2.holdNext] = curNote;
@@ -111,8 +112,9 @@ public class NotesCreator : Node
                 {
                     // add notes to scroll
                     scroll.AddChild(curNote);
-                    curNote.Translation = new Vector3(0, 0, PlayerPrefs.speedMultiplier * 10f * 60f/currentTempo * currentBeatsPerMeasure * (measure.Key + (float)chartNote.Item1/1920f));
+                    curNote.Translation = new Vector3(0, 0, PlaySettings.speedMultiplier * 10f * 60f/currentTempo * currentBeatsPerMeasure * (measure.Key + (float)chartNote.Item1/1920f));
                     curNote.SetPosSize(chartNote.Item2.position, chartNote.Item2.size);
+                    curNote.AddChild(noteHitDetection.Instance());
 
                     // create long note
                     if (curNote.type == NoteType.HoldMid || curNote.type == NoteType.HoldEnd)
@@ -127,7 +129,7 @@ public class NotesCreator : Node
         {
             var ml = measureLine.Instance<Spatial>();
             scroll.AddChild(ml);
-            ml.Translation = new Vector3(0, 0, PlayerPrefs.speedMultiplier * 10f * 60f / currentTempo * currentBeatsPerMeasure * (float)i);
+            ml.Translation = new Vector3(0, 0, PlaySettings.speedMultiplier * 10f * 60f / currentTempo * currentBeatsPerMeasure * (float)i);
             ml.GetChild(2).GetChild<Label>(0).Text = $"{i}";
         }
 
@@ -156,16 +158,9 @@ public class NotesCreator : Node
 
         float noteDepth = destination.Translation.z - origin.Translation.z;
 
-        float stepResolution = 50; // steps per player-scaled second
-        float curveResolution = 3; // how many verts per curve segment
-        int steps = (int) (Math.Ceiling(noteDepth)/10/PlayerPrefs.speedMultiplier*stepResolution);
-
-        if (destination.Name == "@HoldMid@768")
-        {
-            GD.Print($"{origin.pos} -> {destination.pos}");
-            GD.Print($"{Mathf.Rad2Deg(originPosRad)} -> {Mathf.Rad2Deg(destPosRad)}");
-            GD.Print($"Deltas: {minusDelta} - {normDelta} - {plusDelta}");
-        }
+        float stepResolution = 200; // steps per player-scaled second
+        float curveResolution = 1; // how many verts per curve segment
+        int steps = (int) (Math.Ceiling(noteDepth)/10/PlaySettings.speedMultiplier*stepResolution);
 
         for(int step = 0; step < steps; ++step)
         {
@@ -174,11 +169,6 @@ public class NotesCreator : Node
             float curSize = Misc.FloatInterp(origin.size, destination.size, stepRatio);
             // float curSize = 4;
             float curRot = Misc.FloatInterp(originPosRad, destPosRad, stepRatio);
-
-            if (destination.Name == "@HoldMid@768")
-            {
-                GD.Print($"{Mathf.Rad2Deg(curRot)}");
-            }
 
             int numPoints = (int)Math.Ceiling(curSize * curveResolution);
             var innerVerts = new Array<Vector2>();

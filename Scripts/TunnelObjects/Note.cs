@@ -1,6 +1,10 @@
 using Godot;
 using System;
 
+public enum Accuracy
+{
+    Miss, Good, Great, Marvelous
+}
 public class Note : Spatial
 {
     [Export]
@@ -9,6 +13,7 @@ public class Note : Spatial
     public int pos = 0;
     public int size = 1;
     public int noteIndex = -1;
+    public Accuracy curAccuracy = Accuracy.Miss;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -22,10 +27,5 @@ public class Note : Spatial
     {
         this.pos = pos;
         this.size = size;
-    }
-
-    public void ConnectToNote(Note nextNote)
-    {
-
     }
 }

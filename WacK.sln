@@ -1,6 +1,6 @@
 ﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoopAround", "LoopAround.csproj", "{0D8DA7FF-AD44-43BD-94B8-32D74446341F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WacK", "WacK.csproj", "{0D8DA7FF-AD44-43BD-94B8-32D74446341F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
