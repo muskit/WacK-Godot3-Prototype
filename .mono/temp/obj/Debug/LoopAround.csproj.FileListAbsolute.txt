@@ -1,9 +1,0 @@
-C:\Users\Alex\Documents\Godot\LoopAround\.mono\temp\obj\Debug\LoopAround.csproj.AssemblyReference.cache
-C:\Users\Alex\Documents\Godot\LoopAround\.mono\temp\obj\Debug\LoopAround.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\Alex\Documents\Godot\LoopAround\.mono\temp\obj\Debug\LoopAround.AssemblyInfoInputs.cache
-C:\Users\Alex\Documents\Godot\LoopAround\.mono\temp\obj\Debug\LoopAround.AssemblyInfo.cs
-C:\Users\Alex\Documents\Godot\LoopAround\.mono\temp\obj\Debug\LoopAround.csproj.CoreCompileInputs.cache
-C:\Users\Alex\Documents\Godot\LoopAround\.mono\temp\bin\Debug\LoopAround.dll
-C:\Users\Alex\Documents\Godot\LoopAround\.mono\temp\bin\Debug\LoopAround.pdb
-C:\Users\Alex\Documents\Godot\LoopAround\.mono\temp\obj\Debug\LoopAround.dll
-C:\Users\Alex\Documents\Godot\LoopAround\.mono\temp\obj\Debug\LoopAround.pdb

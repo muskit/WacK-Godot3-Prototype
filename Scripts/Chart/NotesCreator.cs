@@ -18,6 +18,8 @@ public class NotesCreator : Node
     private NodePath npScroll;
     private Spatial scroll;
 
+    public bool doneLoading { get; private set; } = false;
+
     // Preloaded note types
     PackedScene measureLine = GD.Load<PackedScene>("res://Things/TunnelObjects/MeasureLine.tscn");
     PackedScene noteTouch = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/Touch.tscn");
@@ -40,6 +42,8 @@ public class NotesCreator : Node
 
     public void Load(Chart chart)
     {
+        doneLoading = false;
+
         float currentTempo = -1;
         float currentBeatsPerMeasure = 4;
 
@@ -126,11 +130,12 @@ public class NotesCreator : Node
             ml.Translation = new Vector3(0, 0, PlayerPrefs.speedMultiplier * 10f * 60f / currentTempo * currentBeatsPerMeasure * (float)i);
             ml.GetChild(2).GetChild<Label>(0).Text = $"{i}";
         }
+
+        doneLoading = true;
     }
 
     private Spatial CreateLongNote(Note origin, Note destination)
     {
-        GD.Print($"Creating long note at {origin.noteIndex} ({origin.Name})");
         Spatial result = new Spatial();
 
         var radius = .573f;
@@ -138,11 +143,29 @@ public class NotesCreator : Node
         var originPosRad = -Misc.Seg2Rad(origin.pos);
         var destPosRad = -Misc.Seg2Rad(destination.pos);
 
+        // look for closest destination angle to work towards
+        float plus = destPosRad + 2f*Mathf.Pi;
+        float minus = destPosRad - 2f*Mathf.Pi;
+        float minusDelta = Mathf.Abs(minus - originPosRad);
+        float normDelta = Mathf.Abs(destPosRad - originPosRad);
+        float plusDelta = Mathf.Abs(plus - originPosRad);
+        if (plusDelta < normDelta)
+            destPosRad = plus;
+        if (minusDelta < normDelta)
+            destPosRad = minus;
+
         float noteDepth = destination.Translation.z - origin.Translation.z;
 
         float stepResolution = 50; // steps per player-scaled second
         float curveResolution = 3; // how many verts per curve segment
         int steps = (int) (Math.Ceiling(noteDepth)/10/PlayerPrefs.speedMultiplier*stepResolution);
+
+        if (destination.Name == "@HoldMid@768")
+        {
+            GD.Print($"{origin.pos} -> {destination.pos}");
+            GD.Print($"{Mathf.Rad2Deg(originPosRad)} -> {Mathf.Rad2Deg(destPosRad)}");
+            GD.Print($"Deltas: {minusDelta} - {normDelta} - {plusDelta}");
+        }
 
         for(int step = 0; step < steps; ++step)
         {
@@ -151,6 +174,11 @@ public class NotesCreator : Node
             float curSize = Misc.FloatInterp(origin.size, destination.size, stepRatio);
             // float curSize = 4;
             float curRot = Misc.FloatInterp(originPosRad, destPosRad, stepRatio);
+
+            if (destination.Name == "@HoldMid@768")
+            {
+                GD.Print($"{Mathf.Rad2Deg(curRot)}");
+            }
 
             int numPoints = (int)Math.Ceiling(curSize * curveResolution);
             var innerVerts = new Array<Vector2>();

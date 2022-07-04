@@ -18,7 +18,7 @@ public static class Misc
 
     public static float Seg2Rad(float seg)
     {
-        return Mathf.Deg2Rad(6f * seg % 360);
+        return Mathf.Deg2Rad(6f * seg);
     }
 
     public static int IntInterp(int a, int b, float ratio)
