@@ -154,7 +154,7 @@ transform = Transform( 0.207912, -0.978147, 0, 0.978147, 0.207912, 0, 0, 0, 1, 0
 transform = Transform( 0.309017, -0.951056, 0, 0.951056, 0.309017, 0, 0, 0, 1, 0, 0, 0 )
 
 [node name="49" parent="." instance=ExtResource( 1 )]
-transform = Transform( 0.404903, -0.914359, -0.000361657, 0.914359, 0.404903, -0.000110713, 0.000247668, -0.000285857, 1, 0, 0, 0 )
+transform = Transform( 0.406736, -0.913545, 0, 0.913545, 0.406736, 0, 0, 0, 1, 0, 0, 0 )
 
 [node name="50" parent="." instance=ExtResource( 1 )]
 transform = Transform( 0.5, -0.866025, 0, 0.866025, 0.5, 0, 0, 0, 1, 0, 0, 0 )

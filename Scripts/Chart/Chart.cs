@@ -101,11 +101,9 @@ public class Chart
                             break;
                         case "12": // BG add
                             notes[currentMeasure].Add((currentBeat, new ChartNote(int.Parse(tokens[5]), int.Parse(tokens[6]), type: NoteType.BGAdd)));
-                            GD.Print("Found BGAdd in chart file!");
                             break;
                         case "13": // BG rem
                             notes[currentMeasure].Add((currentBeat, new ChartNote(int.Parse(tokens[5]), int.Parse(tokens[6]), type: NoteType.BGRem)));
-                            GD.Print("Found BGRem in chart file!");
                             break;
                         
                     }

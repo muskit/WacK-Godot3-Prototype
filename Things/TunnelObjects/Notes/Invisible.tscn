@@ -6,7 +6,7 @@
 flags_unshaded = true
 albedo_color = Color( 0.721569, 0.721569, 0.721569, 1 )
 
-[node name="HoldMid" type="Spatial"]
+[node name="Invisible" type="Spatial"]
 script = ExtResource( 1 )
 type = 2
 

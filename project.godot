@@ -14,10 +14,6 @@ config/name="WacK"
 run/main_scene="res://Scenes/ChartLoader.tscn"
 config/icon="res://icon.png"
 
-[debug]
-
-settings/fps/force_fps=30
-
 [input]
 
 pause={

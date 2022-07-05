@@ -19,16 +19,16 @@ public struct ChartNote
     public int position { get; private set; }
     public int size { get; private set; } // 1 <= size <= 60
     public float value { get; private set; }
-    public int holdIndex { get; private set; }
-    public int holdNext { get; private set; }
+    public int holdIdx { get; private set; }
+    public int holdNextIdx { get; private set; }
 
     public ChartNote(int position = 0, int size = 1, float value = 0f, int holdIndex = -1, int holdNext = -1, NoteType type = NoteType.Touch, bool bonus = false)
     {
         this.position = position;
         this.size = size;
         this.value = value;
-        this.holdIndex = holdIndex;
-        this.holdNext = holdNext;
+        this.holdIdx = holdIndex;
+        this.holdNextIdx = holdNext;
         this.noteType = type;
         this.isBonus = bonus;
     }

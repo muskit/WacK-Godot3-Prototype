@@ -44,8 +44,7 @@ public class Play : Spatial
         }
         if (Input.IsActionJustPressed("reset"))
         {
-            audioPlayer.Stop();
-            audioPlayer.Play();
+            audioPlayer.Seek(0);
         }
 
         pauseText.Visible = Misc.paused;

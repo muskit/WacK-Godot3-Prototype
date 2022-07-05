@@ -26,6 +26,7 @@ public class Playfield : Spatial
     private AudioStreamPlayer tickPlayer;
     private Area tickDetector;
     private Node background;
+    private int resyncCount = 0;
 
     public Playfield()
     {
@@ -71,19 +72,20 @@ public class Playfield : Spatial
 
     public override void _Process(float delta)
     {
-        // scroll
-        if (!Misc.paused && NotesCreator.doneLoading)
+        // scroll if not paused
+        if (!Misc.paused && NotesCreator.doneLoading && Misc.songPlayer.Playing)
         {
-            scroll.Translate(new Vector3(0, 0, -PlaySettings.speedMultiplier * 10f * delta * -syncRatio));
+            scroll.Translate(new Vector3(0, 0, -PlaySettings.speedMultiplier * 10f * delta * syncRatio));
 
-            // synchronization
+            // calculate scroll multiplier for keeping in sync
             var audioTime = (float)(Misc.songPlayer.GetPlaybackPosition() + AudioServer.GetTimeSinceLastMix() - AudioServer.GetOutputLatency()); // audio time with lag compensation
             var playTime = scroll.Translation.z/PlaySettings.speedMultiplier/10;
-            syncRatio = playTime/audioTime; // help prolong the need to resync
-            // forced jerky resync
+            syncRatio = audioTime/-playTime; // help prolong the need to resync.
+
+            // force jerky resync if needed
             if (Mathf.Abs(playTime + audioTime) > 0.05f)
             {
-                GD.Print("Resynching!");
+                GD.Print($"Resync #{++resyncCount}: {syncRatio}!");
                 scroll.Translation = new Vector3(0, 0, -PlaySettings.speedMultiplier * 10f * audioTime);
             }
         }

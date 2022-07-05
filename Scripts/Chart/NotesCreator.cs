@@ -51,7 +51,8 @@ public class NotesCreator : Node
 
         Note lastNote = null;
         Note curNote = null;
-        var nextHoldNote = new System.Collections.Generic.Dictionary<int, Note>(); // <idx of next hold note, Note>
+        var nextHoldNote = new System.Collections.Generic.Dictionary<int, Note>(); // <next hold idx, Note>
+        var curHoldSegment = new System.Collections.Generic.Dictionary<int, Note>(); // <next hold idx, HoldStart>
 
         foreach (var measure in chart.notes) // <measure, List>
         {
@@ -61,7 +62,6 @@ public class NotesCreator : Node
                 {
                     lastNote = curNote;
                 }
-
                 switch (chartNote.Item2.noteType)
                 {
                     // Song-related info //
@@ -75,18 +75,20 @@ public class NotesCreator : Node
                         break;
                     case NoteType.HoldStart:
                         curNote = noteHoldStart.Instance<Note>();
-                        curNote.noteIndex = chartNote.Item2.holdIndex;
-                        nextHoldNote[chartNote.Item2.holdNext] = curNote;
+                        curNote.noteIndex = chartNote.Item2.holdIdx;
+                        nextHoldNote[chartNote.Item2.holdNextIdx] = curNote;
+                        curHoldSegment[chartNote.Item2.holdNextIdx] = curNote;
                         break;
                     case NoteType.HoldMid:
                         curNote = noteInvisible.Instance<Note>();
                         curNote.type = NoteType.HoldMid;
-                        curNote.noteIndex = chartNote.Item2.holdIndex;
-                        nextHoldNote[chartNote.Item2.holdNext] = curNote;
+                        curNote.noteIndex = chartNote.Item2.holdIdx;
+                        nextHoldNote[chartNote.Item2.holdNextIdx] = curNote;
+                        curHoldSegment[chartNote.Item2.holdNextIdx] = curHoldSegment[chartNote.Item2.holdIdx];
                         break;
                     case NoteType.HoldEnd:
                         curNote = noteHoldEnd.Instance<Note>();
-                        curNote.noteIndex = chartNote.Item2.holdIndex;
+                        curNote.noteIndex = chartNote.Item2.holdIdx;
                         break;
                     case NoteType.Untimed:
                         curNote = noteUntimed.Instance<Note>();
@@ -106,10 +108,6 @@ public class NotesCreator : Node
                     default: // invisible modifier notes (ie. Background modifiers)
                         curNote = noteInvisible.Instance<Note>();
                         curNote.type = chartNote.Item2.noteType;
-                        if (curNote.type == NoteType.BGAdd || curNote.type == NoteType.BGRem)
-                        {
-                            GD.Print("Background note added!");
-                        }
                         break;
                 }
                 if (curNote != lastNote)
@@ -123,8 +121,23 @@ public class NotesCreator : Node
                     // create long note
                     if (curNote.type == NoteType.HoldMid || curNote.type == NoteType.HoldEnd)
                     {
-                        nextHoldNote[curNote.noteIndex].AddChild(CreateLongNote(nextHoldNote[curNote.noteIndex], curNote));
+                        // nextHoldNote[curNote.noteIndex].AddChild(CreateLongNote(nextHoldNote[curNote.noteIndex], curNote));
+
+                        var stepGroup = CreateLongNote(nextHoldNote[curNote.noteIndex], curNote);
+                        curHoldSegment[curNote.noteIndex].AddChild(stepGroup);
+                        stepGroup.GlobalTransform = nextHoldNote[curNote.noteIndex].GlobalTransform;
+                        
+                        if (curNote.type == NoteType.HoldEnd)
+                        {
+                            var pos = curNote.GlobalTransform;
+                            scroll.RemoveChild(curNote);
+                            curHoldSegment[curNote.noteIndex].AddChild(curNote);
+                            curNote.GlobalTransform = pos;
+                        }
                     }
+
+                    if (curNote.type == NoteType.HoldMid)
+                        curNote.QueueFree();
                 }
             }
         }
@@ -166,6 +179,8 @@ public class NotesCreator : Node
         float curveResolution = 1; // how many verts per curve segment
         int steps = (int) (Math.Ceiling(noteDepth)/10/PlaySettings.speedMultiplier*stepResolution);
 
+        var mat = matHoldLine.Duplicate() as SpatialMaterial;
+
         for(int step = 0; step < steps; ++step)
         {
             float stepRatio = (float)step/steps;
@@ -193,10 +208,11 @@ public class NotesCreator : Node
 
             CSGPolygon poly = new CSGPolygon();
             result.AddChild(poly);
+            poly.Name = "LongBoi";
             poly.Mode = CSGPolygon.ModeEnum.Depth;
             poly.Polygon = totalVerts.ToArray<Vector2>();
             poly.Depth = noteDepth/steps;
-            poly.Material = matHoldLine;
+            poly.Material = mat;
             poly.Translation = new Vector3(0, 0, noteDepth*stepRatio);
             poly.RotateY(Mathf.Pi);
             poly.RotateZ(curRot);

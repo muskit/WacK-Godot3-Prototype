@@ -49,7 +49,7 @@ public class Strikeline : Spatial
     {
         var note = obj.GetParent() as Note;
         note.curAccuracy = Accuracy.Miss;
-        // noteQueue.Enqueue(note);
+        noteQueue.Enqueue(note);
     }
     private void OnGoodEnter(Node obj)
     {
@@ -79,8 +79,43 @@ public class Strikeline : Spatial
     }
     private void OnGoodExit(Node obj) // LATE MISS
     {
-        // noteQueue.Dequeue();
-        // obj.GetParent().QueueFree();
+        var note = obj.GetParent() as Note;
+
+        if (note.type == NoteType.HoldStart)
+        {
+            // handle miss without destroying note
+            // ((SpatialMaterial)note.GetChild(2).GetChild<CSGPolygon>(0).Material).AlbedoColor = new Color(.5f, .5f, .5f);
+            foreach (Node longSegment in note.GetChildren())
+            {
+                foreach (var step in longSegment.GetChildren())
+                {
+                    if(step is CSGPolygon)
+                    {
+                        var n = step as CSGPolygon;
+                        ((SpatialMaterial)n.Material).AlbedoColor = new Color(.5f, .5f, .5f);
+                        break;
+                    }
+                }
+            }
+
+            if (noteQueue.Contains(note))
+                noteQueue.Dequeue();
+            EmitSignal(nameof(Miss));
+            return;
+        }
+        if (note.type == NoteType.HoldEnd)
+        {
+            // TODO: handle end of hold note
+            if (noteQueue.Contains(note))
+                noteQueue.Dequeue();
+            note.GetParent().QueueFree();
+            return;
+        }
+        
+        // all other notes
+        if (noteQueue.Contains(note))
+            noteQueue.Dequeue();
+        obj.GetParent().QueueFree();
         EmitSignal(nameof(Miss));
     }
 }
