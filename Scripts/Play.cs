@@ -10,24 +10,37 @@ public class Play : Spatial
     
     private AudioStreamPlayer audioPlayer;
     private Label pauseText;
+    private float pauseTime;
     
     public override void _Ready()
     {
-        // Engine.IterationsPerSecond = 120;
         audioPlayer = GetNode<AudioStreamPlayer>(npAudioPlayer);
         Misc.songPlayer = audioPlayer;
         audioPlayer.Stream = Misc.currentAudio;
-        audioPlayer.Play();
 
         pauseText = GetNode<Label>(npPauseText);
+        HandlePause(true);
+    }
+
+    private void HandlePause(bool state)
+    {
+        Misc.paused = state;
+        if (state)
+        {
+            pauseTime = audioPlayer.GetPlaybackPosition();
+            audioPlayer.Stop();
+        }
+        else
+        {
+            audioPlayer.Play(pauseTime);
+        }
     }
 
     public override void _Process(float delta)
     {
         if (Input.IsActionJustPressed("pause"))
         {
-            Misc.paused = !Misc.paused;
-            audioPlayer.StreamPaused = Misc.paused;
+            HandlePause(!Misc.paused);
         }
         if (Input.IsActionJustPressed("reset"))
         {

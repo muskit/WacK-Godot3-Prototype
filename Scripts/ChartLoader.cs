@@ -28,6 +28,8 @@ public class ChartLoader : Control
 		dropLevelSelect.AddItem("HARD");
 		dropLevelSelect.AddItem("EXPERT");
 		dropLevelSelect.AddItem("INFERNO");
+
+		dropLevelSelect.Selected = 2;
 	}
 
 	public void SelDirBtnPressed()

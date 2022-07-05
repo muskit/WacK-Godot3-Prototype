@@ -25,6 +25,7 @@ public class Playfield : Spatial
     private Strikeline strikeline;
     private AudioStreamPlayer tickPlayer;
     private Area tickDetector;
+    private Node background;
 
     public Playfield()
     {
@@ -40,11 +41,26 @@ public class Playfield : Spatial
 
         tickDetector.Scale = new Vector3(1, 1, PlaySettings.speedMultiplier * 10f);
         tickDetector.Connect("body_entered", this, nameof(OnTickEnter));
+
+        background = FindNode("Background");
+        foreach (var seg in background.GetChildren())
+        {
+            (seg as Spatial).Visible = false;
+        }
     }
 
+    // tick-accurate handler
     private void OnTickEnter(Node obj)
     {
         var note = obj.GetParent() as Note;
+
+        if (note.type == NoteType.BGAdd || note.type == NoteType.BGRem)
+        {
+            for (int i = 0; i < note.size; ++i)
+            {
+                background.GetChild<Spatial>((i + note.pos)%60).Visible = (note.type == NoteType.BGAdd);
+            }
+        }
 
         if (note.type != NoteType.HoldMid)
         {
@@ -63,7 +79,7 @@ public class Playfield : Spatial
             // synchronization
             var audioTime = (float)(Misc.songPlayer.GetPlaybackPosition() + AudioServer.GetTimeSinceLastMix() - AudioServer.GetOutputLatency()); // audio time with lag compensation
             var playTime = scroll.Translation.z/PlaySettings.speedMultiplier/10;
-            // syncRatio = audioTime/playTime; // help prolong the need to resync
+            syncRatio = playTime/audioTime; // help prolong the need to resync
             // forced jerky resync
             if (Mathf.Abs(playTime + audioTime) > 0.05f)
             {

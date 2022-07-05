@@ -21,7 +21,7 @@ public class Strikeline : Spatial
     private Area zoneGreat;
     private Area zoneGood;
     private Area zoneError;
-    private Stack<Note> noteStack = new Stack<Note>();
+    public Queue<Note> noteQueue { get; private set; } = new Queue<Note>();
 
     int i = 0;
 
@@ -49,7 +49,7 @@ public class Strikeline : Spatial
     {
         var note = obj.GetParent() as Note;
         note.curAccuracy = Accuracy.Miss;
-        noteStack.Push(note);
+        // noteQueue.Enqueue(note);
     }
     private void OnGoodEnter(Node obj)
     {
@@ -79,8 +79,8 @@ public class Strikeline : Spatial
     }
     private void OnGoodExit(Node obj) // LATE MISS
     {
-        noteStack.Pop();
-        obj.GetParent().QueueFree();
+        // noteQueue.Dequeue();
+        // obj.GetParent().QueueFree();
         EmitSignal(nameof(Miss));
     }
 }

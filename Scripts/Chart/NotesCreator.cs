@@ -24,7 +24,7 @@ public class NotesCreator : Node
     private static PackedScene measureLine = GD.Load<PackedScene>("res://Things/TunnelObjects/MeasureLine.tscn");
     private static PackedScene noteTouch = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/Touch.tscn");
     private static PackedScene noteHoldStart = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/HoldStart.tscn");
-    private static PackedScene noteHoldMid = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/HoldMid.tscn");
+    private static PackedScene noteInvisible = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/Invisible.tscn");
     private static PackedScene noteHoldEnd = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/HoldEnd.tscn");
     private static PackedScene noteUntimed = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/Untimed.tscn");
     private static PackedScene noteSwipeIn = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/SwipeIn.tscn");
@@ -69,11 +69,6 @@ public class NotesCreator : Node
                     case NoteType.Tempo:
                         currentTempo = chartNote.Item2.value;
                         break;
-                    // Background control //
-                    case NoteType.BGAdd:
-                        break;
-                    case NoteType.BGRem:
-                        break;
                     // Playable notes //
                     case NoteType.Touch:
                         curNote = noteTouch.Instance<Note>();
@@ -84,7 +79,8 @@ public class NotesCreator : Node
                         nextHoldNote[chartNote.Item2.holdNext] = curNote;
                         break;
                     case NoteType.HoldMid:
-                        curNote = noteHoldMid.Instance<Note>();
+                        curNote = noteInvisible.Instance<Note>();
+                        curNote.type = NoteType.HoldMid;
                         curNote.noteIndex = chartNote.Item2.holdIndex;
                         nextHoldNote[chartNote.Item2.holdNext] = curNote;
                         break;
@@ -106,6 +102,14 @@ public class NotesCreator : Node
                         break;
                     case NoteType.SwipeCCW:
                         curNote = noteSwipeCCW.Instance<Note>();;
+                        break;
+                    default: // invisible modifier notes (ie. Background modifiers)
+                        curNote = noteInvisible.Instance<Note>();
+                        curNote.type = chartNote.Item2.noteType;
+                        if (curNote.type == NoteType.BGAdd || curNote.type == NoteType.BGRem)
+                        {
+                            GD.Print("Background note added!");
+                        }
                         break;
                 }
                 if (curNote != lastNote)

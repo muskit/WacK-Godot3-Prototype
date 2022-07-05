@@ -48,7 +48,7 @@ align = 1
 valign = 1
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0 )
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0.327 )
 current = true
 fov = 20.3
 far = 35.0
