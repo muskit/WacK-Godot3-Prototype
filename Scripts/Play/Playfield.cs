@@ -67,9 +67,9 @@ public class Playfield : Spatial
             (background as Background).SetSegments(note.pos, note.size, note.type == NoteType.BGAdd, (DrawDirection) note.value);
         }
 
-        if (note.type != NoteType.HoldMid ||
-            note.type != NoteType.HoldEnd ||
-            note.type != NoteType.BGAdd ||
+        if (note.type != NoteType.HoldMid &&
+            note.type != NoteType.HoldEnd &&
+            note.type != NoteType.BGAdd &&
             note.type != NoteType.BGRem)
         {
             tickPlayer.Stop();

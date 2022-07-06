@@ -76,12 +76,14 @@ public class NotesCreator : Node
                     // Song-related info //
                     // TODO: beats per measure, tempo change based on relative note position
                     case NoteType.Tempo:
+                        curNote = noteInvisible.Instance<Note>();
+                        curNote.type = NoteType.Tempo;
                         lastTempoChangePosition += Misc.NotePosition(measure.Key - tempoChangeMeasures.Last<int>(), chartNote.Item1 - tempoChangeBeats.Last<int>(), currentTempo, currentBeatsPerMeasure);
                         GD.Print(lastTempoChangePosition);
-                        currentTempo = chartNote.Item2.value;
-                        tempos.Add(currentTempo);
+                        tempos.Add(chartNote.Item2.value);
                         tempoChangeMeasures.Add(measure.Key);
                         tempoChangeBeats.Add(chartNote.Item1);
+                        currentTempo = chartNote.Item2.value;
                         break;
                     // Playable notes //
                     case NoteType.Touch:
@@ -127,11 +129,17 @@ public class NotesCreator : Node
                 }
                 if (curNote != lastNote)
                 {
-                    // add notes to scroll
-                    scroll.AddChild(curNote);
-                    curNote.Translation = new Vector3(0, 0, lastTempoChangePosition + Misc.NotePosition(measure.Key - tempoChangeMeasures.Last<int>(), chartNote.Item1 - tempoChangeBeats.Last<int>(), currentTempo, currentBeatsPerMeasure));
-                    curNote.SetPosSize(chartNote.Item2.position, chartNote.Item2.size);
-                    curNote.AddChild(noteHitDetection.Instance());
+                    if (curNote.type == NoteType.Tempo)
+                    {
+                        curNote.Translation = new Vector3(0, 0, lastTempoChangePosition);
+                    }
+                    else
+                    {
+                        scroll.AddChild(curNote);
+                        curNote.Translation = new Vector3(0, 0, lastTempoChangePosition + Misc.NotePosition(measure.Key - tempoChangeMeasures.Last<int>(), chartNote.Item1 - tempoChangeBeats.Last<int>(), currentTempo, currentBeatsPerMeasure));
+                        curNote.SetPosSize(chartNote.Item2.position, chartNote.Item2.size);
+                        curNote.AddChild(noteHitDetection.Instance());
+                    }
 
                     // create long note
                     if (curNote.type == NoteType.HoldMid || curNote.type == NoteType.HoldEnd)
@@ -151,17 +159,28 @@ public class NotesCreator : Node
                         }
                     }
 
-                    // if (curNote.type == NoteType.HoldMid)
-                    //     curNote.QueueFree();
+                    if (curNote.type == NoteType.HoldMid)
+                        curNote.QueueFree();
                 }
             }
         }
         // TODO: adapt to tempo changes
+        int tempoChgMeasureIdx = 1;
+        float measureLineOffset = 0f;
+        currentTempo = 0;
         for (int i = 0; i < numMeasures; ++i)
         {
+            if (tempoChgMeasureIdx + 1 < tempoChangeMeasures.Count && i == tempoChangeMeasures[tempoChgMeasureIdx])
+            {
+                for (; tempoChangeMeasures[tempoChgMeasureIdx] == i; ++tempoChgMeasureIdx)
+                {
+                    measureLineOffset += Misc.NotePosition(0, tempoChangeBeats[tempoChgMeasureIdx], tempos[tempoChgMeasureIdx], 4);
+                }
+                currentTempo = tempos[tempoChgMeasureIdx-1];
+            }
             var ml = measureLine.Instance<Spatial>();
             scroll.AddChild(ml);
-            ml.Translation = new Vector3(0, 0, PlaySettings.speedMultiplier * 10f * 60f / currentTempo * currentBeatsPerMeasure * (float)i);
+            ml.Translation = new Vector3(0, 0, measureLineOffset + Misc.NotePosition(i - tempoChangeMeasures[tempoChgMeasureIdx], 0, currentTempo, 4));
             ml.GetChild(2).GetChild<Label>(0).Text = $"{i}";
         }
 
