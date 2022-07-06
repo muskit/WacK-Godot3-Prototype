@@ -46,13 +46,22 @@ public class NotesCreator : Node
     {
         doneLoading = false;
 
+        List<float> tempos = new List<float>();
+        List<int> tempoChangeMeasures = new List<int>();
+        List<int> tempoChangeBeats = new List<int>();
+        float lastTempoChangePosition = 0;
         float currentTempo = -1;
-        float currentBeatsPerMeasure = 4;
+        int currentBeatsPerMeasure = 4; // TODO: implement changing measures sizes
+        int numMeasures = chart.notes.Count;
 
         Note lastNote = null;
         Note curNote = null;
         var nextHoldNote = new System.Collections.Generic.Dictionary<int, Note>(); // <next hold idx, Note>
         var curHoldSegment = new System.Collections.Generic.Dictionary<int, Note>(); // <next hold idx, HoldStart>
+
+        tempos.Add(-1);
+        tempoChangeMeasures.Add(0);
+        tempoChangeBeats.Add(0);
 
         foreach (var measure in chart.notes) // <measure, List>
         {
@@ -65,9 +74,14 @@ public class NotesCreator : Node
                 switch (chartNote.Item2.noteType)
                 {
                     // Song-related info //
-                    // TODO: beats per measure
+                    // TODO: beats per measure, tempo change based on relative note position
                     case NoteType.Tempo:
+                        lastTempoChangePosition += Misc.NotePosition(measure.Key - tempoChangeMeasures.Last<int>(), chartNote.Item1 - tempoChangeBeats.Last<int>(), currentTempo, currentBeatsPerMeasure);
+                        GD.Print(lastTempoChangePosition);
                         currentTempo = chartNote.Item2.value;
+                        tempos.Add(currentTempo);
+                        tempoChangeMeasures.Add(measure.Key);
+                        tempoChangeBeats.Add(chartNote.Item1);
                         break;
                     // Playable notes //
                     case NoteType.Touch:
@@ -108,13 +122,14 @@ public class NotesCreator : Node
                     default: // invisible modifier notes (ie. Background modifiers)
                         curNote = noteInvisible.Instance<Note>();
                         curNote.type = chartNote.Item2.noteType;
+                        curNote.value = (int)chartNote.Item2.value;
                         break;
                 }
                 if (curNote != lastNote)
                 {
                     // add notes to scroll
                     scroll.AddChild(curNote);
-                    curNote.Translation = new Vector3(0, 0, PlaySettings.speedMultiplier * 10f * 60f/currentTempo * currentBeatsPerMeasure * (measure.Key + (float)chartNote.Item1/1920f));
+                    curNote.Translation = new Vector3(0, 0, lastTempoChangePosition + Misc.NotePosition(measure.Key - tempoChangeMeasures.Last<int>(), chartNote.Item1 - tempoChangeBeats.Last<int>(), currentTempo, currentBeatsPerMeasure));
                     curNote.SetPosSize(chartNote.Item2.position, chartNote.Item2.size);
                     curNote.AddChild(noteHitDetection.Instance());
 
@@ -136,13 +151,13 @@ public class NotesCreator : Node
                         }
                     }
 
-                    if (curNote.type == NoteType.HoldMid)
-                        curNote.QueueFree();
+                    // if (curNote.type == NoteType.HoldMid)
+                    //     curNote.QueueFree();
                 }
             }
         }
         // TODO: adapt to tempo changes
-        for (int i = 0; i < 100; ++i)
+        for (int i = 0; i < numMeasures; ++i)
         {
             var ml = measureLine.Instance<Spatial>();
             scroll.AddChild(ml);
@@ -163,15 +178,7 @@ public class NotesCreator : Node
         var destPosRad = -Misc.Seg2Rad(destination.pos);
 
         // look for closest destination angle to work towards
-        float plus = destPosRad + 2f*Mathf.Pi;
-        float minus = destPosRad - 2f*Mathf.Pi;
-        float minusDelta = Mathf.Abs(minus - originPosRad);
-        float normDelta = Mathf.Abs(destPosRad - originPosRad);
-        float plusDelta = Mathf.Abs(plus - originPosRad);
-        if (plusDelta < normDelta)
-            destPosRad = plus;
-        if (minusDelta < normDelta)
-            destPosRad = minus;
+        destPosRad = Misc.NearestAngle(originPosRad, destPosRad);
 
         float noteDepth = destination.Translation.z - origin.Translation.z;
 
@@ -185,9 +192,9 @@ public class NotesCreator : Node
         {
             float stepRatio = (float)step/steps;
             float stepRatioOne = (step+1f)/steps;
-            float curSize = Misc.FloatInterp(origin.size, destination.size, stepRatio);
+            float curSize = Misc.InterpFloat(origin.size, destination.size, stepRatio);
             // float curSize = 4;
-            float curRot = Misc.FloatInterp(originPosRad, destPosRad, stepRatio);
+            float curRot = Misc.InterpFloat(originPosRad, destPosRad, stepRatio);
 
             int numPoints = (int)Math.Ceiling(curSize * curveResolution);
             var innerVerts = new Array<Vector2>();

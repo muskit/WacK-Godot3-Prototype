@@ -13,6 +13,7 @@ public class Note : Spatial
     public int pos = 0;
     public int size = 1;
     public int noteIndex = -1;
+    public float value = 0;
     public Accuracy curAccuracy = Accuracy.Miss;
 
     // Called when the node enters the scene tree for the first time.

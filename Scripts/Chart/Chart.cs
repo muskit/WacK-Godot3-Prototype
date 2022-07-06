@@ -9,6 +9,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Chart
 {
@@ -19,7 +20,7 @@ public class Chart
     /// Key is measure.
     /// Value is List of (beat/1920, Notes) tuples.
     /// </summary>
-    public Dictionary<int, List<(int, ChartNote)>> notes = new Dictionary<int, List<(int, ChartNote)>>();
+    public SortedList<int, List<(int, ChartNote)>> notes = new SortedList<int, List<(int, ChartNote)>>();
 
     /// <summary>
     /// Construct Chart from contents of .mer file.
@@ -100,10 +101,10 @@ public class Chart
                             notes[currentMeasure].Add((currentBeat, new ChartNote(int.Parse(tokens[5]), int.Parse(tokens[6]), type: NoteType.SwipeCW, bonus: true)));
                             break;
                         case "12": // BG add
-                            notes[currentMeasure].Add((currentBeat, new ChartNote(int.Parse(tokens[5]), int.Parse(tokens[6]), type: NoteType.BGAdd)));
+                            notes[currentMeasure].Add((currentBeat, new ChartNote(int.Parse(tokens[5]), int.Parse(tokens[6]), value: int.Parse(tokens[8]), type: NoteType.BGAdd)));
                             break;
                         case "13": // BG rem
-                            notes[currentMeasure].Add((currentBeat, new ChartNote(int.Parse(tokens[5]), int.Parse(tokens[6]), type: NoteType.BGRem)));
+                            notes[currentMeasure].Add((currentBeat, new ChartNote(int.Parse(tokens[5]), int.Parse(tokens[6]), value: int.Parse(tokens[8]), type: NoteType.BGRem)));
                             break;
                         
                     }
@@ -112,6 +113,10 @@ public class Chart
                     notes[currentMeasure].Add((currentBeat, new ChartNote(value: float.Parse(tokens[3]), type: NoteType.Tempo)));
                     break;
             }
+        }
+        foreach (var measure in notes)
+        {
+            measure.Value.Sort((x, y) => x.Item1.CompareTo(y.Item1));
         }
     }
 }

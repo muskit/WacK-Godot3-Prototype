@@ -21,12 +21,57 @@ public static class Misc
         return Mathf.Deg2Rad(6f * seg);
     }
 
-    public static int IntInterp(int a, int b, float ratio)
+    public static float Rad2Seg(float angle)
+    {
+        return Mathf.Rad2Deg(angle)/6f;
+    }
+
+    public static int InterpInt(int a, int b, float ratio)
     {
         return (int) Math.Round(a + (b-a)*ratio);
     }
-    public static float FloatInterp(float a, float b, float ratio)
+
+    public static float InterpFloat(float a, float b, float ratio)
     {
         return a + (b-a)*ratio;
+    }
+
+    public static float NearestAngle(float origin, float destination)
+    {
+        float result = destination;
+
+        float plus = destination + 2f*Mathf.Pi;
+        float minus = destination - 2f*Mathf.Pi;
+        float minusDelta = Mathf.Abs(minus - origin);
+        float normDelta = Mathf.Abs(destination - origin);
+        float plusDelta = Mathf.Abs(plus - origin);
+        if (plusDelta < normDelta)
+            result = plus;
+        if (minusDelta < normDelta)
+            result = minus;
+
+        return result;
+    }
+
+    public static float ScreenPixelToRad(Vector2 pos)
+    {
+        var resolution = OS.WindowSize;
+        var origin = new Vector2(resolution.x/2 - 1, resolution.y/2 - 1);
+
+        return Mathf.Atan2(pos.y - origin.y, pos.x - origin.x);
+    }
+
+    public static int ScreenPixelToSegmentInt(Vector2 pos)
+    {
+        var angle = ScreenPixelToRad(pos);
+        if (angle > 0)
+            angle = Mathf.Tau - angle;
+
+        return Mathf.FloorToInt(Mathf.Abs(angle)/Mathf.Tau * 60) % 60;
+    }
+
+    public static float NotePosition(int measure, int beat, float tempo, int beatsPerMeasure)
+    {
+        return PlaySettings.speedMultiplier * 10f * 60f/tempo * beatsPerMeasure * ((float)measure + (float)beat/1920f);
     }
 }

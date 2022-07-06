@@ -1,22 +1,21 @@
 using Godot;
 using System;
 
-public class Play : Spatial
+public class Play : Node
 {
     [Export]
     private NodePath npAudioPlayer;
     [Export]
     private NodePath npPauseText;
     
-    private AudioStreamPlayer audioPlayer;
     private Label pauseText;
     private float pauseTime;
     
     public override void _Ready()
     {
-        audioPlayer = GetNode<AudioStreamPlayer>(npAudioPlayer);
-        Misc.songPlayer = audioPlayer;
-        audioPlayer.Stream = Misc.currentAudio;
+        Misc.songPlayer = GetNode<AudioStreamPlayer>(npAudioPlayer);
+        Misc.songPlayer.Bus = "BGM";
+        Misc.songPlayer.Stream = Misc.currentAudio;
 
         pauseText = GetNode<Label>(npPauseText);
         HandlePause(true);
@@ -27,12 +26,12 @@ public class Play : Spatial
         Misc.paused = state;
         if (state)
         {
-            pauseTime = audioPlayer.GetPlaybackPosition();
-            audioPlayer.Stop();
+            pauseTime = Misc.songPlayer.GetPlaybackPosition();
+            Misc.songPlayer.Stop();
         }
         else
         {
-            audioPlayer.Play(pauseTime);
+            Misc.songPlayer.Play(pauseTime);
         }
     }
 
@@ -44,7 +43,7 @@ public class Play : Spatial
         }
         if (Input.IsActionJustPressed("reset"))
         {
-            audioPlayer.Seek(0);
+            Misc.songPlayer.Seek(0);
         }
 
         pauseText.Visible = Misc.paused;

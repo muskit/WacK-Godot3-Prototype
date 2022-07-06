@@ -11,6 +11,9 @@ using System;
 
 public class Playfield : Spatial
 {
+    [Signal]
+    public delegate void note_tick(Note note);
+
     [Export]
     private NodePath npScroll;
     [Export]
@@ -21,7 +24,7 @@ public class Playfield : Spatial
     private NodePath npTickDetector;
 
     private Spatial scroll;
-    private float syncRatio = -1;
+    private float syncRatio = 1;
     private Strikeline strikeline;
     private AudioStreamPlayer tickPlayer;
     private Area tickDetector;
@@ -40,6 +43,8 @@ public class Playfield : Spatial
         tickPlayer = GetNode<AudioStreamPlayer>(npTickPlayer);
         tickDetector = GetNode<Area>(npTickDetector);
 
+        tickPlayer.Bus = "NoteTick";
+
         tickDetector.Scale = new Vector3(1, 1, PlaySettings.speedMultiplier * 10f);
         tickDetector.Connect("body_entered", this, nameof(OnTickEnter));
 
@@ -54,16 +59,18 @@ public class Playfield : Spatial
     private void OnTickEnter(Node obj)
     {
         var note = obj.GetParent() as Note;
+        // EmitSignal(nameof(note_tick), note);
+        // GD.Print($"{note.Name} ({note.type})");
 
         if (note.type == NoteType.BGAdd || note.type == NoteType.BGRem)
         {
-            for (int i = 0; i < note.size; ++i)
-            {
-                background.GetChild<Spatial>((i + note.pos)%60).Visible = (note.type == NoteType.BGAdd);
-            }
+            (background as Background).SetSegments(note.pos, note.size, note.type == NoteType.BGAdd, (DrawDirection) note.value);
         }
 
-        if (note.type != NoteType.HoldMid)
+        if (note.type != NoteType.HoldMid ||
+            note.type != NoteType.HoldEnd ||
+            note.type != NoteType.BGAdd ||
+            note.type != NoteType.BGRem)
         {
             tickPlayer.Stop();
             tickPlayer.Play();
@@ -83,9 +90,9 @@ public class Playfield : Spatial
             syncRatio = audioTime/-playTime; // help prolong the need to resync.
 
             // force jerky resync if needed
-            if (Mathf.Abs(playTime + audioTime) > 0.05f)
+            if (Mathf.Abs(playTime + audioTime) > 0.15f)
             {
-                GD.Print($"Resync #{++resyncCount}: {syncRatio}!");
+                GD.Print($"Force resync #{++resyncCount}: {syncRatio}");
                 scroll.Translation = new Vector3(0, 0, -PlaySettings.speedMultiplier * 10f * audioTime);
             }
         }

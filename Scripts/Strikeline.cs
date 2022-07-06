@@ -35,10 +35,10 @@ public class Strikeline : Spatial
         zoneGood = GetChild<Area>(2);
         zoneError = GetChild<Area>(3);
 
-        zoneMarvelous.Connect("body_entered", this, "OnMarvelousEnter");
-        zoneGreat.Connect("body_entered", this, "OnGreatEnter");
-        zoneGood.Connect("body_entered", this, "OnGoodEnter");
-        zoneError.Connect("body_entered", this, "OnErrorEnter");
+        zoneMarvelous.Connect("body_entered", this, nameof(OnMarvelousEnter));
+        zoneGreat.Connect("body_entered", this, nameof(OnGreatEnter));
+        zoneGood.Connect("body_entered", this, nameof(OnGoodEnter));
+        zoneError.Connect("body_entered", this, nameof(OnErrorEnter));
         
         zoneMarvelous.Connect("body_exited", this, nameof(OnMarvelousExit));
         zoneGreat.Connect("body_exited", this, nameof(OnGreatExit));
@@ -79,20 +79,23 @@ public class Strikeline : Spatial
     }
     private void OnGoodExit(Node obj) // LATE MISS
     {
+        // we're done with the collision
+        foreach (CollisionShape shape in obj.GetChildren())
+        {
+            shape.Disabled = true;
+        }
+
         var note = obj.GetParent() as Note;
 
         if (note.type == NoteType.HoldStart)
         {
-            // handle miss without destroying note
-            // ((SpatialMaterial)note.GetChild(2).GetChild<CSGPolygon>(0).Material).AlbedoColor = new Color(.5f, .5f, .5f);
             foreach (Node longSegment in note.GetChildren())
             {
                 foreach (var step in longSegment.GetChildren())
                 {
-                    if(step is CSGPolygon)
+                    if(step is CSGPolygon n)
                     {
-                        var n = step as CSGPolygon;
-                        ((SpatialMaterial)n.Material).AlbedoColor = new Color(.5f, .5f, .5f);
+                        ((SpatialMaterial)n.Material).AlbedoColor = new Color(.4f, .4f, .4f);
                         break;
                     }
                 }
@@ -103,19 +106,22 @@ public class Strikeline : Spatial
             EmitSignal(nameof(Miss));
             return;
         }
+
         if (note.type == NoteType.HoldEnd)
         {
             // TODO: handle end of hold note
             if (noteQueue.Contains(note))
                 noteQueue.Dequeue();
-            note.GetParent().QueueFree();
+            // note.GetParent().QueueFree();
+            note.GetParent<Spatial>().Visible = false;
             return;
         }
         
         // all other notes
         if (noteQueue.Contains(note))
             noteQueue.Dequeue();
-        obj.GetParent().QueueFree();
+        // note.QueueFree();
+        note.Visible = false;
         EmitSignal(nameof(Miss));
     }
 }
