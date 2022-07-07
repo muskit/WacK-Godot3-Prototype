@@ -14,7 +14,6 @@ public class Play : Node
     public override void _Ready()
     {
         Misc.songPlayer = GetNode<AudioStreamPlayer>(npAudioPlayer);
-        Misc.songPlayer.Bus = "BGM";
         Misc.songPlayer.Stream = Misc.currentAudio;
 
         pauseText = GetNode<Label>(npPauseText);
@@ -23,15 +22,18 @@ public class Play : Node
 
     private void HandlePause(bool state)
     {
+        var singleton = GetNode<Singleton>("/root/Singleton");
         Misc.paused = state;
         if (state)
         {
             pauseTime = Misc.songPlayer.GetPlaybackPosition();
             Misc.songPlayer.Stop();
+            singleton.EmitSignal("on_pause");
         }
         else
         {
             Misc.songPlayer.Play(pauseTime);
+            singleton.EmitSignal("on_resume");
         }
     }
 

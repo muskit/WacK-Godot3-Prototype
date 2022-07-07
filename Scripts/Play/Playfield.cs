@@ -38,15 +38,17 @@ public class Playfield : Spatial
 
     public override void _Ready()
     {
+        var singleton = GetNode<Singleton>("/root/Singleton");
+
         scroll = GetNode<Spatial>(npScroll);
         strikeline = GetNode<Strikeline>(npStrikeline);
         tickPlayer = GetNode<AudioStreamPlayer>(npTickPlayer);
         tickDetector = GetNode<Area>(npTickDetector);
 
-        tickPlayer.Bus = "NoteTick";
-
         tickDetector.Scale = new Vector3(1, 1, PlaySettings.speedMultiplier * 10f);
         tickDetector.Connect("body_entered", this, nameof(OnTickEnter));
+
+        singleton.Connect("on_resume", this, nameof(Resync));
 
         background = FindNode("Background");
         foreach (var seg in background.GetChildren())
@@ -77,6 +79,12 @@ public class Playfield : Spatial
         }
     }
 
+    public void Resync()
+    {
+        var audioTime = (float)(Misc.songPlayer.GetPlaybackPosition() + AudioServer.GetTimeSinceLastMix() - AudioServer.GetOutputLatency()); // audio time with lag compensation
+        scroll.Translation = new Vector3(0, 0, -PlaySettings.speedMultiplier * 10f * audioTime);
+    }
+
     public override void _Process(float delta)
     {
         // scroll if not paused
@@ -86,14 +94,14 @@ public class Playfield : Spatial
 
             // calculate scroll multiplier for keeping in sync
             var audioTime = (float)(Misc.songPlayer.GetPlaybackPosition() + AudioServer.GetTimeSinceLastMix() - AudioServer.GetOutputLatency()); // audio time with lag compensation
-            var playTime = scroll.Translation.z/PlaySettings.speedMultiplier/10;
-            syncRatio = audioTime/-playTime; // help prolong the need to resync.
+            var playTime = -scroll.Translation.z/PlaySettings.speedMultiplier/10;
+            syncRatio = audioTime/playTime; // help prolong the need to resync.
 
             // force jerky resync if needed
-            if (Mathf.Abs(playTime + audioTime) > 0.15f)
+            if (Mathf.Abs(playTime - audioTime) > 0.15f)
             {
                 GD.Print($"Force resync #{++resyncCount}: {syncRatio}");
-                scroll.Translation = new Vector3(0, 0, -PlaySettings.speedMultiplier * 10f * audioTime);
+                Resync();
             }
         }
     }

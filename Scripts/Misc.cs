@@ -16,6 +16,11 @@ public static class Misc
     public static AudioStreamPlayer songPlayer;
     public static bool paused = false;
 
+    [Signal]
+    public delegate void on_pause();
+    [Signal]
+    public delegate void on_resume();
+
     public static float Seg2Rad(float seg)
     {
         return Mathf.Deg2Rad(6f * seg);
@@ -28,11 +33,15 @@ public static class Misc
 
     public static int InterpInt(int a, int b, float ratio)
     {
+        if (a == 0 && b == 0)
+            return 0;
         return (int) Math.Round(a + (b-a)*ratio);
     }
 
     public static float InterpFloat(float a, float b, float ratio)
     {
+        if (a == 0 && b == 0)
+            return 0;
         return a + (b-a)*ratio;
     }
 
