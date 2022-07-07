@@ -16,6 +16,8 @@ public class Strikeline : Spatial
     [Signal]
     delegate void Hit(Accuracy acc);
 
+    [Export]
+    private bool hideNotesAfterMiss;
     private AudioStreamPlayer tickPlayer;
     private Area zoneMarvelous;
     private Area zoneGreat;
@@ -87,6 +89,7 @@ public class Strikeline : Spatial
 
         var note = obj.GetParent() as Note;
 
+        // don't hide hold note if its Start is missed
         if (note.type == NoteType.HoldStart)
         {
             foreach (Node longSegment in note.GetChildren())
@@ -113,7 +116,7 @@ public class Strikeline : Spatial
             if (noteQueue.Contains(note))
                 noteQueue.Dequeue();
             // note.GetParent().QueueFree();
-            note.GetParent<Spatial>().Visible = false;
+            note.GetParent<Spatial>().Visible = !hideNotesAfterMiss;
             return;
         }
         
@@ -121,7 +124,7 @@ public class Strikeline : Spatial
         if (noteQueue.Contains(note))
             noteQueue.Dequeue();
         // note.QueueFree();
-        note.Visible = false;
+        note.Visible = !hideNotesAfterMiss;
         EmitSignal(nameof(Miss));
     }
 }

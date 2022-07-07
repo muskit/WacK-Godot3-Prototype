@@ -43,9 +43,7 @@ public class Playfield : Spatial
         tickPlayer = GetNode<AudioStreamPlayer>(npTickPlayer);
         tickDetector = GetNode<Area>(npTickDetector);
 
-        tickPlayer.Bus = "NoteTick";
-
-        tickDetector.Scale = new Vector3(1, 1, PlaySettings.speedMultiplier * 10f);
+        //tickDetector.Scale = new Vector3(1, 1, PlaySettings.speedMultiplier * 10f);
         tickDetector.Connect("body_entered", this, nameof(OnTickEnter));
 
         background = FindNode("Background");

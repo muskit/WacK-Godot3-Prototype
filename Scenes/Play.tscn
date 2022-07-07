@@ -110,7 +110,7 @@ npTickPlayer = NodePath("../TickPlayer")
 npTickDetector = NodePath("Strikeline/TickDetector")
 
 [node name="Strikeline" type="Spatial" parent="Notes 3D/Playfield"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 10, 0, 0, -0.00872469 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 10, 0, 0, -0.009 )
 script = ExtResource( 8 )
 
 [node name="100" type="Area" parent="Notes 3D/Playfield/Strikeline"]
@@ -146,8 +146,10 @@ shape = SubResource( 1 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.0745192 )
 DrawLength = 7.0
 
-[node name="BGMPlayer" type="AudioStreamPlayer" parent="Notes 3D"]
-
 [node name="TickPlayer" type="AudioStreamPlayer" parent="Notes 3D"]
 stream = ExtResource( 9 )
 mix_target = 2
+bus = "NoteTick"
+
+[node name="BGMPlayer" type="AudioStreamPlayer" parent="Notes 3D"]
+bus = "BGM"
