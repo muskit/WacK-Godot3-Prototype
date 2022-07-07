@@ -93,7 +93,7 @@ fov = 20.3
 far = 35.0
 
 [node name="Camera2" type="Camera" parent="Notes 3D"]
-transform = Transform( -5.73206e-15, 1, 4.37114e-08, -1.31134e-07, -4.37114e-08, 1, 1, 0, 1.31134e-07, 0, 8.002, -2.948 )
+transform = Transform( -5.73206e-15, 1, 4.37114e-08, -1.31134e-07, -4.37114e-08, 1, 1, 0, 1.31134e-07, 0, 8.002, 1.5 )
 fov = 63.7
 far = 176.2
 
@@ -146,10 +146,10 @@ shape = SubResource( 1 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.0745192 )
 DrawLength = 7.0
 
+[node name="BGMPlayer" type="AudioStreamPlayer" parent="Notes 3D"]
+bus = "BGM"
+
 [node name="TickPlayer" type="AudioStreamPlayer" parent="Notes 3D"]
 stream = ExtResource( 9 )
 mix_target = 2
 bus = "NoteTick"
-
-[node name="BGMPlayer" type="AudioStreamPlayer" parent="Notes 3D"]
-bus = "BGM"

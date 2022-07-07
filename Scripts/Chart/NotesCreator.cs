@@ -49,6 +49,12 @@ public class NotesCreator : Node
         List<float> tempos = new List<float>();
         List<int> tempoChangeMeasures = new List<int>();
         List<int> tempoChangeBeats = new List<int>();
+        List<float> tempoChangePositions = new List<float>();
+        tempos.Add(-1);
+        tempoChangeMeasures.Add(0);
+        tempoChangeBeats.Add(0);
+        tempoChangePositions.Add(0);
+
         float lastTempoChangePosition = 0;
         float currentTempo = -1;
         int currentBeatsPerMeasure = 4; // TODO: implement changing measures sizes
@@ -58,10 +64,6 @@ public class NotesCreator : Node
         Note curNote = null;
         var nextHoldNote = new System.Collections.Generic.Dictionary<int, Note>(); // <next hold idx, Note>
         var curHoldSegment = new System.Collections.Generic.Dictionary<int, Note>(); // <next hold idx, HoldStart>
-
-        tempos.Add(-1);
-        tempoChangeMeasures.Add(0);
-        tempoChangeBeats.Add(0);
 
         foreach (var measure in chart.notes) // <measure, List>
         {
@@ -76,12 +78,14 @@ public class NotesCreator : Node
                     // Song-related info //
                     // TODO: beats per measure, tempo change based on relative note position
                     case NoteType.Tempo:
+                        curNote = noteInvisible.Instance<Note>();
+                        curNote.type = NoteType.Tempo;
                         lastTempoChangePosition += Misc.NotePosition(measure.Key - tempoChangeMeasures.Last<int>(), chartNote.Item1 - tempoChangeBeats.Last<int>(), currentTempo, currentBeatsPerMeasure);
-                        GD.Print(lastTempoChangePosition);
-                        currentTempo = chartNote.Item2.value;
-                        tempos.Add(currentTempo);
+                        tempos.Add(chartNote.Item2.value);
                         tempoChangeMeasures.Add(measure.Key);
                         tempoChangeBeats.Add(chartNote.Item1);
+                        tempoChangePositions.Add(lastTempoChangePosition);
+                        currentTempo = chartNote.Item2.value;
                         break;
                     // Playable notes //
                     case NoteType.Touch:
@@ -127,11 +131,17 @@ public class NotesCreator : Node
                 }
                 if (curNote != lastNote)
                 {
-                    // add notes to scroll
-                    scroll.AddChild(curNote);
-                    curNote.Translation = new Vector3(0, 0, lastTempoChangePosition + Misc.NotePosition(measure.Key - tempoChangeMeasures.Last<int>(), chartNote.Item1 - tempoChangeBeats.Last<int>(), currentTempo, currentBeatsPerMeasure));
-                    curNote.SetPosSize(chartNote.Item2.position, chartNote.Item2.size);
-                    curNote.AddChild(noteHitDetection.Instance());
+                    if (curNote.type == NoteType.Tempo)
+                    {
+                        curNote.Translation = new Vector3(0, 0, lastTempoChangePosition);
+                    }
+                    else
+                    {
+                        scroll.AddChild(curNote);
+                        curNote.Translation = new Vector3(0, 0, lastTempoChangePosition + Misc.NotePosition(measure.Key - tempoChangeMeasures.Last<int>(), chartNote.Item1 - tempoChangeBeats.Last<int>(), currentTempo, currentBeatsPerMeasure));
+                        curNote.SetPosSize(chartNote.Item2.position, chartNote.Item2.size);
+                        curNote.AddChild(noteHitDetection.Instance());
+                    }
 
                     // create long note
                     if (curNote.type == NoteType.HoldMid || curNote.type == NoteType.HoldEnd)
@@ -151,20 +161,62 @@ public class NotesCreator : Node
                         }
                     }
 
-                    // if (curNote.type == NoteType.HoldMid)
-                    //     curNote.QueueFree();
+                    if (curNote.type == NoteType.HoldMid)
+                        curNote.QueueFree();
                 }
             }
         }
-        // TODO: adapt to tempo changes
-        for (int i = 0; i < numMeasures; ++i)
+        foreach (var elem in tempoChangeMeasures)
         {
-            var ml = measureLine.Instance<Spatial>();
-            scroll.AddChild(ml);
-            ml.Translation = new Vector3(0, 0, PlaySettings.speedMultiplier * 10f * 60f / currentTempo * currentBeatsPerMeasure * (float)i);
-            ml.GetChild(2).GetChild<Label>(0).Text = $"{i}";
+            GD.PrintRaw($"{elem} ");
         }
+        GD.Print();
+        foreach (var elem in tempoChangeBeats)
+        {
+            GD.PrintRaw($"{elem} ");
+        }
+        GD.Print();
+        foreach (var elem in tempoChangePositions)
+        {
+            GD.PrintRaw($"{elem} ");
+        }
+        GD.Print();
 
+        // TODO: adapt to tempo changes
+        int tempoChgMeasureIdx = 1;
+        for (int curMeasure = 0; curMeasure < numMeasures; ++curMeasure)
+        {
+            if (tempoChgMeasureIdx == tempoChangeMeasures.Count - 1) // last measure change; fill in the rest
+            {
+                float pos = tempoChangePositions[tempoChgMeasureIdx] + Misc.NotePosition(curMeasure - tempoChangeMeasures[tempoChgMeasureIdx], 0, tempos.Last(), 4);
+
+                var ml = measureLine.Instance<Spatial>();
+                scroll.AddChild(ml);
+                ml.Translation = new Vector3(0, 0, pos);
+                ml.GetChild(2).GetChild<Label>(0).Text = $"{curMeasure}";
+                GD.Print($"{tempoChgMeasureIdx} = {ml.Translation}");
+            }
+            else if (tempoChgMeasureIdx < tempoChangeMeasures.Count)
+            {
+                while (curMeasure == tempoChangeMeasures[tempoChgMeasureIdx])
+                {
+                    int measuresToCreate = tempoChangeMeasures[tempoChgMeasureIdx] - tempoChangeMeasures[tempoChgMeasureIdx - 1];
+                    for (int i = 0; i < measuresToCreate; ++i)
+                    {
+                        int measureNum = tempoChangeMeasures[tempoChgMeasureIdx - 1] + i;
+                        float pos = Misc.InterpFloat(tempoChangePositions[tempoChgMeasureIdx - 1], tempoChangePositions[tempoChgMeasureIdx], (float)i/measuresToCreate);
+
+                        var ml = measureLine.Instance<Spatial>();
+                        scroll.AddChild(ml);
+                        ml.Translation = new Vector3(0, 0, pos);
+                        ml.GetChild(2).GetChild<Label>(0).Text = $"{measureNum}";
+                        GD.Print($"{measureNum} = {ml.Translation}");
+                    }
+                    tempoChgMeasureIdx++;
+                }
+            }
+            GD.Print();
+        }
         doneLoading = true;
     }
 
