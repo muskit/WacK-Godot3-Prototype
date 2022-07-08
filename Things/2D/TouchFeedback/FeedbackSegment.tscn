@@ -1,0 +1,26 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Shaders/spritemask.gdshader" type="Shader" id=1]
+[ext_resource path="res://Textures/mask.png" type="Texture" id=2]
+[ext_resource path="res://Textures/TouchFeedback.png" type="Texture" id=3]
+[ext_resource path="res://Scripts/2D/TouchFeedback/FeedbackSegment.cs" type="Script" id=4]
+
+[sub_resource type="ShaderMaterial" id=9]
+shader = ExtResource( 1 )
+shader_param/mask_texture = ExtResource( 2 )
+
+[node name="TextureProgress" type="TextureProgress"]
+material = SubResource( 9 )
+margin_left = 212.0
+margin_right = 812.0
+margin_bottom = 600.0
+size_flags_horizontal = 7
+size_flags_vertical = 7
+max_value = 60.0
+value = 1.0
+texture_progress = ExtResource( 3 )
+fill_mode = 5
+radial_initial_angle = 90.0
+nine_patch_stretch = true
+script = ExtResource( 4 )
+LingerTime = 0.2

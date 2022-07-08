@@ -7,7 +7,7 @@
  **/
 
 using Godot;
-using System;
+using System.Collections.Generic;
 
 public class Playfield : Spatial
 {
@@ -22,12 +22,16 @@ public class Playfield : Spatial
     private NodePath npTickPlayer;
     [Export]
     private NodePath npTickDetector;
+    [Export]
+    private NodePath npFeedbackCircle;
 
     private Spatial scroll;
     private float syncRatio = 1;
     private Strikeline strikeline;
     private AudioStreamPlayer tickPlayer;
     private Area tickDetector;
+    private List<FeedbackSegment> feedbackCircle = new List<FeedbackSegment>();
+
     private Node background;
     private int resyncCount = 0;
 
@@ -38,7 +42,8 @@ public class Playfield : Spatial
 
     public override void _Ready()
     {
-        var singleton = GetNode<Singleton>("/root/Singleton");
+        var gEvents = GetNode<GEvents>("/root/GEvents");
+        gEvents.Connect(nameof(GEvents.on_resume), this, nameof(Resync));
 
         scroll = GetNode<Spatial>(npScroll);
         strikeline = GetNode<Strikeline>(npStrikeline);
@@ -48,12 +53,18 @@ public class Playfield : Spatial
         //tickDetector.Scale = new Vector3(1, 1, PlaySettings.speedMultiplier * 10f);
         tickDetector.Connect("body_entered", this, nameof(OnTickEnter));
 
-        singleton.Connect("on_resume", this, nameof(Resync));
 
         background = FindNode("Background");
         foreach (var seg in background.GetChildren())
         {
             (seg as Spatial).Visible = false;
+        }
+
+        var feedbackSegmentsNode = GetNode(npFeedbackCircle);
+        foreach (FeedbackSegment seg in feedbackSegmentsNode.GetChildren())
+        {
+            seg.Visible = false;
+            feedbackCircle.Add(seg);
         }
     }
 
@@ -76,6 +87,16 @@ public class Playfield : Spatial
         {
             tickPlayer.Stop();
             tickPlayer.Play();
+        }
+
+        if (note.type != NoteType.HoldEnd &&
+            note.type != NoteType.BGAdd &&
+            note.type != NoteType.BGRem)
+        {
+            int touchCenter = note.pos + note.size/2;
+            feedbackCircle[touchCenter % 60].Fire();
+            feedbackCircle[(touchCenter + 1) % 60].Fire();
+            feedbackCircle[(touchCenter - 1) % 60].Fire();
         }
     }
 

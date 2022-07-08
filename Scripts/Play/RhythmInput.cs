@@ -11,10 +11,20 @@ using System.Collections.Generic;
 
 public class RhythmInput : Node
 {
+    [Export]
+    private NodePath npFeedbackCircle;
+    private List<FeedbackSegment> feedbackCircle = new List<FeedbackSegment>();
     private Dictionary<int, Vector2> touches = new Dictionary<int, Vector2>();
+    private Dictionary<int, int> touchedSegments = new Dictionary<int, int>();
 
     public override void _Ready()
     {
+        var feedbackSegmentsNode = GetNode(npFeedbackCircle);
+        foreach (FeedbackSegment seg in feedbackSegmentsNode.GetChildren())
+        {
+            seg.Visible = false;
+            feedbackCircle.Add(seg);
+        }
     }
     public override void _Input(InputEvent inputEvent)
     {
@@ -38,23 +48,29 @@ public class RhythmInput : Node
     // for Touch and HoldStart notes
     private void JustTouched(InputEventScreenTouch touchEv)
     {
-        GD.Print($"JustTouched {touchEv.Index} @ {Misc.ScreenPixelToRad(touchEv.Position)} ({Misc.ScreenPixelToSegmentInt(touchEv.Position)})");
+        // GD.Print($"JustTouched {touchEv.Index} @ {Misc.ScreenPixelToRad(touchEv.Position)} ({Misc.ScreenPixelToSegmentInt(touchEv.Position)})");
         touches[touchEv.Index] = touchEv.Position;
+        touchedSegments[touchEv.Index] = Misc.ScreenPixelToSegmentInt(touchEv.Position);
     }
     private void DragTouch(InputEventScreenDrag dragEv)
     {
-        GD.Print($"Dragging {dragEv.Index} @ {Misc.ScreenPixelToRad(dragEv.Position)}");
+        // GD.Print($"Dragging {dragEv.Index} @ {Misc.ScreenPixelToRad(dragEv.Position)}");
         touches[dragEv.Index] = dragEv.Position;
+        touchedSegments[dragEv.Index] = Misc.ScreenPixelToSegmentInt(dragEv.Position);
     }
     private void Untouch(InputEventScreenTouch touchEv)
     {
-        GD.Print($"Untouch {touchEv.Index} @ {Misc.ScreenPixelToRad(touchEv.Position)}");
+        // GD.Print($"Untouch {touchEv.Index} @ {Misc.ScreenPixelToRad(touchEv.Position)}");
         touches.Remove(touchEv.Index);
+        touchedSegments.Remove(touchEv.Index);
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(float delta)
     {
-        
+        foreach (var touch in touchedSegments)
+        {
+            feedbackCircle[touch.Value].Fire();
+        }
     }
 }

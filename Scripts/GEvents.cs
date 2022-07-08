@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public class Singleton : Node
+public class GEvents : Node
 {
     [Signal]
     public delegate void on_pause();

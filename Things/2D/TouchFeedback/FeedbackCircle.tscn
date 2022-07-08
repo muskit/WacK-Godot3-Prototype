@@ -1,0 +1,252 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Shaders/spritemask.gdshader" type="Shader" id=1]
+[ext_resource path="res://Things/2D/TouchFeedback/FeedbackSegment.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Textures/mask.png" type="Texture" id=3]
+
+[sub_resource type="ShaderMaterial" id=9]
+shader = ExtResource( 1 )
+shader_param/mask_texture = ExtResource( 3 )
+
+[node name="FeedbackCircle" type="AspectRatioContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="TextureProgress" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+
+[node name="TextureProgress2" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 84.0
+
+[node name="TextureProgress3" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 78.0
+
+[node name="TextureProgress4" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 72.0
+
+[node name="TextureProgress5" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 66.0
+
+[node name="TextureProgress6" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 60.0
+
+[node name="TextureProgress7" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 54.0
+
+[node name="TextureProgress8" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 48.0
+
+[node name="TextureProgress9" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 42.0
+
+[node name="TextureProgress10" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 36.0
+
+[node name="TextureProgress11" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 30.0
+
+[node name="TextureProgress12" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 24.0
+
+[node name="TextureProgress13" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 18.0
+
+[node name="TextureProgress14" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 12.0
+
+[node name="TextureProgress15" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 6.0
+
+[node name="TextureProgress16" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 0.0
+
+[node name="TextureProgress17" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 354.0
+
+[node name="TextureProgress18" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 348.0
+
+[node name="TextureProgress19" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 342.0
+
+[node name="TextureProgress20" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 336.0
+
+[node name="TextureProgress21" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 330.0
+
+[node name="TextureProgress22" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 324.0
+
+[node name="TextureProgress23" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 318.0
+
+[node name="TextureProgress24" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 312.0
+
+[node name="TextureProgress25" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 306.0
+
+[node name="TextureProgress26" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 300.0
+
+[node name="TextureProgress27" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 294.0
+
+[node name="TextureProgress28" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 288.0
+
+[node name="TextureProgress29" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 282.0
+
+[node name="TextureProgress30" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 276.0
+
+[node name="TextureProgress31" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 270.0
+
+[node name="TextureProgress32" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 264.0
+
+[node name="TextureProgress33" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 258.0
+
+[node name="TextureProgress34" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 252.0
+
+[node name="TextureProgress35" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 246.0
+
+[node name="TextureProgress36" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 240.0
+
+[node name="TextureProgress37" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 234.0
+
+[node name="TextureProgress38" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 228.0
+
+[node name="TextureProgress39" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 222.0
+
+[node name="TextureProgress40" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 216.0
+
+[node name="TextureProgress41" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 210.0
+
+[node name="TextureProgress42" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 204.0
+
+[node name="TextureProgress43" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 198.0
+
+[node name="TextureProgress44" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 192.0
+
+[node name="TextureProgress45" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 186.0
+
+[node name="TextureProgress46" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 180.0
+
+[node name="TextureProgress47" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 174.0
+
+[node name="TextureProgress48" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 168.0
+
+[node name="TextureProgress49" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 162.0
+
+[node name="TextureProgress50" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 156.0
+
+[node name="TextureProgress51" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 150.0
+
+[node name="TextureProgress52" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 144.0
+
+[node name="TextureProgress53" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 138.0
+
+[node name="TextureProgress54" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 132.0
+
+[node name="TextureProgress55" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 126.0
+
+[node name="TextureProgress56" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 120.0
+
+[node name="TextureProgress57" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 114.0
+
+[node name="TextureProgress58" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 108.0
+
+[node name="TextureProgress59" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 102.0
+
+[node name="TextureProgress60" parent="." instance=ExtResource( 2 )]
+material = SubResource( 9 )
+radial_initial_angle = 96.0

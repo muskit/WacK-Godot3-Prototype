@@ -15,8 +15,11 @@ using System.Collections.Generic;
 public class NotesCreator : Node
 {
     [Export]
-    private NodePath npScroll;
-    private Spatial scroll;
+    private NodePath npNoteScroll;
+    [Export]
+    private NodePath npMeasureScroll;
+    private Spatial noteScroll;
+    private Spatial measureScroll;
 
     public static bool doneLoading { get; private set; } = false;
 
@@ -38,7 +41,8 @@ public class NotesCreator : Node
 
     public override void _Ready()
     {
-        scroll = GetNode<Spatial>(npScroll);
+        noteScroll = GetNode<Spatial>(npNoteScroll);
+        measureScroll = GetNode<Spatial>(npMeasureScroll);
         Load(new Chart(Misc.currentMer));
     }
 
@@ -137,7 +141,7 @@ public class NotesCreator : Node
                     }
                     else
                     {
-                        scroll.AddChild(curNote);
+                        noteScroll.AddChild(curNote);
                         curNote.Translation = new Vector3(0, 0, lastTempoChangePosition + Misc.NotePosition(measure.Key - tempoChangeMeasures.Last<int>(), chartNote.Item1 - tempoChangeBeats.Last<int>(), currentTempo, currentBeatsPerMeasure));
                         curNote.SetPosSize(chartNote.Item2.position, chartNote.Item2.size);
                         curNote.AddChild(noteHitDetection.Instance());
@@ -155,7 +159,7 @@ public class NotesCreator : Node
                         if (curNote.type == NoteType.HoldEnd)
                         {
                             var pos = curNote.GlobalTransform;
-                            scroll.RemoveChild(curNote);
+                            noteScroll.RemoveChild(curNote);
                             curHoldSegment[curNote.noteIndex].AddChild(curNote);
                             curNote.GlobalTransform = pos;
                         }
@@ -191,7 +195,7 @@ public class NotesCreator : Node
                 float pos = tempoChangePositions[tempoChgMeasureIdx] + Misc.NotePosition(curMeasure - tempoChangeMeasures[tempoChgMeasureIdx], 0, tempos.Last(), 4);
 
                 var ml = measureLine.Instance<Spatial>();
-                scroll.AddChild(ml);
+                measureScroll.AddChild(ml);
                 ml.Translation = new Vector3(0, 0, pos);
                 ml.GetChild(2).GetChild<Label>(0).Text = $"{curMeasure}";
                 GD.Print($"{tempoChgMeasureIdx} = {ml.Translation}");
@@ -207,7 +211,7 @@ public class NotesCreator : Node
                         float pos = Misc.InterpFloat(tempoChangePositions[tempoChgMeasureIdx - 1], tempoChangePositions[tempoChgMeasureIdx], (float)i/measuresToCreate);
 
                         var ml = measureLine.Instance<Spatial>();
-                        scroll.AddChild(ml);
+                        measureScroll.AddChild(ml);
                         ml.Translation = new Vector3(0, 0, pos);
                         ml.GetChild(2).GetChild<Label>(0).Text = $"{measureNum}";
                         GD.Print($"{measureNum} = {ml.Translation}");

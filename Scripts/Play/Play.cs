@@ -22,18 +22,18 @@ public class Play : Node
 
     private void HandlePause(bool state)
     {
-        var singleton = GetNode<Singleton>("/root/Singleton");
+        var gEvents = GetNode<GEvents>("/root/GEvents");
         Misc.paused = state;
         if (state)
         {
             pauseTime = Misc.songPlayer.GetPlaybackPosition();
             Misc.songPlayer.Stop();
-            singleton.EmitSignal("on_pause");
+            gEvents.EmitSignal(nameof(GEvents.on_pause));
         }
         else
         {
             Misc.songPlayer.Play(pauseTime);
-            singleton.EmitSignal("on_resume");
+            gEvents.EmitSignal(nameof(GEvents.on_resume));
         }
     }
 

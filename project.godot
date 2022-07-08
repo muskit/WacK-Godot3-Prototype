@@ -11,12 +11,16 @@ config_version=4
 [application]
 
 config/name="WacK"
-run/main_scene="res://Scenes/ChartLoader.tscn"
+run/main_scene="res://Scenes/Menu.tscn"
 config/icon="res://icon.png"
 
 [autoload]
 
-Singleton="*res://Scripts/Singleton.cs"
+GEvents="*res://Scripts/GEvents.cs"
+
+[debug]
+
+settings/fps/force_fps=60
 
 [display]
 

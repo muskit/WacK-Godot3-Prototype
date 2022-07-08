@@ -17,7 +17,7 @@ public class Strikeline : Spatial
     delegate void Hit(Accuracy acc);
 
     [Export]
-    private bool hideNotesAfterMiss;
+    private bool hideNotesAfterLeaving;
     private AudioStreamPlayer tickPlayer;
     private Area zoneMarvelous;
     private Area zoneGreat;
@@ -116,7 +116,7 @@ public class Strikeline : Spatial
             if (noteQueue.Contains(note))
                 noteQueue.Dequeue();
             // note.GetParent().QueueFree();
-            note.GetParent<Spatial>().Visible = !hideNotesAfterMiss;
+            note.GetParent<Spatial>().Visible = !hideNotesAfterLeaving;
             return;
         }
         
@@ -124,7 +124,7 @@ public class Strikeline : Spatial
         if (noteQueue.Contains(note))
             noteQueue.Dequeue();
         // note.QueueFree();
-        note.Visible = !hideNotesAfterMiss;
+        note.Visible = !hideNotesAfterLeaving;
         EmitSignal(nameof(Miss));
     }
 }

@@ -50,7 +50,7 @@ public class Background : Node
     }
 
     // draw in 6/60 frames (0.1s)
-    public async void SetSegments(int pos, int size, bool state, DrawDirection direction = DrawDirection.CounterClockwise)
+    public async void SetSegments(int pos, int size, bool state, DrawDirection direction)
     {
         // GD.Print($"{direction} = {state}. Even? {size % 2 == 0}");
 
