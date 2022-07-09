@@ -48,19 +48,19 @@ public class RhythmInput : Node
     // for Touch and HoldStart notes
     private void JustTouched(InputEventScreenTouch touchEv)
     {
-        // GD.Print($"JustTouched {touchEv.Index} @ {Misc.ScreenPixelToRad(touchEv.Position)} ({Misc.ScreenPixelToSegmentInt(touchEv.Position)})");
+        GD.Print($"{touchEv.Position} / {OS.WindowSize}");
+        var touchedSeg = Misc.ScreenPixelToSegmentInt(touchEv.Position);
         touches[touchEv.Index] = touchEv.Position;
-        touchedSegments[touchEv.Index] = Misc.ScreenPixelToSegmentInt(touchEv.Position);
+        touchedSegments[touchEv.Index] = touchedSeg;
+        feedbackCircle[touchedSeg].Fire();
     }
     private void DragTouch(InputEventScreenDrag dragEv)
     {
-        // GD.Print($"Dragging {dragEv.Index} @ {Misc.ScreenPixelToRad(dragEv.Position)}");
         touches[dragEv.Index] = dragEv.Position;
         touchedSegments[dragEv.Index] = Misc.ScreenPixelToSegmentInt(dragEv.Position);
     }
     private void Untouch(InputEventScreenTouch touchEv)
     {
-        // GD.Print($"Untouch {touchEv.Index} @ {Misc.ScreenPixelToRad(touchEv.Position)}");
         touches.Remove(touchEv.Index);
         touchedSegments.Remove(touchEv.Index);
     }
@@ -70,7 +70,7 @@ public class RhythmInput : Node
     {
         foreach (var touch in touchedSegments)
         {
-            feedbackCircle[touch.Value].Fire();
+            feedbackCircle[touch.Value].Fire(false);
         }
     }
 }

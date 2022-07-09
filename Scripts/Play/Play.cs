@@ -17,7 +17,7 @@ public class Play : Node
         Misc.songPlayer.Stream = Misc.currentAudio;
 
         pauseText = GetNode<Label>(npPauseText);
-        HandlePause(true);
+        HandlePause(false);
     }
 
     private void HandlePause(bool state)

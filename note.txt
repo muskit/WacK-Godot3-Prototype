@@ -1,1 +1,0 @@
-Place song folders here. Nested folders for playlists supported.

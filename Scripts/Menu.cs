@@ -1,33 +1,38 @@
 using Godot;
 using System;
 
-public class Menu : Control
+public class Menu : CanvasLayer
 {
-	Directory songDir;
+	[Export]
+	private NodePath npListSongs;
+	[Export]
+	private NodePath npPlayButton;
+
+	private ItemList listSongs;
+	private Button playButton;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		songDir = new Directory();
-		if (songDir.Open("user://songs") != Error.Ok)
-		{
-			songDir.MakeDir("user://songs");
-			if (songDir.Open("user://songs") != Error.Ok)
-			{
-				GD.PrintErr("Failed to open songs folder!");
-				return;
-			}
-		}
+		listSongs = GetNode<ItemList>(npListSongs);
+		playButton = GetNode<Button>(npPlayButton);
 
-		File f = new File();
-		f.Open(songDir.GetCurrentDir() + "/note.txt", File.ModeFlags.Write);
-		f.StoreString("Place song folders here. Nested folders for playlists supported.\nHello from Xcode!");
-		f.Close();
+		playButton.Connect("pressed", this, nameof(OnPlayPressed));
+
+		foreach (var song in Misc.songList)
+		{
+			listSongs.AddItem($"{song.artist} - {song.name}");
+		}
 	}
 
-//  // Called every frame. 'delta' is the elapsed time since the previous frame.
-//  public override void _Process(float delta)
-//  {
-//      
-//  }
+	private void OnPlayPressed()
+	{
+		var misc = GetNode<Misc>("/root/Misc");
+		misc.LoadSong(Misc.songList[listSongs.GetSelectedItems()[0]].directory.GetCurrentDir(), 2);
+	}
+
+	public override void _Process(float delta)
+	{
+		playButton.Disabled = !listSongs.IsAnythingSelected();
+	}
 }

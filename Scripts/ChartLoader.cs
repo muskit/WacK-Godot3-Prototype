@@ -40,6 +40,8 @@ public class ChartLoader : Control
 		fd.Access = FileDialog.AccessEnum.Filesystem;
 		fd.Connect("dir_selected", this, "SetTextPath");
 		fd.SetPosition(this.RectSize / 2);
+		fd.SetSize(new Vector2(400, 300));
+		fd.CurrentDir = "user:///";
 		fd.Resizable = true;
 		fd.Visible = true;
 	}
@@ -51,27 +53,7 @@ public class ChartLoader : Control
 
 	public void PlayBtnPressed()
 	{
-		string chartPath = textPath.Text + $"/{dropLevelSelect.Selected}.mer";
-		string audioPath = textPath.Text + "/music.mp3";
-
-		var chart = new File();
-		var audio = new File();
-		Error errChart = chart.Open(chartPath, File.ModeFlags.Read);
-		Error errAudio = audio.Open(audioPath, File.ModeFlags.Read);
-
-		if (errChart != Error.Ok)
-		{
-			GD.PrintErr($"Trouble loading {chartPath}!\n{errChart}");
-			return;
-		}
-		if (errAudio != Error.Ok)
-		{
-			GD.PrintErr($"Trouble loading {audioPath}!\n{errAudio}");
-			return;
-		}
-		Misc.currentMer = chart.GetAsText();
-		Misc.currentAudio = new AudioStreamMP3();
-		Misc.currentAudio.Data = audio.GetBuffer((long)audio.GetLen());
-		GetTree().ChangeScene("res://Scenes/Play.tscn");
+		var misc = GetNode<Misc>("/root/Misc");
+		misc.LoadSong(textPath.Text, dropLevelSelect.Selected);
 	}
 }

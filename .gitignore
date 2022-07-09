@@ -9,3 +9,17 @@ export_presets.cfg
 # Mono-specific ignores
 .mono/
 data_*/
+.DS_Store
+mono_crash.0.0.json
+mono_crash.0.1.json
+mono_crash.0.10.json
+mono_crash.0.11.json
+mono_crash.0.12.json
+mono_crash.0.2.json
+mono_crash.0.3.json
+mono_crash.0.4.json
+mono_crash.0.5.json
+mono_crash.0.6.json
+mono_crash.0.7.json
+mono_crash.0.8.json
+mono_crash.0.9.json

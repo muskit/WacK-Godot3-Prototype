@@ -89,15 +89,15 @@ public class Playfield : Spatial
             tickPlayer.Play();
         }
 
-        if (note.type != NoteType.HoldEnd &&
-            note.type != NoteType.BGAdd &&
-            note.type != NoteType.BGRem)
-        {
-            int touchCenter = note.pos + note.size/2;
-            feedbackCircle[touchCenter % 60].Fire();
-            feedbackCircle[(touchCenter + 1) % 60].Fire();
-            feedbackCircle[(touchCenter - 1) % 60].Fire();
-        }
+        // if (note.type != NoteType.HoldEnd &&
+        //     note.type != NoteType.BGAdd &&
+        //     note.type != NoteType.BGRem)
+        // {
+        //     int touchCenter = note.pos + note.size/2;
+        //     feedbackCircle[touchCenter % 60].Fire();
+        //     feedbackCircle[(touchCenter + 1) % 60].Fire();
+        //     feedbackCircle[(touchCenter - 1) % 60].Fire();
+        // }
     }
 
     public void Resync()
@@ -119,7 +119,7 @@ public class Playfield : Spatial
             syncRatio = audioTime/playTime; // help prolong the need to resync.
 
             // force jerky resync if needed
-            if (Mathf.Abs(playTime - audioTime) > 0.15f)
+            if (Mathf.Abs(playTime - audioTime) > 0.1f)
             {
                 GD.Print($"Force resync #{++resyncCount}: {syncRatio}");
                 Resync();

@@ -7,14 +7,16 @@
  **/
 using Godot;
 using System;
+using System.Collections.Generic;
 
-public static class Misc
+public class Misc : Node
 {
     public static float cameraOffset = 0;
     public static string currentMer = "";
     public static AudioStreamMP3 currentAudio;
     public static AudioStreamPlayer songPlayer;
     public static bool paused = false;
+    public static List<Song> songList;
 
     [Signal]
     public delegate void on_pause();
@@ -82,5 +84,31 @@ public static class Misc
     public static float NotePosition(int measure, int beat, float tempo, int beatsPerMeasure)
     {
         return PlaySettings.speedMultiplier * 10f * 60f/tempo * beatsPerMeasure * ((float)measure + (float)beat/1920f);
+    }
+
+    public void LoadSong(string path, int difficulty = 0)
+    {
+        var chart = new File();
+		var audio = new File();
+
+        var chartPath = path + $"/{difficulty}.mer";
+        var audioPath = path + "/music.mp3";
+		Error errChart = chart.Open(chartPath, File.ModeFlags.Read);
+		Error errAudio = audio.Open(audioPath, File.ModeFlags.Read);
+
+		if (errChart != Error.Ok)
+		{
+			GD.PrintErr($"Trouble loading {chartPath}!\n{errChart}");
+			return;
+		}
+		if (errAudio != Error.Ok)
+		{
+			GD.PrintErr($"Trouble loading {audioPath}!\n{errAudio}");
+			return;
+		}
+		Misc.currentMer = chart.GetAsText();
+		Misc.currentAudio = new AudioStreamMP3();
+		Misc.currentAudio.Data = audio.GetBuffer((long)audio.GetLen());
+		GetTree().ChangeScene("res://Scenes/Play.tscn");
     }
 }
