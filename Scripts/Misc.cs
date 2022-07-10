@@ -17,6 +17,7 @@ public class Misc : Node
     public static AudioStreamPlayer songPlayer;
     public static bool paused = false;
     public static List<Song> songList;
+    public static string debugStr = ""; // MAX 5 LINES CAN BE SHOWN AT A TIME
 
     [Signal]
     public delegate void on_pause();
@@ -70,6 +71,17 @@ public class Misc : Node
         var origin = new Vector2(resolution.x/2 - 1, resolution.y/2 - 1);
 
         return Mathf.Atan2(pos.y - origin.y, pos.x - origin.x);
+    }
+
+    public static int TouchPosToSegmentInt(Vector2 pos, Vector2 touchResolution)
+    {
+        var origin = new Vector2(touchResolution.x/2 - 1, touchResolution.y/2 - 1);
+        var angle = Mathf.Atan2(pos.y - origin.y, pos.x - origin.x);
+
+        if (angle > 0)
+            angle = Mathf.Tau - angle;
+
+        return Mathf.FloorToInt(Mathf.Abs(angle)/Mathf.Tau * 60) % 60;
     }
 
     public static int ScreenPixelToSegmentInt(Vector2 pos)

@@ -1,0 +1,69 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Fonts/Futura/Futura XBlk BT.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://Fonts/Futura/Futura Book font.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://Scripts/FontResizeToLabel.cs" type="Script" id=3]
+[ext_resource path="res://Scripts/Menu/Difficulty.cs" type="Script" id=4]
+
+[sub_resource type="DynamicFont" id=1]
+size = 96
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=2]
+resource_local_to_scene = true
+size = 260
+font_data = ExtResource( 2 )
+
+[node name="Difficulty" type="AspectRatioContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource( 4 )
+
+[node name="Control" type="Control" parent="."]
+margin_left = 212.0
+margin_right = 812.0
+margin_bottom = 600.0
+
+[node name="Color Header" type="ColorRect" parent="Control"]
+anchor_right = 1.0
+anchor_bottom = 0.2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+color = Color( 0.0509804, 0.364706, 0.639216, 1 )
+
+[node name="Header" type="Label" parent="Control/Color Header"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_clip_content = true
+size_flags_vertical = 1
+custom_fonts/font = SubResource( 1 )
+text = "normal"
+align = 1
+valign = 1
+autowrap = true
+clip_text = true
+uppercase = true
+script = ExtResource( 3 )
+
+[node name="Color Body" type="ColorRect" parent="Control"]
+anchor_top = 0.2
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+color = Color( 0, 0.462745, 0.870588, 1 )
+
+[node name="Body" type="Label" parent="Control/Color Body"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_clip_content = true
+size_flags_vertical = 1
+custom_fonts/font = SubResource( 2 )
+text = "12+"
+align = 1
+valign = 1
+autowrap = true
+clip_text = true
+script = ExtResource( 3 )

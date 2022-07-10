@@ -9,7 +9,7 @@
 using Godot;
 using System.Collections.Generic;
 
-public class RhythmInput : Node
+public class RhythmInput : Control
 {
     [Export]
     private NodePath npFeedbackCircle;
@@ -25,8 +25,9 @@ public class RhythmInput : Node
             seg.Visible = false;
             feedbackCircle.Add(seg);
         }
+        Connect("gui_input", this, nameof(OnInput));
     }
-    public override void _Input(InputEvent inputEvent)
+    public void OnInput(InputEvent inputEvent)
     {
         if (inputEvent is InputEventScreenTouch touchEv)
         {
@@ -48,21 +49,25 @@ public class RhythmInput : Node
     // for Touch and HoldStart notes
     private void JustTouched(InputEventScreenTouch touchEv)
     {
-        GD.Print($"{touchEv.Position} / {OS.WindowSize}");
-        var touchedSeg = Misc.ScreenPixelToSegmentInt(touchEv.Position);
+        var touchedSeg = Misc.TouchPosToSegmentInt(touchEv.Position, RectSize);
+
         touches[touchEv.Index] = touchEv.Position;
         touchedSegments[touchEv.Index] = touchedSeg;
         feedbackCircle[touchedSeg].Fire();
+        GD.Print($"added {touchEv.Index}");
     }
     private void DragTouch(InputEventScreenDrag dragEv)
     {
+        var touchedSeg = Misc.TouchPosToSegmentInt(dragEv.Position, RectSize);
+
         touches[dragEv.Index] = dragEv.Position;
-        touchedSegments[dragEv.Index] = Misc.ScreenPixelToSegmentInt(dragEv.Position);
+        touchedSegments[dragEv.Index] = touchedSeg;
     }
     private void Untouch(InputEventScreenTouch touchEv)
     {
         touches.Remove(touchEv.Index);
         touchedSegments.Remove(touchEv.Index);
+        GD.Print($"removed {touchEv.Index}");
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -70,6 +75,7 @@ public class RhythmInput : Node
     {
         foreach (var touch in touchedSegments)
         {
+            // GD.Print(touch.Key);
             feedbackCircle[touch.Value].Fire(false);
         }
     }

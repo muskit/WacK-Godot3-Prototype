@@ -58,8 +58,6 @@ npAudioPlayer = NodePath("3D/BGMPlayer")
 npPauseText = NodePath("Display/CenterContainer/Label")
 
 [node name="Display" type="CanvasLayer" parent="."]
-script = ExtResource( 13 )
-npFeedbackCircle = NodePath("FeedbackCircle")
 
 [node name="Background" type="TextureRect" parent="Display"]
 anchor_right = 1.0
@@ -116,6 +114,14 @@ custom_fonts/font = SubResource( 5 )
 text = "Game is paused."
 align = 1
 valign = 1
+
+[node name="Input" type="CanvasLayer" parent="."]
+
+[node name="RhythmInput" type="Control" parent="Input"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 13 )
+npFeedbackCircle = NodePath("../../Display/FeedbackCircle")
 
 [node name="3D" type="Spatial" parent="."]
 

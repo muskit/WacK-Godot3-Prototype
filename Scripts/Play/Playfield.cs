@@ -119,7 +119,7 @@ public class Playfield : Spatial
             syncRatio = audioTime/playTime; // help prolong the need to resync.
 
             // force jerky resync if needed
-            if (Mathf.Abs(playTime - audioTime) > 0.1f)
+            if (Mathf.Abs(playTime - audioTime) > 0.05f)
             {
                 GD.Print($"Force resync #{++resyncCount}: {syncRatio}");
                 Resync();
