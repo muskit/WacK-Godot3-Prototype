@@ -58,6 +58,9 @@ public class SongInfo : Panel
                 difficulties.AddChild(diff);
                 diff.Set(song.difficulty[i], (DifficultyLevel)i);
             }
+            // var diff = difficulty.Instance<Difficulty>();
+            // difficulties.AddChild(diff);
+            // diff.Set(song.difficulty[0], (DifficultyLevel)0);
         }
     }
 }

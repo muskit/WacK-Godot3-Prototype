@@ -170,21 +170,6 @@ public class NotesCreator : Node
                 }
             }
         }
-        foreach (var elem in tempoChangeMeasures)
-        {
-            GD.PrintRaw($"{elem} ");
-        }
-        GD.Print();
-        foreach (var elem in tempoChangeBeats)
-        {
-            GD.PrintRaw($"{elem} ");
-        }
-        GD.Print();
-        foreach (var elem in tempoChangePositions)
-        {
-            GD.PrintRaw($"{elem} ");
-        }
-        GD.Print();
 
         // TODO: adapt to tempo changes
         int tempoChgMeasureIdx = 1;
@@ -198,7 +183,6 @@ public class NotesCreator : Node
                 measureScroll.AddChild(ml);
                 ml.Translation = new Vector3(0, 0, pos);
                 ml.GetChild(2).GetChild<Label>(0).Text = $"{curMeasure}";
-                GD.Print($"{tempoChgMeasureIdx} = {ml.Translation}");
             }
             else if (tempoChgMeasureIdx < tempoChangeMeasures.Count)
             {
@@ -214,12 +198,10 @@ public class NotesCreator : Node
                         measureScroll.AddChild(ml);
                         ml.Translation = new Vector3(0, 0, pos);
                         ml.GetChild(2).GetChild<Label>(0).Text = $"{measureNum}";
-                        GD.Print($"{measureNum} = {ml.Translation}");
                     }
                     tempoChgMeasureIdx++;
                 }
             }
-            GD.Print();
         }
         doneLoading = true;
     }
@@ -238,7 +220,7 @@ public class NotesCreator : Node
 
         float noteDepth = destination.Translation.z - origin.Translation.z;
 
-        float stepResolution = 200; // steps per player-scaled second
+        float stepResolution = 100; // steps per player-scaled second
         float curveResolution = 1; // how many verts per curve segment
         int steps = (int) (Math.Ceiling(noteDepth)/10/PlaySettings.speedMultiplier*stepResolution);
 

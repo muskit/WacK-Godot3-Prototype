@@ -56,6 +56,11 @@ public class Startup : Node
                 {
                     Misc.songList.Add(new Song($"{songDir.GetCurrentDir()}/{curObj}"));
                 }
+				else if (songDir.FileExists($"{curObj}/*.mer"))
+				{
+					GD.Print("Found song folder without .ini");
+				}
+
 			}
 			curObj = songDir.GetNext();
 		}

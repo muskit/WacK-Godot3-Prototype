@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://Things/2D/TouchFeedback/FeedbackCircle.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Textures/mask.png" type="Texture" id=2]
@@ -9,6 +9,7 @@
 [ext_resource path="res://Fonts/Futura/Futura Medium Italic font.ttf" type="DynamicFontData" id=7]
 [ext_resource path="res://Scripts/Play/Strikeline.cs" type="Script" id=8]
 [ext_resource path="res://Sounds/tick_beat.mp3" type="AudioStream" id=9]
+[ext_resource path="res://Scenes/Pause.tscn" type="PackedScene" id=10]
 [ext_resource path="res://Textures/background-placeholder.jpg" type="Texture" id=11]
 [ext_resource path="res://Scripts/Play/RhythmInput.cs" type="Script" id=13]
 
@@ -115,13 +116,15 @@ text = "Game is paused."
 align = 1
 valign = 1
 
-[node name="Input" type="CanvasLayer" parent="."]
+[node name="Interactions" type="CanvasLayer" parent="."]
 
-[node name="RhythmInput" type="Control" parent="Input"]
+[node name="RhythmInput" type="Control" parent="Interactions"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 13 )
 npFeedbackCircle = NodePath("../../Display/FeedbackCircle")
+
+[node name="PauseLayer" parent="Interactions" instance=ExtResource( 10 )]
 
 [node name="3D" type="Spatial" parent="."]
 
@@ -167,6 +170,7 @@ transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0
 cull_mask = 4
 current = true
 fov = 20.3
+size = 0.1
 far = 35.0
 
 [node name="NoteCreator" type="Node" parent="3D"]

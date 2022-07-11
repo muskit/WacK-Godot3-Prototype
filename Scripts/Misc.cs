@@ -19,11 +19,6 @@ public class Misc : Node
     public static List<Song> songList;
     public static string debugStr = ""; // MAX 5 LINES CAN BE SHOWN AT A TIME
 
-    [Signal]
-    public delegate void on_pause();
-    [Signal]
-    public delegate void on_resume();
-
     public static float Seg2Rad(float seg)
     {
         return Mathf.Deg2Rad(6f * seg);

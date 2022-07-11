@@ -1,0 +1,37 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://icon.png" type="Texture" id=1]
+[ext_resource path="res://Scripts/Pause.cs" type="Script" id=2]
+
+[node name="PauseLayer" type="CanvasLayer"]
+script = ExtResource( 2 )
+npPauseBtn = NodePath("Control/HBoxContainer/TextureButton")
+
+[node name="Control" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control"]
+anchor_right = 1.0
+mouse_filter = 2
+alignment = 2
+
+[node name="TextureButton" type="TextureButton" parent="Control/HBoxContainer"]
+margin_left = 974.0
+margin_right = 1024.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 50, 50 )
+size_flags_horizontal = 9
+texture_normal = ExtResource( 1 )
+expand = true
+stretch_mode = 4
+
+[node name="PauseMenu" type="Panel" parent="Control"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 125.0
+margin_top = 125.0
+margin_right = -125.0
+margin_bottom = -125.0

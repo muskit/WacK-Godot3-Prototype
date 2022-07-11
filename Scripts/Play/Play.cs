@@ -8,6 +8,7 @@ public class Play : Node
     [Export]
     private NodePath npPauseText;
     
+    private GEvents gEvents;
     private Label pauseText;
     private float pauseTime;
     
@@ -17,12 +18,17 @@ public class Play : Node
         Misc.songPlayer.Stream = Misc.currentAudio;
 
         pauseText = GetNode<Label>(npPauseText);
+
+        gEvents = GetNode<GEvents>("/root/GEvents");
+        gEvents.Connect(nameof(GEvents.on_pause), this, nameof(OnPauseEv));
+        gEvents.Connect(nameof(GEvents.on_resume), this, nameof(OnUnpauseEv));
         
+        // countdown start
         var t = new Timer();
         AddChild(t);
         t.WaitTime = 1;
         t.OneShot = true;
-        HandlePause(true);
+        gEvents.SetPause(true);
         t.Start();
         
         Misc.debugStr = "5";
@@ -39,34 +45,28 @@ public class Play : Node
         Misc.debugStr = "1";
         t.Start();
         await ToSignal(t, "timeout");
-        HandlePause(false);
+        gEvents.SetPause(false);
         Misc.debugStr = "";
 
         t.QueueFree();
     }
 
-    private void HandlePause(bool state)
+    private void OnPauseEv()
     {
-        var gEvents = GetNode<GEvents>("/root/GEvents");
-        Misc.paused = state;
-        if (state)
-        {
-            pauseTime = Misc.songPlayer.GetPlaybackPosition();
-            Misc.songPlayer.Stop();
-            gEvents.EmitSignal(nameof(GEvents.on_pause));
-        }
-        else
-        {
-            Misc.songPlayer.Play(pauseTime);
-            gEvents.EmitSignal(nameof(GEvents.on_resume));
-        }
+        pauseTime = Misc.songPlayer.GetPlaybackPosition();
+        Misc.songPlayer.Stop();
+    }
+
+    private void OnUnpauseEv()
+    {
+        Misc.songPlayer.Play(pauseTime);
     }
 
     public override void _Process(float delta)
     {
         if (Input.IsActionJustPressed("pause"))
         {
-            HandlePause(!Misc.paused);
+            gEvents.TogglePause();
         }
         if (Input.IsActionJustPressed("reset"))
         {

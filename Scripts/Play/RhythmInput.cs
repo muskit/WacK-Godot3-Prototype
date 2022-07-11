@@ -25,9 +25,8 @@ public class RhythmInput : Control
             seg.Visible = false;
             feedbackCircle.Add(seg);
         }
-        Connect("gui_input", this, nameof(OnInput));
     }
-    public void OnInput(InputEvent inputEvent)
+    public override void _Input(InputEvent inputEvent)
     {
         if (inputEvent is InputEventScreenTouch touchEv)
         {
