@@ -12,6 +12,9 @@ using System.Collections.Generic;
 public class Misc : Node
 {
     public static float cameraOffset = 0;
+    public static float strikelineZPos = 0;
+    public static float noteDrawDistance = 10;
+
     public static string currentMer = "";
     public static AudioStreamMP3 currentAudio;
     public static AudioStreamPlayer songPlayer;
@@ -90,8 +93,30 @@ public class Misc : Node
 
     public static float NotePosition(int measure, int beat, float tempo, int beatsPerMeasure)
     {
-        return PlaySettings.speedMultiplier * 10f * 60f/tempo * beatsPerMeasure * ((float)measure + (float)beat/1920f);
+        return TimeToPosition(60f/tempo * beatsPerMeasure * ((float)measure + (float)beat/1920f));
     }
+
+    public static Vector3 NoteScale(float zPos, float zOrigin = 0)
+    {
+        var result = Vector3.Zero;
+        var val = zPos - zOrigin;
+        if (val <=  Misc.noteDrawDistance)
+        {
+            var ratio = Mathf.Clamp((Misc.noteDrawDistance - val) / Misc.noteDrawDistance, 0, 1);
+            result = new Vector3(ratio, ratio, 1);
+        }
+        return result;
+    }
+
+    public static float TimeToPosition(float time)
+    {
+        return time * PlaySettings.speedMultiplier * PlaySettings.SCROLL_MULT;
+    }
+
+    public static float PositionToTime(float pos)
+    {
+        return pos / PlaySettings.speedMultiplier / PlaySettings.SCROLL_MULT;
+    }    
 
     public void LoadSong(string path, int difficulty = 0)
     {

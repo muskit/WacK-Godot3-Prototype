@@ -52,12 +52,17 @@ public class RhythmInput : Control
 
         touches[touchEv.Index] = touchEv.Position;
         touchedSegments[touchEv.Index] = touchedSeg;
-        feedbackCircle[touchedSeg].Fire();
-        GD.Print($"added {touchEv.Index}");
+        feedbackCircle[touchedSeg].Fire(true);
+        // GD.Print($"added {touchEv.Index}");
     }
     private void DragTouch(InputEventScreenDrag dragEv)
     {
         var touchedSeg = Misc.TouchPosToSegmentInt(dragEv.Position, RectSize);
+
+        if (touchedSegments[dragEv.Index] != touchedSeg)
+        {
+            feedbackCircle[touchedSeg].Fire(true);
+        }
 
         touches[dragEv.Index] = dragEv.Position;
         touchedSegments[dragEv.Index] = touchedSeg;
@@ -66,7 +71,7 @@ public class RhythmInput : Control
     {
         touches.Remove(touchEv.Index);
         touchedSegments.Remove(touchEv.Index);
-        GD.Print($"removed {touchEv.Index}");
+        // GD.Print($"removed {touchEv.Index}");
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.

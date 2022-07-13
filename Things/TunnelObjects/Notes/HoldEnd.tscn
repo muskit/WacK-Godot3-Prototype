@@ -20,7 +20,6 @@ type = 3
 
 [node name="Note" type="CSGPolygon" parent="."]
 transform = Transform( -1, -1.50996e-07, 6.60024e-15, 0, -4.37114e-08, -1, 1.50996e-07, -1, 4.37114e-08, 0, 0, 0 )
-visible = false
 polygon = PoolVector2Array( 0.555, 0, 0.555, -0.01, 0.58, -0.01, 0.58, 0 )
 mode = 1
 spin_degrees = 6.0

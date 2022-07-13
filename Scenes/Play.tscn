@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=29 format=2]
 
 [ext_resource path="res://Things/2D/TouchFeedback/FeedbackCircle.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Textures/mask.png" type="Texture" id=2]
@@ -8,10 +8,13 @@
 [ext_resource path="res://Scripts/Play/Play.cs" type="Script" id=6]
 [ext_resource path="res://Fonts/Futura/Futura Medium Italic font.ttf" type="DynamicFontData" id=7]
 [ext_resource path="res://Scripts/Play/Strikeline.cs" type="Script" id=8]
-[ext_resource path="res://Sounds/tick_beat.mp3" type="AudioStream" id=9]
+[ext_resource path="res://Sounds/tick.wav" type="AudioStream" id=9]
 [ext_resource path="res://Scenes/Pause.tscn" type="PackedScene" id=10]
 [ext_resource path="res://Textures/background-placeholder.jpg" type="Texture" id=11]
+[ext_resource path="res://Things/TunnelObjects/MeasureLine.tscn" type="PackedScene" id=12]
 [ext_resource path="res://Scripts/Play/RhythmInput.cs" type="Script" id=13]
+[ext_resource path="res://Scenes/HoldSegmentsTexture.tscn" type="PackedScene" id=14]
+[ext_resource path="res://Things/TunnelObjects/HoldsCone.tscn" type="PackedScene" id=15]
 
 [sub_resource type="Shader" id=7]
 code = "shader_type canvas_item;
@@ -32,11 +35,14 @@ shader_param/mask_texture = ExtResource( 2 )
 [sub_resource type="ViewportTexture" id=10]
 viewport_path = NodePath("3D/TunnelViewport")
 
-[sub_resource type="ViewportTexture" id=11]
-viewport_path = NodePath("3D/NotesViewport")
+[sub_resource type="ViewportTexture" id=15]
+viewport_path = NodePath("3D/HoldsViewport")
 
 [sub_resource type="ViewportTexture" id=12]
 viewport_path = NodePath("3D/StrikelineViewport")
+
+[sub_resource type="ViewportTexture" id=11]
+viewport_path = NodePath("3D/NotesViewport")
 
 [sub_resource type="DynamicFont" id=5]
 size = 46
@@ -52,6 +58,16 @@ extents = Vector3( 1, 1, 0.15 )
 
 [sub_resource type="BoxShape" id=4]
 extents = Vector3( 1, 1, 0.2 )
+
+[sub_resource type="ViewportTexture" id=16]
+viewport_path = NodePath("HoldsTextureViewport")
+
+[sub_resource type="SpatialMaterial" id=17]
+resource_local_to_scene = true
+render_priority = 1
+flags_transparent = true
+flags_unshaded = true
+albedo_texture = SubResource( 16 )
 
 [node name="Play" type="Node"]
 script = ExtResource( 6 )
@@ -78,18 +94,18 @@ expand = true
 stretch_mode = 6
 flip_v = true
 
-[node name="FeedbackCircle" parent="Display" instance=ExtResource( 1 )]
-
-[node name="Notes Texture" type="TextureRect" parent="Display"]
+[node name="Holds Texture" type="TextureRect" parent="Display"]
 material = SubResource( 8 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 size_flags_horizontal = 5
 size_flags_vertical = 5
-texture = SubResource( 11 )
+texture = SubResource( 15 )
 expand = true
 stretch_mode = 6
 flip_v = true
+
+[node name="FeedbackCircle" parent="Display" instance=ExtResource( 1 )]
 
 [node name="Strikeline Texture" type="TextureRect" parent="Display"]
 material = SubResource( 8 )
@@ -98,6 +114,17 @@ anchor_bottom = 1.0
 size_flags_horizontal = 5
 size_flags_vertical = 5
 texture = SubResource( 12 )
+expand = true
+stretch_mode = 6
+flip_v = true
+
+[node name="Notes Texture" type="TextureRect" parent="Display"]
+material = SubResource( 8 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 5
+size_flags_vertical = 5
+texture = SubResource( 11 )
 expand = true
 stretch_mode = 6
 flip_v = true
@@ -135,16 +162,29 @@ handle_input_locally = false
 msaa = 1
 
 [node name="NotesCamera" type="Camera" parent="3D/NotesViewport"]
-transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0.327 )
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0 )
 cull_mask = 1
 current = true
-fov = 20.3
-far = 35.0
+fov = 60.0
+far = 11.0
 
 [node name="OverheadDebug" type="Camera" parent="3D/NotesViewport"]
 transform = Transform( -5.73206e-15, 1, 4.37114e-08, -1.31134e-07, -4.37114e-08, 1, 1, 9.31736e-21, 1.31134e-07, 0, 8.002, 1.5 )
 fov = 63.7
 far = 176.2
+
+[node name="HoldsViewport" type="Viewport" parent="3D"]
+size = Vector2( 1200, 1200 )
+transparent_bg = true
+handle_input_locally = false
+msaa = 2
+
+[node name="HoldsCamera" type="Camera" parent="3D/HoldsViewport"]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0 )
+cull_mask = 8
+current = true
+fov = 60.0
+far = 11.0
 
 [node name="StrikelineViewport" type="Viewport" parent="3D"]
 size = Vector2( 1200, 1200 )
@@ -153,10 +193,10 @@ handle_input_locally = false
 msaa = 1
 
 [node name="StrikelineCamera" type="Camera" parent="3D/StrikelineViewport"]
-transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0.327 )
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0 )
 cull_mask = 2
 current = true
-fov = 20.3
+fov = 60.0
 far = 35.0
 
 [node name="TunnelViewport" type="Viewport" parent="3D"]
@@ -166,69 +206,79 @@ handle_input_locally = false
 msaa = 1
 
 [node name="TunnelCamera" type="Camera" parent="3D/TunnelViewport"]
-transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0.327 )
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0 )
 cull_mask = 4
 current = true
-fov = 20.3
+fov = 60.0
 size = 0.1
 far = 35.0
 
 [node name="NoteCreator" type="Node" parent="3D"]
 script = ExtResource( 5 )
-npNoteScroll = NodePath("../Playfield/Scroll/Notes")
-npMeasureScroll = NodePath("../Playfield/Scroll/MeasureLines")
+npNoteScroll = NodePath("../Playfield/Spatial/Scroll/Notes")
+npMeasureScroll = NodePath("../Playfield/Spatial/Scroll/MeasureLines")
+npHoldTexture = NodePath("../../HoldsTextureViewport/HoldsTexture")
 
 [node name="Playfield" type="Spatial" parent="3D"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3.84754 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.043 )
 script = ExtResource( 4 )
-npScroll = NodePath("Scroll")
-npStrikeline = NodePath("Strikeline")
+npScroll = NodePath("Spatial/Scroll")
+npStrikeline = NodePath("Spatial/Strikeline")
 npTickPlayer = NodePath("../TickPlayer")
-npTickDetector = NodePath("Strikeline/TickDetector")
+npTickDetector = NodePath("Spatial/Strikeline/TickDetector")
 npFeedbackCircle = NodePath("../../Display/FeedbackCircle")
+npHoldTexture = NodePath("../../HoldsTextureViewport/HoldsTexture")
 
-[node name="Strikeline" type="Spatial" parent="3D/Playfield"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 10, 0, 0, -0.009 )
+[node name="Background" parent="3D/Playfield" instance=ExtResource( 3 )]
+DrawLength = 3.0
+
+[node name="Spatial" type="Spatial" parent="3D/Playfield"]
+
+[node name="Strikeline" type="Spatial" parent="3D/Playfield/Spatial"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 10, 0, 0, 0 )
 script = ExtResource( 8 )
 hideNotesAfterLeaving = true
 
-[node name="100" type="Area" parent="3D/Playfield/Strikeline"]
+[node name="100" type="Area" parent="3D/Playfield/Spatial/Strikeline"]
 
-[node name="shape" type="CollisionShape" parent="3D/Playfield/Strikeline/100"]
+[node name="shape" type="CollisionShape" parent="3D/Playfield/Spatial/Strikeline/100"]
 shape = SubResource( 1 )
 
-[node name="70" type="Area" parent="3D/Playfield/Strikeline"]
+[node name="70" type="Area" parent="3D/Playfield/Spatial/Strikeline"]
 
-[node name="shape" type="CollisionShape" parent="3D/Playfield/Strikeline/70"]
+[node name="shape" type="CollisionShape" parent="3D/Playfield/Spatial/Strikeline/70"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00681376, -2.38419e-07, 6.13928e-05 )
 shape = SubResource( 2 )
 
-[node name="50" type="Area" parent="3D/Playfield/Strikeline"]
+[node name="50" type="Area" parent="3D/Playfield/Spatial/Strikeline"]
 
-[node name="shape" type="CollisionShape" parent="3D/Playfield/Strikeline/50"]
+[node name="shape" type="CollisionShape" parent="3D/Playfield/Spatial/Strikeline/50"]
 shape = SubResource( 3 )
 
-[node name="0" type="Area" parent="3D/Playfield/Strikeline"]
+[node name="0" type="Area" parent="3D/Playfield/Spatial/Strikeline"]
 
-[node name="shape" type="CollisionShape" parent="3D/Playfield/Strikeline/0"]
+[node name="shape" type="CollisionShape" parent="3D/Playfield/Spatial/Strikeline/0"]
 shape = SubResource( 4 )
 
-[node name="TickDetector" type="Area" parent="3D/Playfield/Strikeline"]
+[node name="TickDetector" type="Area" parent="3D/Playfield/Spatial/Strikeline"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.75373e-05 )
 
-[node name="shape" type="CollisionShape" parent="3D/Playfield/Strikeline/TickDetector"]
+[node name="shape" type="CollisionShape" parent="3D/Playfield/Spatial/Strikeline/TickDetector"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1 )
 shape = SubResource( 1 )
 
-[node name="Scroll" type="Spatial" parent="3D/Playfield"]
+[node name="Scroll" type="Spatial" parent="3D/Playfield/Spatial"]
 
-[node name="Notes" type="Spatial" parent="3D/Playfield/Scroll"]
+[node name="Notes" type="Spatial" parent="3D/Playfield/Spatial/Scroll"]
 
-[node name="MeasureLines" type="Spatial" parent="3D/Playfield/Scroll"]
+[node name="MeasureLines" type="Spatial" parent="3D/Playfield/Spatial/Scroll"]
 
-[node name="Background" parent="3D/Playfield" instance=ExtResource( 3 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.0745192 )
-DrawLength = 7.0
+[node name="MeasureLine" parent="3D/Playfield/Spatial/Scroll/MeasureLines" instance=ExtResource( 12 )]
+
+[node name="Cylinder" parent="3D/Playfield/Spatial" instance=ExtResource( 15 )]
+transform = Transform( 4.37114e-06, 0.000162921, 100, 100, -4.37114e-05, -4.37114e-06, 4.37114e-06, 1000, -1.62921e-05, 0, 0, 0 )
+layers = 8
+material/0 = SubResource( 17 )
 
 [node name="BGMPlayer" type="AudioStreamPlayer" parent="3D"]
 bus = "BGM"
@@ -237,3 +287,12 @@ bus = "BGM"
 stream = ExtResource( 9 )
 mix_target = 2
 bus = "NoteTick"
+
+[node name="HoldsTextureViewport" type="Viewport" parent="."]
+size = Vector2( 600, 2400 )
+transparent_bg = true
+hdr = false
+usage = 0
+render_target_v_flip = true
+
+[node name="HoldsTexture" parent="HoldsTextureViewport" instance=ExtResource( 14 )]

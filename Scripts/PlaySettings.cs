@@ -11,5 +11,6 @@ using System;
 
 public static class PlaySettings
 {
-    public static float speedMultiplier = 4f;
+    public const float SCROLL_MULT = 2f;
+    public static float speedMultiplier = 2f;
 }

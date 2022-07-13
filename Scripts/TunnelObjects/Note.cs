@@ -20,13 +20,68 @@ public class Note : Spatial
     public override void _Ready()
     {
         note = GetChild<CSGPolygon>(0);
-        note.Transform = note.Transform.Rotated(Vector3.Forward, Mathf.Deg2Rad(6f*pos));
+    }
+
+    public async void SetPosSize(int pos = 0, int size = 1)
+    {
+        await ToSignal(this, "ready");
+
+        this.pos = pos;
+        this.size = size;
+        note.Transform = note.Transform.Rotated(Vector3.Forward, Mathf.Deg2Rad(6f * pos));
         note.SpinDegrees = 6 * size;
     }
 
-    public void SetPosSize(int pos = 0, int size = 1)
+    public void Miss()
     {
-        this.pos = pos;
-        this.size = size;
+        // Disable physics
+        foreach (Node n in GetChildren())
+        {
+            if (n is CollisionShape shape)
+                shape.Disabled = true;
+        }
+        SetPhysicsProcess(false);
+
+        // HoldStart
+        if (type == NoteType.HoldStart)
+        {
+            foreach (Node longSegment in note.GetChildren())
+            {
+                foreach (var step in longSegment.GetChildren())
+                {
+                    if(step is CSGPolygon n)
+                    {
+                        ((SpatialMaterial)n.Material).AlbedoColor = new Color(.4f, .4f, .4f);
+                        break;
+                    }
+                }
+            }
+            return;
+        }
+
+        FullDisable();
+    }
+
+    private void FullDisable()
+    {
+        SetProcess(false);
+        this.Visible = false;
+    }
+
+    public void Enable()
+    {
+        this.Visible = true;
+        // Disable physics
+        foreach (Node n in GetChildren())
+        {
+            if (n is CollisionShape shape)
+                shape.Disabled = false;
+        }
+        SetPhysicsProcess(true);
+    }
+
+    public override void _Process(float delta)
+    {
+        this.Scale = Misc.NoteScale(this.GlobalTransform.origin.z, Misc.strikelineZPos);
     }
 }

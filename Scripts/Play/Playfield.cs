@@ -24,6 +24,8 @@ public class Playfield : Spatial
     private NodePath npTickDetector;
     [Export]
     private NodePath npFeedbackCircle;
+    [Export]
+    private NodePath npHoldTexture;
 
     private Spatial scroll;
     private float syncRatio = 1;
@@ -31,6 +33,7 @@ public class Playfield : Spatial
     private AudioStreamPlayer tickPlayer;
     private Area tickDetector;
     private List<FeedbackSegment> feedbackCircle = new List<FeedbackSegment>();
+    private HoldSegmentsTexture holdTexture;
 
     private Node background;
     private int resyncCount = 0;
@@ -49,6 +52,7 @@ public class Playfield : Spatial
         strikeline = GetNode<Strikeline>(npStrikeline);
         tickPlayer = GetNode<AudioStreamPlayer>(npTickPlayer);
         tickDetector = GetNode<Area>(npTickDetector);
+        holdTexture = GetNode<HoldSegmentsTexture>(npHoldTexture);
 
         //tickDetector.Scale = new Vector3(1, 1, PlaySettings.speedMultiplier * 10f);
         tickDetector.Connect("body_entered", this, nameof(OnTickEnter));
@@ -103,7 +107,9 @@ public class Playfield : Spatial
     public void Resync()
     {
         var audioTime = (float)(Misc.songPlayer.GetPlaybackPosition() + AudioServer.GetTimeSinceLastMix() - AudioServer.GetOutputLatency()); // audio time with lag compensation
-        scroll.Translation = new Vector3(0, 0, -PlaySettings.speedMultiplier * 10f * audioTime);
+        
+        scroll.Translation = new Vector3(0, 0, -Misc.TimeToPosition(audioTime));
+        holdTexture.SetPosition(Misc.TimeToPosition(audioTime));
     }
 
     public override void _Process(float delta)
@@ -111,11 +117,12 @@ public class Playfield : Spatial
         // scroll if not paused
         if (!Misc.paused && NotesCreator.doneLoading && Misc.songPlayer.Playing)
         {
-            scroll.Translate(new Vector3(0, 0, -PlaySettings.speedMultiplier * 10f * delta * syncRatio));
+            scroll.Translate(new Vector3(0, 0, -Misc.TimeToPosition(delta * syncRatio)));
+            holdTexture.Scroll(Misc.TimeToPosition(delta * syncRatio));
 
             // calculate scroll multiplier for keeping in sync
             var audioTime = (float)(Misc.songPlayer.GetPlaybackPosition() + AudioServer.GetTimeSinceLastMix() - AudioServer.GetOutputLatency()); // audio time with lag compensation
-            var playTime = -scroll.Translation.z/PlaySettings.speedMultiplier/10;
+            var playTime = -Misc.PositionToTime(scroll.Translation.z);
             syncRatio = audioTime/playTime; // help prolong the need to resync.
 
             // force jerky resync if needed

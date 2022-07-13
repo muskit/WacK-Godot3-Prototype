@@ -18,8 +18,12 @@ public class NotesCreator : Node
     private NodePath npNoteScroll;
     [Export]
     private NodePath npMeasureScroll;
+    [Export]
+    private NodePath npHoldTexture;
+
     private Spatial noteScroll;
     private Spatial measureScroll;
+    private HoldSegmentsTexture holdTexture;
 
     public static bool doneLoading { get; private set; } = false;
 
@@ -43,6 +47,8 @@ public class NotesCreator : Node
     {
         noteScroll = GetNode<Spatial>(npNoteScroll);
         measureScroll = GetNode<Spatial>(npMeasureScroll);
+        holdTexture = GetNode<HoldSegmentsTexture>(npHoldTexture);
+        
         Load(new Chart(Misc.currentMer));
     }
 
@@ -148,25 +154,18 @@ public class NotesCreator : Node
                     }
 
                     // create long note
-                    if (curNote.type == NoteType.HoldMid || curNote.type == NoteType.HoldEnd)
-                    {
-                        // nextHoldNote[curNote.noteIndex].AddChild(CreateLongNote(nextHoldNote[curNote.noteIndex], curNote));
-
-                        var stepGroup = CreateLongNote(nextHoldNote[curNote.noteIndex], curNote);
-                        curHoldSegment[curNote.noteIndex].AddChild(stepGroup);
-                        stepGroup.GlobalTransform = nextHoldNote[curNote.noteIndex].GlobalTransform;
-                        
-                        if (curNote.type == NoteType.HoldEnd)
-                        {
-                            var pos = curNote.GlobalTransform;
-                            noteScroll.RemoveChild(curNote);
-                            curHoldSegment[curNote.noteIndex].AddChild(curNote);
-                            curNote.GlobalTransform = pos;
-                        }
-                    }
-
                     if (curNote.type == NoteType.HoldMid)
-                        curNote.QueueFree();
+                    {
+                        var pos = curNote.GlobalTransform;
+                        noteScroll.RemoveChild(curNote);
+                        curHoldSegment[curNote.noteIndex].AddChild(curNote);
+                        curNote.GlobalTransform = pos;
+                    }
+                    if (curNote.type == NoteType.HoldEnd)
+                    {
+                        holdTexture.CreateLongNote(curHoldSegment[curNote.noteIndex], curNote);
+                        // TODO: associate HoldStart with holdSegment
+                    }
                 }
             }
         }
@@ -182,7 +181,7 @@ public class NotesCreator : Node
                 var ml = measureLine.Instance<Spatial>();
                 measureScroll.AddChild(ml);
                 ml.Translation = new Vector3(0, 0, pos);
-                ml.GetChild(2).GetChild<Label>(0).Text = $"{curMeasure}";
+                // ml.GetChild(2).GetChild<Label>(0).Text = $"{curMeasure}";
             }
             else if (tempoChgMeasureIdx < tempoChangeMeasures.Count)
             {
@@ -197,7 +196,7 @@ public class NotesCreator : Node
                         var ml = measureLine.Instance<Spatial>();
                         measureScroll.AddChild(ml);
                         ml.Translation = new Vector3(0, 0, pos);
-                        ml.GetChild(2).GetChild<Label>(0).Text = $"{measureNum}";
+                        // ml.GetChild(2).GetChild<Label>(0).Text = $"{measureNum}";
                     }
                     tempoChgMeasureIdx++;
                 }
@@ -206,6 +205,7 @@ public class NotesCreator : Node
         doneLoading = true;
     }
 
+    // 3D laggy method to create long notes
     private Spatial CreateLongNote(Note origin, Note destination)
     {
         Spatial result = new Spatial();
@@ -220,7 +220,7 @@ public class NotesCreator : Node
 
         float noteDepth = destination.Translation.z - origin.Translation.z;
 
-        float stepResolution = 100; // steps per player-scaled second
+        float stepResolution = 200; // steps per player-scaled second
         float curveResolution = 1; // how many verts per curve segment
         int steps = (int) (Math.Ceiling(noteDepth)/10/PlaySettings.speedMultiplier*stepResolution);
 
@@ -261,6 +261,7 @@ public class NotesCreator : Node
             poly.Translation = new Vector3(0, 0, noteDepth*stepRatio);
             poly.RotateY(Mathf.Pi);
             poly.RotateZ(curRot);
+            poly.SetScript(GD.Load("res://Scripts/TunnelObjects/HoldStep.cs"));
         }
         return result;
     }

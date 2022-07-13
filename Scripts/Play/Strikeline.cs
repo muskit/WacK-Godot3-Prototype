@@ -23,14 +23,14 @@ public class Strikeline : Spatial
     private Area zoneGreat;
     private Area zoneGood;
     private Area zoneError;
-    public Queue<Note> noteQueue { get; private set; } = new Queue<Note>();
 
     int i = 0;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        this.Scale = new Vector3(1, 1, 10*PlaySettings.speedMultiplier);
+        Misc.strikelineZPos = this.Translation.z;
+        this.Scale = new Vector3(1, 1, PlaySettings.SCROLL_MULT*PlaySettings.speedMultiplier);
 
         zoneMarvelous = GetChild<Area>(0);
         zoneGreat = GetChild<Area>(1);
@@ -51,7 +51,6 @@ public class Strikeline : Spatial
     {
         var note = obj.GetParent() as Note;
         note.curAccuracy = Accuracy.Miss;
-        noteQueue.Enqueue(note);
     }
     private void OnGoodEnter(Node obj)
     {
@@ -81,50 +80,11 @@ public class Strikeline : Spatial
     }
     private void OnGoodExit(Node obj) // LATE MISS
     {
-        // we're done with the collision
-        foreach (CollisionShape shape in obj.GetChildren())
-        {
-            shape.Disabled = true;
-        }
-
         var note = obj.GetParent() as Note;
 
-        // don't hide hold note if its Start is missed
-        if (note.type == NoteType.HoldStart)
-        {
-            foreach (Node longSegment in note.GetChildren())
-            {
-                foreach (var step in longSegment.GetChildren())
-                {
-                    if(step is CSGPolygon n)
-                    {
-                        ((SpatialMaterial)n.Material).AlbedoColor = new Color(.4f, .4f, .4f);
-                        break;
-                    }
-                }
-            }
-
-            if (noteQueue.Contains(note))
-                noteQueue.Dequeue();
-            EmitSignal(nameof(Miss));
-            return;
-        }
-
-        if (note.type == NoteType.HoldEnd)
-        {
-            // TODO: handle end of hold note
-            if (noteQueue.Contains(note))
-                noteQueue.Dequeue();
-            // note.GetParent().QueueFree();
-            note.GetParent<Spatial>().Visible = !hideNotesAfterLeaving;
-            return;
-        }
+        note.Miss();
         
         // all other notes
-        if (noteQueue.Contains(note))
-            noteQueue.Dequeue();
-        // note.QueueFree();
-        note.Visible = !hideNotesAfterLeaving;
         EmitSignal(nameof(Miss));
     }
 }

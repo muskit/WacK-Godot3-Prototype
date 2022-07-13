@@ -27,7 +27,7 @@ public class Background : Node
             if (!isReady) return;
 
             bgMaterial.DistanceFadeMinDistance = Misc.cameraOffset + _drawLength;
-            bgMaterial.DistanceFadeMaxDistance = Misc.cameraOffset - 1;
+            bgMaterial.DistanceFadeMaxDistance = 0;
             foreach (Node segment in segments)
             {
                 segment.GetChild<Spatial>(1).Scale = new Vector3(1, _drawLength, 1);

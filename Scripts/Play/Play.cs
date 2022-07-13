@@ -12,7 +12,7 @@ public class Play : Node
     private Label pauseText;
     private float pauseTime;
     
-    public async override void _Ready()
+    public override void _Ready()
     {
         Misc.songPlayer = GetNode<AudioStreamPlayer>(npAudioPlayer);
         Misc.songPlayer.Stream = Misc.currentAudio;
@@ -22,13 +22,17 @@ public class Play : Node
         gEvents = GetNode<GEvents>("/root/GEvents");
         gEvents.Connect(nameof(GEvents.on_pause), this, nameof(OnPauseEv));
         gEvents.Connect(nameof(GEvents.on_resume), this, nameof(OnUnpauseEv));
-        
+
+        gEvents.SetPause(true);
+    }
+
+    private async void CountdownStart()
+    {
         // countdown start
         var t = new Timer();
         AddChild(t);
         t.WaitTime = 1;
         t.OneShot = true;
-        gEvents.SetPause(true);
         t.Start();
         
         Misc.debugStr = "5";
