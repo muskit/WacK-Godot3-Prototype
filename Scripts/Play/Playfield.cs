@@ -109,7 +109,6 @@ public class Playfield : Spatial
         var audioTime = (float)(Misc.songPlayer.GetPlaybackPosition() + AudioServer.GetTimeSinceLastMix() - AudioServer.GetOutputLatency()); // audio time with lag compensation
         
         scroll.Translation = new Vector3(0, 0, -Misc.TimeToPosition(audioTime));
-        holdTexture.SetPosition(Misc.TimeToPosition(audioTime));
     }
 
     public override void _Process(float delta)
@@ -118,7 +117,6 @@ public class Playfield : Spatial
         if (!Misc.paused && NotesCreator.doneLoading && Misc.songPlayer.Playing)
         {
             scroll.Translate(new Vector3(0, 0, -Misc.TimeToPosition(delta * syncRatio)));
-            holdTexture.Scroll(Misc.TimeToPosition(delta * syncRatio));
 
             // calculate scroll multiplier for keeping in sync
             var audioTime = (float)(Misc.songPlayer.GetPlaybackPosition() + AudioServer.GetTimeSinceLastMix() - AudioServer.GetOutputLatency()); // audio time with lag compensation
@@ -132,5 +130,6 @@ public class Playfield : Spatial
                 Resync();
             }
         }
+        holdTexture.SetPosition(-scroll.Translation.z);
     }
 }

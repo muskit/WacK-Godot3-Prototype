@@ -13,16 +13,18 @@ public class HoldSegmentsTexture : Node2D
 {
     public float scrollScale = 1f;
     private float minuteSize;
-    private float calibrationOffset = -50f;
+    private float holdCalibrationOffset = 0;
 
+    private Vector2 textureSize;
     private Node2D scroll;
     private static Color color = new Color(255f/255, 236f/255, 26f/255);
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        minuteSize = GetViewportRect().Size.x / 60;
-        scrollScale = GetViewportRect().Size.y / Misc.noteDrawDistance;
+        textureSize = GetViewportRect().Size;
+        minuteSize = textureSize.x / 60;
+        scrollScale = textureSize.y / Misc.noteDrawDistance;
         scroll = GetChild<Node2D>(0).GetChild<Node2D>(0);
     }
 
@@ -44,10 +46,10 @@ public class HoldSegmentsTexture : Node2D
         // REMOVE when done
 
         var verts = new Vector2[4];
-        verts[0] = new Vector2(600 - holdStart.pos * Misc.noteDrawDistance, 0);
-        verts[1] = new Vector2(600 - holdStart.pos * Misc.noteDrawDistance - holdStart.size * Misc.noteDrawDistance, 0);
-        verts[2] = new Vector2(600 - holdEnd.pos * Misc.noteDrawDistance - holdEnd.size * Misc.noteDrawDistance, -length);
-        verts[3] = new Vector2(600 - holdEnd.pos * Misc.noteDrawDistance, -length);
+        verts[0] = new Vector2(textureSize.x - holdStart.pos * minuteSize, 0);
+        verts[1] = new Vector2(verts[0].x - holdStart.size * minuteSize, 0);
+        verts[2] = new Vector2(textureSize.x - holdEnd.pos * minuteSize - holdEnd.size * minuteSize, -length);
+        verts[3] = new Vector2(textureSize.x - holdEnd.pos * minuteSize, -length);
         var segment = new Polygon2D();
         segment.Polygon = verts;
         segment.Color = color;
@@ -60,6 +62,6 @@ public class HoldSegmentsTexture : Node2D
     }
     public void SetPosition(float zPos)
     {
-        scroll.Position = new Vector2(0, zPos * scrollScale + calibrationOffset);
+        scroll.Position = new Vector2(0, zPos * scrollScale + holdCalibrationOffset);
     }
 }

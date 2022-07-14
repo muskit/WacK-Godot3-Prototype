@@ -60,7 +60,7 @@ extents = Vector3( 1, 1, 0.15 )
 extents = Vector3( 1, 1, 0.2 )
 
 [sub_resource type="ViewportTexture" id=16]
-viewport_path = NodePath("HoldsTextureViewport")
+viewport_path = NodePath("3D/HoldsTextureViewport")
 
 [sub_resource type="SpatialMaterial" id=17]
 resource_local_to_scene = true
@@ -160,6 +160,8 @@ size = Vector2( 1200, 1200 )
 transparent_bg = true
 handle_input_locally = false
 msaa = 1
+hdr = false
+gui_disable_input = true
 
 [node name="NotesCamera" type="Camera" parent="3D/NotesViewport"]
 transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0 )
@@ -177,7 +179,8 @@ far = 176.2
 size = Vector2( 1200, 1200 )
 transparent_bg = true
 handle_input_locally = false
-msaa = 2
+hdr = false
+gui_disable_input = true
 
 [node name="HoldsCamera" type="Camera" parent="3D/HoldsViewport"]
 transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0 )
@@ -191,6 +194,8 @@ size = Vector2( 1200, 1200 )
 transparent_bg = true
 handle_input_locally = false
 msaa = 1
+hdr = false
+gui_disable_input = true
 
 [node name="StrikelineCamera" type="Camera" parent="3D/StrikelineViewport"]
 transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0 )
@@ -204,6 +209,8 @@ size = Vector2( 1200, 1200 )
 transparent_bg = true
 handle_input_locally = false
 msaa = 1
+hdr = false
+gui_disable_input = true
 
 [node name="TunnelCamera" type="Camera" parent="3D/TunnelViewport"]
 transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0 )
@@ -217,7 +224,7 @@ far = 35.0
 script = ExtResource( 5 )
 npNoteScroll = NodePath("../Playfield/Spatial/Scroll/Notes")
 npMeasureScroll = NodePath("../Playfield/Spatial/Scroll/MeasureLines")
-npHoldTexture = NodePath("../../HoldsTextureViewport/HoldsTexture")
+npHoldTexture = NodePath("../HoldsTextureViewport/HoldsTexture")
 
 [node name="Playfield" type="Spatial" parent="3D"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.043 )
@@ -227,7 +234,7 @@ npStrikeline = NodePath("Spatial/Strikeline")
 npTickPlayer = NodePath("../TickPlayer")
 npTickDetector = NodePath("Spatial/Strikeline/TickDetector")
 npFeedbackCircle = NodePath("../../Display/FeedbackCircle")
-npHoldTexture = NodePath("../../HoldsTextureViewport/HoldsTexture")
+npHoldTexture = NodePath("../HoldsTextureViewport/HoldsTexture")
 
 [node name="Background" parent="3D/Playfield" instance=ExtResource( 3 )]
 DrawLength = 3.0
@@ -276,7 +283,7 @@ shape = SubResource( 1 )
 [node name="MeasureLine" parent="3D/Playfield/Spatial/Scroll/MeasureLines" instance=ExtResource( 12 )]
 
 [node name="Cylinder" parent="3D/Playfield/Spatial" instance=ExtResource( 15 )]
-transform = Transform( 4.37114e-06, 0.000162921, 100, 100, -4.37114e-05, -4.37114e-06, 4.37114e-06, 1000, -1.62921e-05, 0, 0, 0 )
+transform = Transform( -8.74228e-06, 4.37114e-06, -100, -100, 4.37114e-06, 8.74228e-06, 4.37114e-06, 100, 4.37114e-06, 0, 0, 0 )
 layers = 8
 material/0 = SubResource( 17 )
 
@@ -288,11 +295,13 @@ stream = ExtResource( 9 )
 mix_target = 2
 bus = "NoteTick"
 
-[node name="HoldsTextureViewport" type="Viewport" parent="."]
-size = Vector2( 600, 2400 )
+[node name="HoldsTextureViewport" type="Viewport" parent="3D"]
+size = Vector2( 2400, 2400 )
 transparent_bg = true
+handle_input_locally = false
 hdr = false
 usage = 0
 render_target_v_flip = true
+gui_disable_input = true
 
-[node name="HoldsTexture" parent="HoldsTextureViewport" instance=ExtResource( 14 )]
+[node name="HoldsTexture" parent="3D/HoldsTextureViewport" instance=ExtResource( 14 )]

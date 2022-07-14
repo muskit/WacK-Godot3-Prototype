@@ -98,14 +98,13 @@ public class Misc : Node
 
     public static Vector3 NoteScale(float zPos, float zOrigin = 0)
     {
-        var result = Vector3.Zero;
         var val = zPos - zOrigin;
         if (val <=  Misc.noteDrawDistance)
         {
             var ratio = Mathf.Clamp((Misc.noteDrawDistance - val) / Misc.noteDrawDistance, 0, 1);
-            result = new Vector3(ratio, ratio, 1);
+            return new Vector3(ratio, ratio, 1);
         }
-        return result;
+        return Vector3.Zero;
     }
 
     public static float TimeToPosition(float time)

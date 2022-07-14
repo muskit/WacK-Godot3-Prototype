@@ -29,7 +29,7 @@ public class Strikeline : Spatial
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        Misc.strikelineZPos = this.Translation.z;
+        Misc.strikelineZPos = this.GlobalTransform.origin.z;
         this.Scale = new Vector3(1, 1, PlaySettings.SCROLL_MULT*PlaySettings.speedMultiplier);
 
         zoneMarvelous = GetChild<Area>(0);
