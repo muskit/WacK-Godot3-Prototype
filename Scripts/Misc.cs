@@ -63,6 +63,23 @@ public class Misc : Node
         return result;
     }
 
+    public static float NearestSegment(int origin, int destination)
+    {
+        int result = destination % 60;
+
+        int plus = destination + 60;
+        int minus = destination - 60;
+        int minusDelta = Math.Abs(minus - origin);
+        int normDelta = Math.Abs(destination - origin);
+        int plusDelta = Math.Abs(plus - origin);
+        if (plusDelta < normDelta)
+            result = plus;
+        if (minusDelta < normDelta)
+            result = minus;
+
+        return result;
+    }
+
     public static float ScreenPixelToRad(Vector2 pos)
     {
         var resolution = OS.WindowSize;
@@ -96,6 +113,8 @@ public class Misc : Node
         return TimeToPosition(60f/tempo * beatsPerMeasure * ((float)measure + (float)beat/1920f));
     }
 
+    // TODO: notes scale to scroll position instead of strikeline
+    // (where calibration offsets can be applied)
     public static Vector3 NoteScale(float zPos, float zOrigin = 0)
     {
         var val = zPos - zOrigin;
