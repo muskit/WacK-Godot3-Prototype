@@ -11,13 +11,15 @@ using System;
 
 public class HoldSegmentsTexture : Node2D
 {
-    public float scrollScale = 1f;
-    private float minuteSize;
     private float holdCalibrationOffset = 0;
+    private float minuteSize;
+    public float scrollScale;
+    private float startPos;
 
     private Vector2 textureSize;
     private Node2D scroll2D;
-    private static Color color = new Color(255f/255, 236f/255, 26f/255);
+    private Camera2D cam2D;
+    private static Color color = new Color(255f/255, 218f/255, 0f/255, 0.96f);
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -25,7 +27,11 @@ public class HoldSegmentsTexture : Node2D
         textureSize = GetViewportRect().Size;
         minuteSize = textureSize.x / 60;
         scrollScale = textureSize.y / Misc.noteDrawDistance;
-        scroll2D = GetChild<Node2D>(0).GetChild<Node2D>(0);
+        startPos = textureSize.y;
+
+        scroll2D = FindNode("Scroll") as Node2D;
+        cam2D = FindNode("Camera2D") as Camera2D;
+        SetPosition(0);
     }
 
     // Each section between START-MID, MID-MID, or MID-END are
@@ -105,10 +111,10 @@ public class HoldSegmentsTexture : Node2D
 
     public void Scroll(float offset)
     {
-        scroll2D.Translate(new Vector2(0, offset * scrollScale));
+        cam2D.Translate(new Vector2(0, -offset * scrollScale));
     }
     public void SetPosition(float zPos)
     {
-        scroll2D.Position = new Vector2(0, zPos * scrollScale + holdCalibrationOffset);
+        cam2D.Position = new Vector2(0, -(zPos * scrollScale + holdCalibrationOffset + startPos));
     }
 }
