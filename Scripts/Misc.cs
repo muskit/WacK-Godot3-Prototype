@@ -110,6 +110,7 @@ public class Misc : Node
 
     public static float NotePosition(int measure, int beat, float tempo, int beatsPerMeasure)
     {
+        if (tempo == 0) return 0; // avoid divide by 0
         return TimeToPosition(60f/tempo * beatsPerMeasure * ((float)measure + (float)beat/1920f));
     }
 

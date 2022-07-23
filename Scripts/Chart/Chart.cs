@@ -6,7 +6,6 @@
  * July 1, 2022
  **/
 
-using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +27,7 @@ public class Chart
     /// <param name="mer">Contents of a .mer file.</param>    
     public Chart(string mer)
     {
-        if (mer.Empty()) return;
+        if (mer == String.Empty) return;
         List<string> lines = new List<string>(mer.Split('\n'));
         foreach (var line in lines)
         {
@@ -111,6 +110,9 @@ public class Chart
                     break;
                 case "2": // tempo
                     notes[currentMeasure].Add((currentBeat, new ChartNote(value: float.Parse(tokens[3]), type: NoteType.Tempo)));
+                    break;
+                case "3": // beats per measure
+                    notes[currentMeasure].Add((currentBeat, new ChartNote(value: float.Parse(tokens[3]), type: NoteType.BeatsPerMeasure)));
                     break;
             }
         }

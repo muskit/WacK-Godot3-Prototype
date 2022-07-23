@@ -52,52 +52,57 @@ public class NotesCreator : Node
         Load(new Chart(Misc.currentMer));
     }
 
+    // place notes and events relative to the previous
     public void Load(Chart chart)
     {
         doneLoading = false;
 
-        List<float> tempos = new List<float>();
-        List<int> tempoChangeMeasures = new List<int>();
-        List<int> tempoChangeBeats = new List<int>();
-        List<float> tempoChangePositions = new List<float>();
-        tempos.Add(-1);
-        tempoChangeMeasures.Add(0);
-        tempoChangeBeats.Add(0);
-        tempoChangePositions.Add(0);
+        // TODO: implement these as Lists
+        float curTempo = -1;
+        int curBeatsPerMeasure = -1;
 
-        float lastTempoChangePosition = 0;
-        float currentTempo = -1;
-        int currentBeatsPerMeasure = 4; // TODO: implement changing measures sizes
-        int numMeasures = chart.notes.Count;
+        float queuedTempo = -1;
+        int queuedBPM = -1;
 
-        Note lastNote = null;
+        // timing info of the previous beat
+        float prevPosition = 0;
+        int prevMeasure = 0;
+        int prevBeat = 0; // (/1920 beats per measure)
+
+        Note prevNote = null;
         Note curNote = null;
         var nextHoldNote = new System.Collections.Generic.Dictionary<int, Note>(); // <next hold idx, Note>
         var curHoldSegment = new System.Collections.Generic.Dictionary<int, Note>(); // <next hold idx, HoldStart>
 
+        GD.Print($"Beginning prevPosition: {prevPosition}");
+
         foreach (var measure in chart.notes) // <measure, List>
         {
+            GD.Print(measure.Key);
             foreach (var chartNote in measure.Value) // List<beat, ChartNote>
             {
-                if (curNote != null)
+                var curPos = prevPosition + Misc.NotePosition(measure.Key - prevMeasure, chartNote.Item1 - prevBeat, curTempo, curBeatsPerMeasure);
+                GD.Print($"{chartNote.Item1}: {chartNote.Item2.noteType} ({(int)chartNote.Item2.value})");
+
+                if (prevMeasure != measure.Key && prevBeat != chartNote.Item1)
                 {
-                    lastNote = curNote;
+                    curTempo = queuedTempo;
+                    curBeatsPerMeasure = queuedBPM;
                 }
+
+                // notetype-dependent operations
                 switch (chartNote.Item2.noteType)
                 {
-                    // Song-related info //
-                    // TODO: beats per measure, tempo change based on relative note position
                     case NoteType.Tempo:
-                        curNote = noteInvisible.Instance<Note>();
-                        curNote.type = NoteType.Tempo;
-                        lastTempoChangePosition += Misc.NotePosition(measure.Key - tempoChangeMeasures.Last<int>(), chartNote.Item1 - tempoChangeBeats.Last<int>(), currentTempo, currentBeatsPerMeasure);
-                        tempos.Add(chartNote.Item2.value);
-                        tempoChangeMeasures.Add(measure.Key);
-                        tempoChangeBeats.Add(chartNote.Item1);
-                        tempoChangePositions.Add(lastTempoChangePosition);
-                        currentTempo = chartNote.Item2.value;
+                        if (curTempo == -1)
+                            curTempo = chartNote.Item2.value;
+                        queuedTempo = chartNote.Item2.value;
                         break;
-                    // Playable notes //
+                    case NoteType.BeatsPerMeasure:
+                        if (curBeatsPerMeasure == -1)
+                            curBeatsPerMeasure = (int)chartNote.Item2.value;
+                        queuedBPM = (int)chartNote.Item2.value;
+                        break;
                     case NoteType.Touch:
                         curNote = noteTouch.Instance<Note>();
                         break;
@@ -133,27 +138,28 @@ public class NotesCreator : Node
                     case NoteType.SwipeCCW:
                         curNote = noteSwipeCCW.Instance<Note>();;
                         break;
-                    default: // invisible modifier notes (ie. Background modifiers)
+                    default: // invisible modifier notes (aka events)
                         curNote = noteInvisible.Instance<Note>();
                         curNote.type = chartNote.Item2.noteType;
                         curNote.value = (int)chartNote.Item2.value;
                         break;
                 }
-                if (curNote != lastNote)
-                {
-                    if (curNote.type == NoteType.Tempo)
-                    {
-                        curNote.Translation = new Vector3(0, 0, lastTempoChangePosition);
-                    }
-                    else
-                    {
-                        noteScroll.AddChild(curNote);
-                        curNote.Translation = new Vector3(0, 0, lastTempoChangePosition + Misc.NotePosition(measure.Key - tempoChangeMeasures.Last<int>(), chartNote.Item1 - tempoChangeBeats.Last<int>(), currentTempo, currentBeatsPerMeasure));
-                        curNote.SetPosSize(chartNote.Item2.position, chartNote.Item2.size);
-                        curNote.AddChild(noteHitDetection.Instance());
-                    }
 
-                    // create long note
+                if (curNote != null && curNote != prevNote)
+                {
+                    curNote.AddChild(noteHitDetection.Instance());
+                    curNote.SetPosSize(chartNote.Item2.position, chartNote.Item2.size);
+                    noteScroll.AddChild(curNote);
+
+                    curNote.Translation = new Vector3(0, 0, curPos);
+                    prevNote = curNote;
+
+                    // update "previous timing" info to place next note/event properly
+                    prevPosition = curPos;
+                    prevBeat = chartNote.Item1;
+                    prevMeasure = measure.Key;
+
+                    // hold notes
                     if (curNote.type == NoteType.HoldMid)
                     {
                         var pos = curNote.GlobalTransform;
@@ -170,38 +176,6 @@ public class NotesCreator : Node
             }
         }
 
-        // TODO: adapt to tempo changes
-        int tempoChgMeasureIdx = 1;
-        for (int curMeasure = 0; curMeasure < numMeasures; ++curMeasure)
-        {
-            if (tempoChgMeasureIdx == tempoChangeMeasures.Count - 1) // last measure change; fill in the rest
-            {
-                float pos = tempoChangePositions[tempoChgMeasureIdx] + Misc.NotePosition(curMeasure - tempoChangeMeasures[tempoChgMeasureIdx], 0, tempos.Last(), 4);
-
-                var ml = measureLine.Instance<Spatial>();
-                measureScroll.AddChild(ml);
-                ml.Translation = new Vector3(0, 0, pos);
-                // ml.GetChild(2).GetChild<Label>(0).Text = $"{curMeasure}";
-            }
-            else if (tempoChgMeasureIdx < tempoChangeMeasures.Count)
-            {
-                while (curMeasure == tempoChangeMeasures[tempoChgMeasureIdx])
-                {
-                    int measuresToCreate = tempoChangeMeasures[tempoChgMeasureIdx] - tempoChangeMeasures[tempoChgMeasureIdx - 1];
-                    for (int i = 0; i < measuresToCreate; ++i)
-                    {
-                        int measureNum = tempoChangeMeasures[tempoChgMeasureIdx - 1] + i;
-                        float pos = Misc.InterpFloat(tempoChangePositions[tempoChgMeasureIdx - 1], tempoChangePositions[tempoChgMeasureIdx], (float)i/measuresToCreate);
-
-                        var ml = measureLine.Instance<Spatial>();
-                        measureScroll.AddChild(ml);
-                        ml.Translation = new Vector3(0, 0, pos);
-                        // ml.GetChild(2).GetChild<Label>(0).Text = $"{measureNum}";
-                    }
-                    tempoChgMeasureIdx++;
-                }
-            }
-        }
         doneLoading = true;
     }
 

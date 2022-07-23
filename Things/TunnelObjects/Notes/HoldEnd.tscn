@@ -41,6 +41,7 @@ valign = 1
 
 [node name="Sprite3D" type="Sprite3D" parent="Note"]
 transform = Transform( -0.0140667, 1.92579e-07, -0.999901, 1.05165e-07, -1, -1.94078e-07, -0.999901, -1.07885e-07, 0.0140667, 0.541376, 8.06143e-08, -0.0258828 )
+visible = false
 pixel_size = 0.0007
 axis = 1
 texture = SubResource( 3 )

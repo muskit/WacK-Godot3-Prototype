@@ -4,8 +4,6 @@ using System.Diagnostics;
 
 public class FontResizeToLabel : Label
 {
-    private Mutex resizeMtx = new Mutex();
-    
     public override void _Ready()
     {
         Connect("resized", this, nameof(OnResize));
@@ -13,8 +11,9 @@ public class FontResizeToLabel : Label
 
     private async void OnResize()
     {
-        if (resizeMtx.TryLock() == Error.Ok)
+        if (IsInsideTree())
         {
+            await ToSignal(GetTree(), "idle_frame");
             await ToSignal(GetTree(), "idle_frame");
 
             var parentName = GetParent().GetParent().GetParent().Name;
@@ -37,7 +36,6 @@ public class FontResizeToLabel : Label
                 // GD.Print($"Step: {swStep.ElapsedMilliseconds}ms");
                 // swStep.Restart();
             }
-            resizeMtx.Unlock();
 
             // swTotal.Stop();
             // GD.Print($"{parentName}: {this.Name} completed resizing after {swTotal.ElapsedMilliseconds}ms");

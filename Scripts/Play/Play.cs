@@ -14,6 +14,7 @@ public class Play : Node
     
     public override void _Ready()
     {
+        Physics2DServer.SetActive(false);
         Misc.songPlayer = GetNode<AudioStreamPlayer>(npAudioPlayer);
         Misc.songPlayer.Stream = Misc.currentAudio;
 

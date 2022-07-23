@@ -34,14 +34,6 @@ public class Note : Spatial
 
     public void Miss()
     {
-        // Disable physics
-        foreach (Node n in GetChildren())
-        {
-            if (n is CollisionShape shape)
-                shape.Disabled = true;
-        }
-        SetPhysicsProcess(false);
-
         // HoldStart
         if (type == NoteType.HoldStart)
         {
@@ -59,25 +51,26 @@ public class Note : Spatial
             return;
         }
 
-        FullDisable();
+        // FullDisable();
     }
 
     private void FullDisable()
     {
         SetProcess(false);
-        this.Visible = false;
+        // this.Visible = false;
     }
 
     public void Enable()
     {
         this.Visible = true;
-        // Disable physics
+
+        // Re-enable physics
         foreach (Node n in GetChildren())
         {
             if (n is CollisionShape shape)
                 shape.Disabled = false;
         }
-        SetPhysicsProcess(true);
+        SetProcess(true);
     }
 
     public override void _Process(float delta)

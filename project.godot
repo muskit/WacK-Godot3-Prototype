@@ -27,6 +27,7 @@ settings/fps/force_fps=60
 
 [display]
 
+window/vsync/use_vsync=false
 window/handheld/orientation="sensor"
 window/stretch/mode="2d"
 window/stretch/aspect="expand"
@@ -59,9 +60,9 @@ common/enable_pause_aware_picking=true
 
 [rendering]
 
-quality/driver/driver_name="GLES2"
 quality/intended_usage/framebuffer_allocation=1
 quality/intended_usage/framebuffer_allocation.mobile=1
+threads/thread_model=2
 quality/directional_shadow/size=256
 quality/directional_shadow/size.mobile=256
 quality/shadow_atlas/size=256
@@ -77,11 +78,10 @@ quality/reflections/high_quality_ggx=false
 quality/shading/force_vertex_shading.mobile=false
 quality/shading/force_lambert_over_burley.mobile=false
 quality/shading/force_blinn_over_ggx.mobile=false
-2d/options/use_software_skinning=false
 quality/lightmapping/use_bicubic_sampling=false
+quality/subsurface_scattering/quality=0
+quality/subsurface_scattering/weight_samples=false
 quality/reflections/atlas_size=0
 quality/reflections/atlas_subdiv=0
 quality/depth/hdr=false
 environment/default_environment="res://default_env.tres"
-quality/subsurface_scattering/quality=0
-quality/subsurface_scattering/weight_samples=false
