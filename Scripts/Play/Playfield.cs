@@ -33,7 +33,7 @@ public class Playfield : Spatial
     private AudioStreamPlayer tickPlayer;
     private Area tickDetector;
     private List<FeedbackSegment> feedbackCircle = new List<FeedbackSegment>();
-    private HoldSegmentsTexture holdTexture;
+    private HoldNotesTexture holdTexture;
 
     private Node background;
     private int resyncCount = 0;
@@ -52,7 +52,7 @@ public class Playfield : Spatial
         strikeline = GetNode<Strikeline>(npStrikeline);
         tickPlayer = GetNode<AudioStreamPlayer>(npTickPlayer);
         tickDetector = GetNode<Area>(npTickDetector);
-        holdTexture = GetNode<HoldSegmentsTexture>(npHoldTexture);
+        holdTexture = GetNode<HoldNotesTexture>(npHoldTexture);
 
         //tickDetector.Scale = new Vector3(1, 1, PlaySettings.speedMultiplier * 10f);
         tickDetector.Connect("body_entered", this, nameof(OnTickEnter));

@@ -17,6 +17,7 @@ public class Play : Node
         Physics2DServer.SetActive(false);
         Misc.songPlayer = GetNode<AudioStreamPlayer>(npAudioPlayer);
         Misc.songPlayer.Stream = Misc.currentAudio;
+        Misc.songPlayer.Connect("finished", this, nameof(OnSongEnd));
 
         pauseText = GetNode<Label>(npPauseText);
 
@@ -65,6 +66,11 @@ public class Play : Node
     private void OnUnpauseEv()
     {
         Misc.songPlayer.Play(pauseTime);
+    }
+
+    private void OnSongEnd()
+    {
+        GetTree().ChangeScene("res://Scenes/Menu.tscn");
     }
 
     public override void _Process(float delta)

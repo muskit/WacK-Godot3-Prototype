@@ -9,17 +9,21 @@ public class Note : Spatial
 {
     [Export]
     public NoteType type;
-    private CSGPolygon note;
+    [Export]
+    public Node2D holdSegment = null;
+    
+    private CSGPolygon notePoly;
+    
+    public Accuracy curAccuracy = Accuracy.Miss;
     public int pos = 0;
     public int size = 1;
     public int noteIndex = -1;
     public float value = 0;
-    public Accuracy curAccuracy = Accuracy.Miss;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        note = GetChild<CSGPolygon>(0);
+        notePoly = GetChild<CSGPolygon>(0);
     }
 
     public async void SetPosSize(int pos = 0, int size = 1)
@@ -28,48 +32,40 @@ public class Note : Spatial
 
         this.pos = pos;
         this.size = size;
-        note.Transform = note.Transform.Rotated(Vector3.Forward, Mathf.Deg2Rad(6f * pos));
-        note.SpinDegrees = 6 * size;
+        notePoly.Transform = notePoly.Transform.Rotated(Vector3.Forward, Mathf.Deg2Rad(6f * pos));
+        notePoly.SpinDegrees = 6 * size;
     }
 
     public void Miss()
     {
+        Misc.debugStr = $"{this.Name} missed";
+
         // HoldStart
-        if (type == NoteType.HoldStart)
+        if (type == NoteType.HoldStart && holdSegment != null)
         {
-            foreach (Node longSegment in note.GetChildren())
+            foreach(Polygon2D p2D in holdSegment.GetChildren())
             {
-                foreach (var step in longSegment.GetChildren())
+                p2D.Color = new Color(0.5f, 0.5f, 0.5f, 0.96f);
+                foreach(Polygon2D p2DOffset in p2D.GetChildren())
                 {
-                    if(step is CSGPolygon n)
-                    {
-                        ((SpatialMaterial)n.Material).AlbedoColor = new Color(.4f, .4f, .4f);
-                        break;
-                    }
+                    p2DOffset.Color = new Color(0.5f, 0.5f, 0.5f, 0.96f);
                 }
             }
             return;
         }
 
-        // FullDisable();
+        FullDisable();
     }
 
     private void FullDisable()
     {
         SetProcess(false);
-        // this.Visible = false;
+        this.Visible = false;
     }
 
     public void Enable()
     {
         this.Visible = true;
-
-        // Re-enable physics
-        foreach (Node n in GetChildren())
-        {
-            if (n is CollisionShape shape)
-                shape.Disabled = false;
-        }
         SetProcess(true);
     }
 

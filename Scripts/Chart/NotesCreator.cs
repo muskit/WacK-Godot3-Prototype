@@ -23,7 +23,7 @@ public class NotesCreator : Node
 
     private Spatial noteScroll;
     private Spatial measureScroll;
-    private HoldSegmentsTexture holdTexture;
+    private HoldNotesTexture holdTexture;
 
     public static bool doneLoading { get; private set; } = false;
 
@@ -47,19 +47,31 @@ public class NotesCreator : Node
     {
         noteScroll = GetNode<Spatial>(npNoteScroll);
         measureScroll = GetNode<Spatial>(npMeasureScroll);
-        holdTexture = GetNode<HoldSegmentsTexture>(npHoldTexture);
+        holdTexture = GetNode<HoldNotesTexture>(npHoldTexture);
         
         Load(new Chart(Misc.currentMer));
     }
 
     // place notes and events relative to the previous
-    public void Load(Chart chart)
+    public async void Load(Chart chart)
     {
         doneLoading = false;
 
+        // let other Nodes initialize properly first
+        await ToSignal(GetTree(), "idle_frame");
+        await ToSignal(GetTree(), "idle_frame");
+        await ToSignal(GetTree(), "idle_frame");
+
         // TODO: implement these as Lists
-        float curTempo = -1;
-        int curBeatsPerMeasure = -1;
+        List<float> tempo = new List<float>();
+        List<int> tempoChangeMeasures = new List<int>();
+        List<int> beatsPerMeasure = new List<int>();
+        List<int> bpmChangeMeasures = new List<int>();
+
+        tempo.Add(0);
+        tempoChangeMeasures.Add(0);
+        beatsPerMeasure.Add(0);
+        bpmChangeMeasures.Add(0);
 
         float queuedTempo = -1;
         int queuedBPM = -1;
@@ -76,31 +88,41 @@ public class NotesCreator : Node
 
         GD.Print($"Beginning prevPosition: {prevPosition}");
 
+        // Notes and Events //
         foreach (var measure in chart.notes) // <measure, List>
         {
             GD.Print(measure.Key);
             foreach (var chartNote in measure.Value) // List<beat, ChartNote>
             {
-                var curPos = prevPosition + Misc.NotePosition(measure.Key - prevMeasure, chartNote.Item1 - prevBeat, curTempo, curBeatsPerMeasure);
+                var curPos = prevPosition + Misc.NotePosition(measure.Key - prevMeasure, chartNote.Item1 - prevBeat, tempo.Last<float>(), beatsPerMeasure.Last<int>());
                 GD.Print($"{chartNote.Item1}: {chartNote.Item2.noteType} ({(int)chartNote.Item2.value})");
 
                 if (prevMeasure != measure.Key && prevBeat != chartNote.Item1)
                 {
-                    curTempo = queuedTempo;
-                    curBeatsPerMeasure = queuedBPM;
+                    tempo.Add(queuedTempo);
+                    tempoChangeMeasures.Add(measure.Key);
+
+                    beatsPerMeasure.Add(queuedBPM);
+                    bpmChangeMeasures.Add(measure.Key);
                 }
 
                 // notetype-dependent operations
                 switch (chartNote.Item2.noteType)
                 {
                     case NoteType.Tempo:
-                        if (curTempo == -1)
-                            curTempo = chartNote.Item2.value;
+                        if (tempo.Count == 1)
+                        {
+                            tempo.Add(chartNote.Item2.value);
+                            tempoChangeMeasures.Add(measure.Key);
+                        }
                         queuedTempo = chartNote.Item2.value;
                         break;
                     case NoteType.BeatsPerMeasure:
-                        if (curBeatsPerMeasure == -1)
-                            curBeatsPerMeasure = (int)chartNote.Item2.value;
+                        if (beatsPerMeasure.Count == 1)
+                        {
+                            beatsPerMeasure.Add((int)chartNote.Item2.value);
+                            bpmChangeMeasures.Add(measure.Key);
+                        }
                         queuedBPM = (int)chartNote.Item2.value;
                         break;
                     case NoteType.Touch:
@@ -169,14 +191,20 @@ public class NotesCreator : Node
                     }
                     if (curNote.type == NoteType.HoldEnd)
                     {
-                        holdTexture.CreateLongNote(curHoldSegment[curNote.noteIndex], curNote);
+                        curHoldSegment[curNote.noteIndex].holdSegment = holdTexture.CreateLongNote(curHoldSegment[curNote.noteIndex], curNote);
                         // TODO: associate HoldStart with holdSegment
                     }
                 }
             }
         }
 
-        doneLoading = true;
+        // Measure Lines //
+        for (int curMeasure = 0; curMeasure < chart.notes.Count; ++curMeasure)
+        {
+
+        }
+
+            doneLoading = true;
     }
 
     // 3D laggy method to create long notes

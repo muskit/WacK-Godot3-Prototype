@@ -1,5 +1,5 @@
 /**
- * HoldSegementsTexture.cs
+ * HoldNotesTexture.cs
  * Create Hold notes as 2D texture.
  *
  * by muskit
@@ -9,7 +9,7 @@
 using Godot;
 using System;
 
-public class HoldSegmentsTexture : Node2D
+public class HoldNotesTexture : Node2D
 {
     private float holdCalibrationOffset = 0;
     private float minuteSize;
@@ -36,11 +36,8 @@ public class HoldSegmentsTexture : Node2D
 
     // Each section between START-MID, MID-MID, or MID-END are
     // known as "segments."
-    public async void CreateLongNote(Note holdStart, Note holdEnd)
+    public Node2D CreateLongNote(Note holdStart, Note holdEnd)
     {
-        while (scroll2D == null)
-            await ToSignal(GetTree(), "idle_frame");
-
         // GD.Print($"Creating long note {holdStart.noteIndex} that's {holdEnd.Translation.z - holdStart.Translation.z} long.");
         var holdNote = new Node2D();
         scroll2D.AddChild(holdNote);
@@ -72,6 +69,7 @@ public class HoldSegmentsTexture : Node2D
             var segment = CreateSegment(holdStart, holdEnd);
             holdNote.AddChild(segment);
         }
+        return holdNote;
     }
 
     private Polygon2D CreateSegment(Note origin, Note destination)
