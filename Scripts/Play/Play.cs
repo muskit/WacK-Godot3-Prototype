@@ -7,14 +7,23 @@ public class Play : Node
     private NodePath npAudioPlayer;
     [Export]
     private NodePath npPauseText;
-    
+
+    public static float playbackTime = 0;
+
     private GEvents gEvents;
     private Label pauseText;
     private float pauseTime;
+
+    public Play()
+    {
+        playbackTime = 0;
+    }
     
     public override void _Ready()
     {
         Physics2DServer.SetActive(false);
+        PhysicsServer.SetActive(false);
+        
         Misc.songPlayer = GetNode<AudioStreamPlayer>(npAudioPlayer);
         Misc.songPlayer.Stream = Misc.currentAudio;
         Misc.songPlayer.Connect("finished", this, nameof(OnSongEnd));
@@ -22,8 +31,8 @@ public class Play : Node
         pauseText = GetNode<Label>(npPauseText);
 
         gEvents = GetNode<GEvents>("/root/GEvents");
-        gEvents.Connect(nameof(GEvents.on_pause), this, nameof(OnPauseEv));
-        gEvents.Connect(nameof(GEvents.on_resume), this, nameof(OnUnpauseEv));
+        gEvents.Connect(nameof(GEvents.OnPause), this, nameof(OnPauseEv));
+        gEvents.Connect(nameof(GEvents.OnResume), this, nameof(OnUnpauseEv));
 
         gEvents.SetPause(true);
     }
@@ -70,7 +79,8 @@ public class Play : Node
 
     private void OnSongEnd()
     {
-        GetTree().ChangeScene("res://Scenes/Menu.tscn");
+        if (!Misc.paused)
+            GetTree().ChangeScene("res://Scenes/Menu.tscn");
     }
 
     public override void _Process(float delta)

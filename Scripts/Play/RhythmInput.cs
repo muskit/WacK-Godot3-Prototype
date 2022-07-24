@@ -14,8 +14,8 @@ public class RhythmInput : Control
     [Export]
     private NodePath npFeedbackCircle;
     private List<FeedbackSegment> feedbackCircle = new List<FeedbackSegment>();
-    private Dictionary<int, Vector2> touches = new Dictionary<int, Vector2>();
-    private Dictionary<int, int> touchedSegments = new Dictionary<int, int>();
+    public static Dictionary<int, Vector2> touches = new Dictionary<int, Vector2>();
+    public static Dictionary<int, int> touchedSegments = new Dictionary<int, int>();
 
     public override void _Ready()
     {

@@ -1,6 +1,6 @@
 /**
- * NotesCreator.cs
- * Code for Node in Play scene that handles placing notes on the Scroll from a Chart.
+ * ChartReader.cs
+ * For the Play scene, handle placing notes on Scrolls from a Chart.
  *
  * by muskit
  * July 1, 2022
@@ -12,7 +12,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-public class NotesCreator : Node
+public class ChartReader : Node
 {
     [Export]
     private NodePath npNoteScroll;
@@ -26,6 +26,8 @@ public class NotesCreator : Node
     private HoldNotesTexture holdTexture;
 
     public static bool doneLoading { get; private set; } = false;
+    // [zPos] = List<Note> (chords)
+    public SortedList<float, List<Note>> totalNotes { get; private set; }
 
     // Preloaded note types
     private static PackedScene measureLine = GD.Load<PackedScene>("res://Things/TunnelObjects/MeasureLine.tscn");
@@ -42,25 +44,40 @@ public class NotesCreator : Node
     private static PackedScene noteHitDetection = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/HitDetection.tscn");
     private static SpatialMaterial matHoldLine = GD.Load<SpatialMaterial>("res://Materials/HoldLine.tres");
 
+    public ChartReader()
+    {
+        doneLoading = false;
+    }
 
-    public override void _Ready()
+    public async override void _Ready()
     {
         noteScroll = GetNode<Spatial>(npNoteScroll);
         measureScroll = GetNode<Spatial>(npMeasureScroll);
         holdTexture = GetNode<HoldNotesTexture>(npHoldTexture);
-        
+
+        await ToSignal(holdTexture, "ready");
+        doneLoading = false;
         Load(new Chart(Misc.currentMer));
     }
 
     // place notes and events relative to the previous
-    public async void Load(Chart chart)
+    public void Load(Chart chart)
     {
         doneLoading = false;
 
-        // let other Nodes initialize properly first
-        await ToSignal(GetTree(), "idle_frame");
-        await ToSignal(GetTree(), "idle_frame");
-        await ToSignal(GetTree(), "idle_frame");
+        if (totalNotes != null)
+        {
+            foreach (KeyValuePair<float, List<Note>> obj in totalNotes.AsEnumerable())
+                foreach (Note n in obj.Value)
+                {
+                    try
+                    {
+                        n?.QueueFree();
+                    }
+                    catch (ObjectDisposedException) { }
+                }
+        }
+        totalNotes = new SortedList<float, List<Note>>();
 
         // TODO: implement these as Lists
         List<float> tempo = new List<float>();
@@ -86,16 +103,12 @@ public class NotesCreator : Node
         var nextHoldNote = new System.Collections.Generic.Dictionary<int, Note>(); // <next hold idx, Note>
         var curHoldSegment = new System.Collections.Generic.Dictionary<int, Note>(); // <next hold idx, HoldStart>
 
-        GD.Print($"Beginning prevPosition: {prevPosition}");
-
         // Notes and Events //
         foreach (var measure in chart.notes) // <measure, List>
         {
-            GD.Print(measure.Key);
             foreach (var chartNote in measure.Value) // List<beat, ChartNote>
             {
                 var curPos = prevPosition + Misc.NotePosition(measure.Key - prevMeasure, chartNote.Item1 - prevBeat, tempo.Last<float>(), beatsPerMeasure.Last<int>());
-                GD.Print($"{chartNote.Item1}: {chartNote.Item2.noteType} ({(int)chartNote.Item2.value})");
 
                 if (prevMeasure != measure.Key && prevBeat != chartNote.Item1)
                 {
@@ -169,7 +182,7 @@ public class NotesCreator : Node
 
                 if (curNote != null && curNote != prevNote)
                 {
-                    curNote.AddChild(noteHitDetection.Instance());
+                    // curNote.AddChild(noteHitDetection.Instance());
                     curNote.SetPosSize(chartNote.Item2.position, chartNote.Item2.size);
                     noteScroll.AddChild(curNote);
 
@@ -192,9 +205,30 @@ public class NotesCreator : Node
                     if (curNote.type == NoteType.HoldEnd)
                     {
                         curHoldSegment[curNote.noteIndex].holdSegment = holdTexture.CreateLongNote(curHoldSegment[curNote.noteIndex], curNote);
-                        // TODO: associate HoldStart with holdSegment
                     }
+
+                    // int key = 1920 * measure.Key + chartNote.Item1;
+                    float key = Misc.PositionToTime(curPos);
+                    if (!totalNotes.ContainsKey(key))
+                    {
+                        totalNotes[key] = new List<Note>();
+                    }
+                    totalNotes[key].Add(curNote);
                 }
+            }
+        }
+
+        foreach (KeyValuePair<float, List<Note>> pair in totalNotes)
+        {
+            int chordableNotes = 0;
+            foreach (Note n in pair.Value)
+            {
+                if (!n.isEvent && n.type != NoteType.HoldMid && n.type != NoteType.HoldEnd && n.type != NoteType.Untimed)
+                    chordableNotes++;
+            }
+            if (chordableNotes >= 2)
+            {
+                GD.Print($"chord @ {pair.Key}");
             }
         }
 
@@ -204,67 +238,6 @@ public class NotesCreator : Node
 
         }
 
-            doneLoading = true;
-    }
-
-    // 3D laggy method to create long notes
-    private Spatial CreateLongNote(Note origin, Note destination)
-    {
-        Spatial result = new Spatial();
-
-        var radius = .573f;
-        var originPos = new Vector2(radius, 0);
-        var originPosRad = -Misc.Seg2Rad(origin.pos);
-        var destPosRad = -Misc.Seg2Rad(destination.pos);
-
-        // look for closest destination angle to work towards
-        destPosRad = Misc.NearestAngle(originPosRad, destPosRad);
-
-        float noteDepth = destination.Translation.z - origin.Translation.z;
-
-        float stepResolution = 200; // steps per player-scaled second
-        float curveResolution = 1; // how many verts per curve segment
-        int steps = (int) (Math.Ceiling(noteDepth)/10/PlaySettings.speedMultiplier*stepResolution);
-
-        var mat = matHoldLine.Duplicate() as SpatialMaterial;
-
-        for(int step = 0; step < steps; ++step)
-        {
-            float stepRatio = (float)step/steps;
-            float stepRatioOne = (step+1f)/steps;
-            float curSize = Misc.InterpFloat(origin.size, destination.size, stepRatio);
-            // float curSize = 4;
-            float curRot = Misc.InterpFloat(originPosRad, destPosRad, stepRatio);
-
-            int numPoints = (int)Math.Ceiling(curSize * curveResolution);
-            var innerVerts = new Array<Vector2>();
-            // GD.Print($"curSize: {curSize}");
-            innerVerts.Add(originPos);
-            for(int radSeg = 1; radSeg < numPoints; ++radSeg)
-            {
-                innerVerts.Add(originPos.Rotated(Misc.Seg2Rad((float)radSeg/(numPoints - 1) * curSize)));
-            }
-
-            var outerVerts = new Array<Vector2>();
-            for (int i = numPoints - 1; i >= 0; --i)
-            {
-                var vec = new Vector2(innerVerts[i]);
-                outerVerts.Add(vec * 1.001f);
-            }
-            var totalVerts = innerVerts + outerVerts;
-
-            CSGPolygon poly = new CSGPolygon();
-            result.AddChild(poly);
-            poly.Name = "LongBoi";
-            poly.Mode = CSGPolygon.ModeEnum.Depth;
-            poly.Polygon = totalVerts.ToArray<Vector2>();
-            poly.Depth = noteDepth/steps;
-            poly.Material = mat;
-            poly.Translation = new Vector3(0, 0, noteDepth*stepRatio);
-            poly.RotateY(Mathf.Pi);
-            poly.RotateZ(curRot);
-            poly.SetScript(GD.Load("res://Scripts/TunnelObjects/HoldStep.cs"));
-        }
-        return result;
+        doneLoading = true;
     }
 }

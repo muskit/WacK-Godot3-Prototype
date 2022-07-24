@@ -4,9 +4,16 @@ using System;
 public class GEvents : Node
 {
     [Signal]
-    public delegate void on_pause();
+    public delegate void OnPause();
     [Signal]
-    public delegate void on_resume();
+    public delegate void OnResume();
+
+    [Signal]
+    public delegate void RhythmInputFire(int segment, bool justTouched);
+    [Signal]
+    public delegate void NoteHit(Note note);
+    [Signal]
+    public delegate void NoteMiss(Note note);
 
     public void TogglePause()
     {
@@ -17,8 +24,8 @@ public class GEvents : Node
     {
         Misc.paused = state;
         if (state)
-            EmitSignal(nameof(on_pause));
+            EmitSignal(nameof(OnPause));
         else
-            EmitSignal(nameof(on_resume));
+            EmitSignal(nameof(OnResume));
     }
 }

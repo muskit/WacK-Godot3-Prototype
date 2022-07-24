@@ -8,6 +8,8 @@ public enum Accuracy
 public class Note : Spatial
 {
     [Export]
+    public bool isEvent;
+    [Export]
     public NoteType type;
     [Export]
     public Node2D holdSegment = null;
@@ -20,10 +22,15 @@ public class Note : Spatial
     public int noteIndex = -1;
     public float value = 0;
 
+    private Color holdMissColor = new Color(0.5f, 0.5f, 0.5f, 0.96f);
+
+    private GEvents gEvents;
+
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
         notePoly = GetChild<CSGPolygon>(0);
+        gEvents = GetNode<GEvents>("/root/GEvents");
     }
 
     public async void SetPosSize(int pos = 0, int size = 1)
@@ -32,13 +39,21 @@ public class Note : Spatial
 
         this.pos = pos;
         this.size = size;
-        notePoly.Transform = notePoly.Transform.Rotated(Vector3.Forward, Mathf.Deg2Rad(6f * pos));
-        notePoly.SpinDegrees = 6 * size;
+        if (type != NoteType.HoldStart && type != NoteType.HoldEnd && size >= 3 && size <= 59)
+        {
+            notePoly.Transform = notePoly.Transform.Rotated(Vector3.Forward, Mathf.Deg2Rad(6f * (pos + 1)));
+            notePoly.SpinDegrees = 6f * (size - 2);
+        }
+        else
+        {
+            notePoly.Transform = notePoly.Transform.Rotated(Vector3.Forward, Mathf.Deg2Rad(6f * pos));
+            notePoly.SpinDegrees = 6f * size;
+        }
     }
 
     public void Miss()
     {
-        Misc.debugStr = $"{this.Name} missed";
+        gEvents.EmitSignal(nameof(GEvents.NoteMiss), this);
 
         // HoldStart
         if (type == NoteType.HoldStart && holdSegment != null)
@@ -55,6 +70,18 @@ public class Note : Spatial
         }
 
         FullDisable();
+    }
+
+    public void Hit(Accuracy acc)
+    {
+        if (acc == Accuracy.Miss) { Miss(); return; }
+
+        if (curAccuracy == Accuracy.Miss)
+        {
+            curAccuracy = acc;
+            gEvents.EmitSignal(nameof(GEvents.NoteHit), this);
+            FullDisable();
+        }
     }
 
     private void FullDisable()

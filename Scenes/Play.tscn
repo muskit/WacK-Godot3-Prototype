@@ -1,13 +1,12 @@
-[gd_scene load_steps=30 format=2]
+[gd_scene load_steps=25 format=2]
 
 [ext_resource path="res://Things/2D/TouchFeedback/FeedbackCircle.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Textures/mask.png" type="Texture" id=2]
 [ext_resource path="res://Things/TunnelObjects/Background/Background.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Scripts/Play/Playfield.cs" type="Script" id=4]
-[ext_resource path="res://Scripts/Chart/NotesCreator.cs" type="Script" id=5]
+[ext_resource path="res://Scripts/Chart/ChartReader.cs" type="Script" id=5]
 [ext_resource path="res://Scripts/Play/Play.cs" type="Script" id=6]
 [ext_resource path="res://Fonts/Futura/Futura Medium Italic font.ttf" type="DynamicFontData" id=7]
-[ext_resource path="res://Scripts/Play/Strikeline.cs" type="Script" id=8]
 [ext_resource path="res://Sounds/tick.wav" type="AudioStream" id=9]
 [ext_resource path="res://Scenes/Pause.tscn" type="PackedScene" id=10]
 [ext_resource path="res://Textures/background-placeholder.jpg" type="Texture" id=11]
@@ -50,17 +49,6 @@ viewport_path = NodePath("3D/NotesViewport")
 [sub_resource type="DynamicFont" id=5]
 size = 46
 font_data = ExtResource( 7 )
-
-[sub_resource type="BoxShape" id=1]
-
-[sub_resource type="BoxShape" id=2]
-extents = Vector3( 1, 1, 0.1 )
-
-[sub_resource type="BoxShape" id=3]
-extents = Vector3( 1, 1, 0.15 )
-
-[sub_resource type="BoxShape" id=4]
-extents = Vector3( 1, 1, 0.2 )
 
 [sub_resource type="ViewportTexture" id=16]
 flags = 64
@@ -249,19 +237,13 @@ fov = 60.0
 size = 0.1
 far = 35.0
 
-[node name="NoteCreator" type="Node" parent="3D"]
-script = ExtResource( 5 )
-npNoteScroll = NodePath("../Playfield/Spatial/Scroll/Notes")
-npMeasureScroll = NodePath("../Playfield/Spatial/Scroll/MeasureLines")
-npHoldTexture = NodePath("../HoldsTextureViewport/HoldsTexture")
-
 [node name="Playfield" type="Spatial" parent="3D"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.043 )
 script = ExtResource( 4 )
+npChartReader = NodePath("../ChartReader")
 npScroll = NodePath("Spatial/Scroll")
-npStrikeline = NodePath("Spatial/Strikeline")
 npTickPlayer = NodePath("../TickPlayer")
-npTickDetector = NodePath("Spatial/Strikeline/TickDetector")
+npMissTickPlayer = NodePath("../MissTickPlayer")
 npFeedbackCircle = NodePath("../../Display/FeedbackCircle")
 npHoldTexture = NodePath("../HoldsTextureViewport/HoldsTexture")
 
@@ -269,39 +251,6 @@ npHoldTexture = NodePath("../HoldsTextureViewport/HoldsTexture")
 DrawLength = 3.0
 
 [node name="Spatial" type="Spatial" parent="3D/Playfield"]
-
-[node name="Strikeline" type="Spatial" parent="3D/Playfield/Spatial"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 10, 0, 0, 0 )
-script = ExtResource( 8 )
-hideNotesAfterLeaving = true
-
-[node name="100" type="Area" parent="3D/Playfield/Spatial/Strikeline"]
-
-[node name="shape" type="CollisionShape" parent="3D/Playfield/Spatial/Strikeline/100"]
-shape = SubResource( 1 )
-
-[node name="70" type="Area" parent="3D/Playfield/Spatial/Strikeline"]
-
-[node name="shape" type="CollisionShape" parent="3D/Playfield/Spatial/Strikeline/70"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00681376, -2.38419e-07, 6.13928e-05 )
-shape = SubResource( 2 )
-
-[node name="50" type="Area" parent="3D/Playfield/Spatial/Strikeline"]
-
-[node name="shape" type="CollisionShape" parent="3D/Playfield/Spatial/Strikeline/50"]
-shape = SubResource( 3 )
-
-[node name="0" type="Area" parent="3D/Playfield/Spatial/Strikeline"]
-
-[node name="shape" type="CollisionShape" parent="3D/Playfield/Spatial/Strikeline/0"]
-shape = SubResource( 4 )
-
-[node name="TickDetector" type="Area" parent="3D/Playfield/Spatial/Strikeline"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.75373e-05 )
-
-[node name="shape" type="CollisionShape" parent="3D/Playfield/Spatial/Strikeline/TickDetector"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1 )
-shape = SubResource( 1 )
 
 [node name="Scroll" type="Spatial" parent="3D/Playfield/Spatial"]
 
@@ -319,11 +268,24 @@ generate_lightmap = false
 software_skinning_transform_normals = false
 material/0 = SubResource( 17 )
 
+[node name="ChartReader" type="Node" parent="3D"]
+script = ExtResource( 5 )
+npNoteScroll = NodePath("../Playfield/Spatial/Scroll/Notes")
+npMeasureScroll = NodePath("../Playfield/Spatial/Scroll/MeasureLines")
+npHoldTexture = NodePath("../HoldsTextureViewport/HoldsTexture")
+
 [node name="BGMPlayer" type="AudioStreamPlayer" parent="3D"]
 bus = "BGM"
 
 [node name="TickPlayer" type="AudioStreamPlayer" parent="3D"]
 stream = ExtResource( 9 )
+mix_target = 2
+bus = "NoteTick"
+
+[node name="MissTickPlayer" type="AudioStreamPlayer" parent="3D"]
+stream = ExtResource( 9 )
+volume_db = -5.353
+pitch_scale = 0.5
 mix_target = 2
 bus = "NoteTick"
 

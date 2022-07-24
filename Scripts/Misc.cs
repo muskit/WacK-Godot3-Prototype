@@ -162,4 +162,21 @@ public class Misc : Node
 		Misc.currentAudio.Data = audio.GetBuffer((long)audio.GetLen());
 		GetTree().ChangeScene("res://Scenes/Play.tscn");
     }
+
+    public static bool IsInSegmentRegion(Note n, int segment)
+    {
+        int a = n.pos;
+        int b = n.pos + n.size;
+        if (b > 59)
+        {
+            b = 59;
+            int c = 0;
+            int d = b % 60;
+            return (a <= segment && segment <= b && c <= segment && segment <= d);
+        }
+        else
+        {
+            return (a <= segment && segment <= b);
+        }
+    }
 }
