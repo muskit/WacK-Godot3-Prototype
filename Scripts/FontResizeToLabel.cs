@@ -14,7 +14,6 @@ public class FontResizeToLabel : Label
         if (IsInsideTree())
         {
             await ToSignal(GetTree(), "idle_frame");
-            await ToSignal(GetTree(), "idle_frame");
 
             var parentName = GetParent().GetParent().GetParent().Name;
             var font = GetFont("font") as DynamicFont;

@@ -220,15 +220,16 @@ public class ChartReader : Node
 
         foreach (KeyValuePair<float, List<Note>> pair in totalNotes)
         {
-            int chordableNotes = 0;
+            List<Note> chordableNotes = new List<Note>();
             foreach (Note n in pair.Value)
             {
-                if (!n.isEvent && n.type != NoteType.HoldMid && n.type != NoteType.HoldEnd && n.type != NoteType.Untimed)
-                    chordableNotes++;
+                if (!n.isEvent && n.type != NoteType.HoldEnd && n.type != NoteType.Untimed)
+                    chordableNotes.Add(n);
             }
-            if (chordableNotes >= 2)
+            if (chordableNotes.Count >= 2)
             {
-                GD.Print($"chord @ {pair.Key}");
+                // GD.Print($"chord @ {pair.Key}");
+                // TODO: draw chord indicators "Chordify"
             }
         }
 

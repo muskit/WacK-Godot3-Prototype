@@ -75,6 +75,7 @@ public class Play : Node
     private void OnUnpauseEv()
     {
         Misc.songPlayer.Play(pauseTime);
+        // Misc.songPlayer.Play(Misc.songPlayer.Stream.GetLength()*0.85f);
     }
 
     private void OnSongEnd()

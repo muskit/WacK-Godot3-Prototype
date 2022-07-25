@@ -53,11 +53,14 @@ public class Playfield : Spatial
 
     public Playfield()
     {
-        Misc.cameraOffset = Translation.z;
+        
     }
 
     public override async void _Ready()
     {
+        Misc.cameraOffset = Translation.z;
+        Misc.strikelineZPos = GlobalTransform.origin.z;
+
         gEvents = GetNode<GEvents>("/root/GEvents");
         gEvents.Connect(nameof(GEvents.OnResume), this, nameof(Resync));
         gEvents.Connect(nameof(GEvents.RhythmInputFire), this, nameof(OnCircleInputFire));
@@ -113,17 +116,23 @@ public class Playfield : Spatial
             int extraCheckIndex = 0;
             bool touchInteracted = false;
             float curHitDelta = Play.playbackTime - beatTimes[curIndex];
+            
+            while (curHitDelta > TIMING_WINDOW_GOOD && curIndex < beatTimes.Length - 1)
+            {
+                extraCheckIndex++;
+                curIndex = nextHittableBeatIndex + extraCheckIndex;
+                curHitDelta = Play.playbackTime - beatTimes[curIndex];
+            }
 
             while (!touchInteracted && curIndex < beatTimes.Length && (-TIMING_WINDOW_EARLYMISS <= curHitDelta && curHitDelta <= TIMING_WINDOW_GOOD))
             {
-                curHitDelta = Play.playbackTime - beatTimes[curIndex];
                 foreach (Note n in chartReader.totalNotes.Values[curIndex])
                 {
                     if (!n.isEvent)
                     {
-                        if (n.type == NoteType.Untimed || n.type == NoteType.HoldEnd) continue;
+                        if (n.type == NoteType.Untimed) continue;
 
-                        if (Misc.IsInSegmentRegion(n, segment)) // region check
+                        if (Misc.NoteIsInSegmentRegion(n, segment) && !n.hasBeenInteracted)
                         {
                             // early miss
                             if (-TIMING_WINDOW_EARLYMISS <= curHitDelta && curHitDelta < -TIMING_WINDOW_GOOD && justTouched)
@@ -153,11 +162,15 @@ public class Playfield : Spatial
                                 if (TIMING_WINDOW_GREAT <= curHitDelta && curHitDelta <= TIMING_WINDOW_GOOD)
                                     n.Hit(Accuracy.Good);
                             }
+                            if (touchInteracted)
+                                Misc.debugStr = n.curAccuracy.ToString();
                         }
                     }
                 }
                 extraCheckIndex++;
                 curIndex = nextHittableBeatIndex + extraCheckIndex;
+                if (curIndex < beatTimes.Length)
+                    curHitDelta = Play.playbackTime - beatTimes[curIndex];
             }
         }
     }
@@ -165,13 +178,13 @@ public class Playfield : Spatial
     private void OnNoteHit(Note note)
     {
         hitTickPlayer.Play();
-        Misc.debugStr = note.curAccuracy.ToString();
+        // Misc.debugStr = note.curAccuracy.ToString();
     }
 
     private void OnNoteMiss(Note note)
     {
         missTickPlayer.Play();
-        Misc.debugStr = "Miss";
+        // Misc.debugStr = "Miss";
     }
 
     private void ProcessScroll(float delta)
@@ -211,13 +224,13 @@ public class Playfield : Spatial
                     {
                         foreach (int seg in RhythmInput.touchedSegments.Values)
                         {
-                            if (Misc.IsInSegmentRegion(n, seg))
+                            if (Misc.NoteIsInSegmentRegion(n, seg))
                                 n.Hit(Accuracy.Marvelous);
                         }
                     }
                     else if (n.type == NoteType.HoldEnd) // TODO: associate HoldEnd with HoldStart (the whole hold)
                     {
-                        n.Hit(Accuracy.Marvelous);
+                        // n.Hit(Accuracy.Marvelous);
                     }
                 }
                 else // event note

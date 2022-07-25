@@ -163,16 +163,21 @@ public class Misc : Node
 		GetTree().ChangeScene("res://Scenes/Play.tscn");
     }
 
-    public static bool IsInSegmentRegion(Note n, int segment)
+    public static bool NoteIsInSegmentRegion(Note n, int segment)
     {
         int a = n.pos;
         int b = n.pos + n.size;
+        return IsInSegmentRegion(a, b, segment);
+    }
+
+    public static bool IsInSegmentRegion(int a, int b, int segment)
+    {
         if (b > 59)
         {
-            b = 59;
             int c = 0;
             int d = b % 60;
-            return (a <= segment && segment <= b && c <= segment && segment <= d);
+            b = 59;
+            return ((a <= segment && segment <= b) || (c <= segment && segment <= d));
         }
         else
         {

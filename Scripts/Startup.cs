@@ -15,6 +15,9 @@ public class Startup : Node
     private Directory songDir;
     public override void _Ready()
 	{
+		GD.Print($"6 in 4+1: {Misc.IsInSegmentRegion(4, 5, 6)}");
+		GD.Print($"16 in 10+10: {Misc.IsInSegmentRegion(10, 20, 16)}");
+		GD.Print($"39 in 20+50: {Misc.IsInSegmentRegion(20, 70, 39)}");
         // TODO: enable loading screen
 
 		songDir = new Directory();

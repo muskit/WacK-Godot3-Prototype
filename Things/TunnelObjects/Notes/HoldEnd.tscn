@@ -16,6 +16,7 @@ viewport_path = NodePath("Note/Viewport")
 
 [node name="HoldEnd" type="Spatial"]
 script = ExtResource( 1 )
+isEvent = true
 type = 3
 
 [node name="Note" type="CSGPolygon" parent="."]

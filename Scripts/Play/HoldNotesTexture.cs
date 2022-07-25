@@ -76,17 +76,44 @@ public class HoldNotesTexture : Node2D
     {
         var length = scrollScale * (destination.GlobalTransform.origin.z - origin.GlobalTransform.origin.z);
         var verts = new Vector2[4];
-        var destPos = Misc.NearestSegment(origin.pos, destination.pos);
-        verts[0] = new Vector2(textureSize.x - origin.pos * minuteSize, 0);
-        verts[1] = new Vector2(verts[0].x - origin.size * minuteSize, 0);
-        verts[2] = new Vector2(textureSize.x - destPos * minuteSize - destination.size * minuteSize, -length);
+
+        int originPos;
+        int originSize;
+        int destPos;
+        int destSize;
+        if (3 <= origin.size && origin.size <= 59)
+        {
+            originPos = (origin.pos + 1)%60;
+            originSize = origin.size - 2;
+        }
+        else
+        {
+            originPos = origin.pos;
+            originSize = origin.size;
+        }
+
+        if (3 <= destination.size && destination.size <= 59)
+        {
+            destPos = (destination.pos + 1)%60;
+            destSize = destination.size - 2;
+        }
+        else
+        {
+            destPos = destination.pos;
+            destSize = destination.size;
+        }
+
+        destPos = (int)Misc.NearestSegment(originPos, destPos);
+        verts[0] = new Vector2(textureSize.x - originPos * minuteSize, 0);
+        verts[1] = new Vector2(verts[0].x - originSize * minuteSize, 0);
+        verts[2] = new Vector2(textureSize.x - destPos * minuteSize - destSize * minuteSize, -length);
         verts[3] = new Vector2(textureSize.x - destPos * minuteSize, -length);
         var segment = new Polygon2D();
         segment.Polygon = verts;
         segment.Color = color;
 
-        var originFinalPos = origin.pos + origin.size;
-        var destinationFinalPos = destPos + destination.size;
+        var originFinalPos = originPos + originSize;
+        var destinationFinalPos = destPos + destSize;
         if (originFinalPos > 60 || destinationFinalPos > 60)
         {
             var subSegment = new Polygon2D();

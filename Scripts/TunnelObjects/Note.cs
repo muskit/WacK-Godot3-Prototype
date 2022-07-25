@@ -16,6 +16,7 @@ public class Note : Spatial
     
     private CSGPolygon notePoly;
     
+    public bool hasBeenInteracted { get; private set; } = false;
     public Accuracy curAccuracy = Accuracy.Miss;
     public int pos = 0;
     public int size = 1;
@@ -39,7 +40,7 @@ public class Note : Spatial
 
         this.pos = pos;
         this.size = size;
-        if (type != NoteType.HoldStart && type != NoteType.HoldEnd && size >= 3 && size <= 59)
+        if (size >= 3 && size <= 59)
         {
             notePoly.Transform = notePoly.Transform.Rotated(Vector3.Forward, Mathf.Deg2Rad(6f * (pos + 1)));
             notePoly.SpinDegrees = 6f * (size - 2);
@@ -53,34 +54,38 @@ public class Note : Spatial
 
     public void Miss()
     {
-        gEvents.EmitSignal(nameof(GEvents.NoteMiss), this);
-
-        // HoldStart
-        if (type == NoteType.HoldStart && holdSegment != null)
+        if (!hasBeenInteracted)
         {
-            foreach(Polygon2D p2D in holdSegment.GetChildren())
+            hasBeenInteracted = true;
+
+            // HoldStart
+            if (type == NoteType.HoldStart && holdSegment != null)
             {
-                p2D.Color = new Color(0.5f, 0.5f, 0.5f, 0.96f);
-                foreach(Polygon2D p2DOffset in p2D.GetChildren())
+                foreach(Polygon2D p2D in holdSegment.GetChildren())
                 {
-                    p2DOffset.Color = new Color(0.5f, 0.5f, 0.5f, 0.96f);
+                    p2D.Color = new Color(0.5f, 0.5f, 0.5f, 0.96f);
+                    foreach(Polygon2D p2DOffset in p2D.GetChildren())
+                    {
+                        p2DOffset.Color = new Color(0.5f, 0.5f, 0.5f, 0.96f);
+                    }
                 }
             }
-            return;
-        }
 
-        FullDisable();
+            FullDisable();
+            gEvents.EmitSignal(nameof(GEvents.NoteMiss), this);
+        }
     }
 
     public void Hit(Accuracy acc)
     {
-        if (acc == Accuracy.Miss) { Miss(); return; }
-
-        if (curAccuracy == Accuracy.Miss)
+        if (!hasBeenInteracted)
         {
+            hasBeenInteracted = true;
+            if (acc == Accuracy.Miss) { Miss(); return; }
+            
             curAccuracy = acc;
-            gEvents.EmitSignal(nameof(GEvents.NoteHit), this);
             FullDisable();
+            gEvents.EmitSignal(nameof(GEvents.NoteHit), this);
         }
     }
 
