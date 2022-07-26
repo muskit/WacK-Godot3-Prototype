@@ -7,7 +7,7 @@ public class DebugOverlay : CanvasLayer
 
     private Label fpsText;
     private Label orientationText;
-    private Label debugText;
+    private RichTextLabel debugText;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -16,7 +16,7 @@ public class DebugOverlay : CanvasLayer
         
         fpsText = FindNode("FPSLabel") as Label;
         orientationText = FindNode("OrientationLabel") as Label;
-        debugText = FindNode("DebugLabel") as Label;
+        debugText = FindNode("DebugLabel") as RichTextLabel;
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.

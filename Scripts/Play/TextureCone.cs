@@ -1,6 +1,6 @@
 /**
- * HoldNotesTexture.cs
- * Create Hold notes as 2D texture.
+ * TextureCone.cs
+ * For texture of the tunnel cone.
  *
  * by muskit
  * July 12, 2022
@@ -9,7 +9,7 @@
 using Godot;
 using System;
 
-public class HoldNotesTexture : Node2D
+public class TextureCone : Node2D
 {
     private float holdCalibrationOffset = 0;
     private float minuteSize;
@@ -112,6 +112,7 @@ public class HoldNotesTexture : Node2D
         segment.Polygon = verts;
         segment.Color = color;
 
+        // draw overflow
         var originFinalPos = originPos + originSize;
         var destinationFinalPos = destPos + destSize;
         if (originFinalPos > 60 || destinationFinalPos > 60)

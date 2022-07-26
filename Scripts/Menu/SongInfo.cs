@@ -22,7 +22,7 @@ public class SongInfo : Panel
     private Label charter;
     private Node difficulties;
 
-    private PackedScene difficulty = GD.Load<PackedScene>("res://Things/Menu/Difficulty.tscn");
+    private PackedScene difficulty = GD.Load<PackedScene>("res://Things/2D/Menu/Difficulty.tscn");
 
     public override void _Ready()
     {

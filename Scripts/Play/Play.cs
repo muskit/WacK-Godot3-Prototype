@@ -44,24 +44,24 @@ public class Play : Node
         AddChild(t);
         t.WaitTime = 1;
         t.OneShot = true;
-        t.Start();
-        
-        Misc.debugStr = "5";
-        await ToSignal(t, "timeout");
-        Misc.debugStr = "4";
+
+        Misc.DebugPrintln("5");
         t.Start();
         await ToSignal(t, "timeout");
-        Misc.debugStr = "3";
+        Misc.DebugPrintln("4");
         t.Start();
         await ToSignal(t, "timeout");
-        Misc.debugStr = "2";
+        Misc.DebugPrintln("3");
         t.Start();
         await ToSignal(t, "timeout");
-        Misc.debugStr = "1";
+        Misc.DebugPrintln("2");
+        t.Start();
+        await ToSignal(t, "timeout");
+        Misc.DebugPrintln("1");
         t.Start();
         await ToSignal(t, "timeout");
         gEvents.SetPause(false);
-        Misc.debugStr = "";
+        Misc.DebugPrintln("START");
 
         t.QueueFree();
     }

@@ -23,25 +23,23 @@ public class ChartReader : Node
 
     private Spatial noteScroll;
     private Spatial measureScroll;
-    private HoldNotesTexture holdTexture;
+    private TextureCone holdTexture;
 
     public static bool doneLoading { get; private set; } = false;
-    // [zPos] = List<Note> (chords)
+    // [zPos] = List<Note> (use list for chord marking creation)
     public SortedList<float, List<Note>> totalNotes { get; private set; }
 
     // Preloaded note types
-    private static PackedScene measureLine = GD.Load<PackedScene>("res://Things/TunnelObjects/MeasureLine.tscn");
-    private static PackedScene noteTouch = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/Touch.tscn");
-    private static PackedScene noteHoldStart = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/HoldStart.tscn");
-    private static PackedScene noteInvisible = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/Invisible.tscn");
-    private static PackedScene noteHoldEnd = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/HoldEnd.tscn");
-    private static PackedScene noteUntimed = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/Untimed.tscn");
-    private static PackedScene noteSwipeIn = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/SwipeIn.tscn");
-    private static PackedScene noteSwipeOut = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/SwipeOut.tscn");
-    private static PackedScene noteSwipeCW = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/SwipeCW.tscn");
-    private static PackedScene noteSwipeCCW = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/SwipeCCW.tscn");
-    
-    private static PackedScene noteHitDetection = GD.Load<PackedScene>("res://Things/TunnelObjects/Notes/HitDetection.tscn");
+    private static PackedScene measureLine = GD.Load<PackedScene>("res://Things/3D/TunnelObjects/MeasureLine.tscn");
+    private static PackedScene noteTouch = GD.Load<PackedScene>("res://Things/3D/TunnelObjects/Notes/Touch.tscn");
+    private static PackedScene noteHoldStart = GD.Load<PackedScene>("res://Things/3D/TunnelObjects/Notes/HoldStart.tscn");
+    private static PackedScene noteInvisible = GD.Load<PackedScene>("res://Things/3D/TunnelObjects/Notes/Invisible.tscn");
+    private static PackedScene noteHoldEnd = GD.Load<PackedScene>("res://Things/3D/TunnelObjects/Notes/HoldEnd.tscn");
+    private static PackedScene noteUntimed = GD.Load<PackedScene>("res://Things/3D/TunnelObjects/Notes/Untimed.tscn");
+    private static PackedScene noteSwipeIn = GD.Load<PackedScene>("res://Things/3D/TunnelObjects/Notes/SwipeIn.tscn");
+    private static PackedScene noteSwipeOut = GD.Load<PackedScene>("res://Things/3D/TunnelObjects/Notes/SwipeOut.tscn");
+    private static PackedScene noteSwipeCW = GD.Load<PackedScene>("res://Things/3D/TunnelObjects/Notes/SwipeCW.tscn");
+    private static PackedScene noteSwipeCCW = GD.Load<PackedScene>("res://Things/3D/TunnelObjects/Notes/SwipeCCW.tscn");
     private static SpatialMaterial matHoldLine = GD.Load<SpatialMaterial>("res://Materials/HoldLine.tres");
 
     public ChartReader()
@@ -53,10 +51,13 @@ public class ChartReader : Node
     {
         noteScroll = GetNode<Spatial>(npNoteScroll);
         measureScroll = GetNode<Spatial>(npMeasureScroll);
-        holdTexture = GetNode<HoldNotesTexture>(npHoldTexture);
+        holdTexture = GetNode<TextureCone>(npHoldTexture);
 
         await ToSignal(holdTexture, "ready");
         doneLoading = false;
+        Misc.currentChart = new Chart(Misc.currentMer);
+        var scoreKeeper = GetNode<ScoreKeeper>("/root/ScoreKeeper");
+        scoreKeeper.NewChart(Misc.currentChart);
         Load(new Chart(Misc.currentMer));
     }
 
@@ -79,16 +80,21 @@ public class ChartReader : Node
         }
         totalNotes = new SortedList<float, List<Note>>();
 
-        // TODO: implement these as Lists
         List<float> tempo = new List<float>();
         List<int> tempoChangeMeasures = new List<int>();
+        List<int> tempoChangeBeats = new List<int>();
+        List<float> tempoChangePositions = new List<float>();
         List<int> beatsPerMeasure = new List<int>();
         List<int> bpmChangeMeasures = new List<int>();
+        List<float> bpmChangePositions = new List<float>();
 
         tempo.Add(0);
         tempoChangeMeasures.Add(0);
+        tempoChangeBeats.Add(0);
+        tempoChangePositions.Add(0);
         beatsPerMeasure.Add(0);
         bpmChangeMeasures.Add(0);
+        bpmChangePositions.Add(0);
 
         float queuedTempo = -1;
         int queuedBPM = -1;
@@ -112,11 +118,21 @@ public class ChartReader : Node
 
                 if (prevMeasure != measure.Key && prevBeat != chartNote.Item1)
                 {
-                    tempo.Add(queuedTempo);
-                    tempoChangeMeasures.Add(measure.Key);
+                    if (queuedTempo != -1)
+                    {
+                        tempo.Add(queuedTempo);
+                        tempoChangeMeasures.Add(measure.Key);
+                        tempoChangeBeats.Add(chartNote.Item1);
+                        tempoChangePositions.Add(curPos);
+                        queuedTempo = -1;
+                    }
 
-                    beatsPerMeasure.Add(queuedBPM);
-                    bpmChangeMeasures.Add(measure.Key);
+                    if (queuedBPM != -1)
+                    {
+                        beatsPerMeasure.Add(queuedBPM);
+                        bpmChangeMeasures.Add(measure.Key);
+                        queuedBPM = -1;
+                    }
                 }
 
                 // notetype-dependent operations
@@ -127,16 +143,21 @@ public class ChartReader : Node
                         {
                             tempo.Add(chartNote.Item2.value);
                             tempoChangeMeasures.Add(measure.Key);
+                            tempoChangeBeats.Add(chartNote.Item1);
+                            tempoChangePositions.Add(curPos);
                         }
-                        queuedTempo = chartNote.Item2.value;
+                        else
+                            queuedTempo = chartNote.Item2.value;
                         break;
                     case NoteType.BeatsPerMeasure:
                         if (beatsPerMeasure.Count == 1)
                         {
                             beatsPerMeasure.Add((int)chartNote.Item2.value);
                             bpmChangeMeasures.Add(measure.Key);
+                            bpmChangePositions.Add(curPos);
                         }
-                        queuedBPM = (int)chartNote.Item2.value;
+                        else
+                            queuedBPM = (int)chartNote.Item2.value;
                         break;
                     case NoteType.Touch:
                         curNote = noteTouch.Instance<Note>();
@@ -234,9 +255,41 @@ public class ChartReader : Node
         }
 
         // Measure Lines //
-        for (int curMeasure = 0; curMeasure < chart.notes.Count; ++curMeasure)
+        // TODO: adapt to tempo changes in the middle of a measure
+        int tempoIdx = 1;
+        int bpmIdx = 1;
+        for (int curMeasure = 0; curMeasure < chart.notes.Count; curMeasure++)
         {
+            while (curMeasure >= bpmChangeMeasures[bpmIdx] && bpmIdx < bpmChangeMeasures.Count - 1)
+                ++bpmIdx;
 
+            // last tempo change / only one tempo change exists
+            if (tempoIdx == tempoChangeMeasures.Count - 1)
+            {
+                float pos = tempoChangePositions[tempoIdx] + Misc.NotePosition(curMeasure - tempoChangeMeasures[tempoIdx], 0, tempo.Last(), beatsPerMeasure[bpmIdx]);
+                var ml = measureLine.Instance<Spatial>();
+                measureScroll.AddChild(ml);
+                ml.Translation = new Vector3(0, 0, pos);
+            }
+            else if (tempoIdx < tempoChangeMeasures.Count)
+            {
+                // TODO: adapt to key signature changes
+                while (curMeasure == tempoChangeMeasures[tempoIdx])
+                {
+                    int measuresToCreate = tempoChangeMeasures[tempoIdx] - tempoChangeMeasures[tempoIdx - 1];
+                    for (int i = 0; i < measuresToCreate; ++i)
+                    {
+                        int measureNum = tempoChangeMeasures[tempoIdx - 1] + i;
+                        // GD.Print($"{tempoIdx} / {tempoChangePositions.Count}, {tempo.Count}");
+                        float pos = Misc.InterpFloat(tempoChangePositions[tempoIdx - 1], tempoChangePositions[tempoIdx], (float)i/measuresToCreate);
+
+                        var ml = measureLine.Instance<Spatial>();
+                        measureScroll.AddChild(ml);
+                        ml.Translation = new Vector3(0, 0, pos);
+                    }
+                    tempoIdx = Mathf.Clamp(tempoIdx + 1, 0, tempo.Count - 1);
+                }
+            }
         }
 
         doneLoading = true;

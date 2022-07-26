@@ -27,8 +27,7 @@ public class FontResizeToLabel : Label
             // FIXME: when Label JUST spawned, GetStringSize appears to hang game for some time. used await at beginning to avoid.
             while (font.GetStringSize(this.Text).y > this.RectSize.y || font.GetStringSize(this.Text).x > this.RectSize.x)
             {
-                font.Size -= 1;
-
+                font.Size -= 2;
                 // swStep.Stop();
                 // GD.Print($"{font.Size}: {font.GetStringSize("0").y} > {this.RectSize.y} || {font.GetStringSize(this.Text).x} > {this.RectSize.x}");
                 // GD.Print($"Total: {swTotal.ElapsedMilliseconds}ms");

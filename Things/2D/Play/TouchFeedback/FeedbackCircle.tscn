@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Shaders/spritemask.gdshader" type="Shader" id=1]
-[ext_resource path="res://Things/2D/TouchFeedback/FeedbackSegment.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Things/2D/Play/TouchFeedback/FeedbackSegment.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Textures/mask.png" type="Texture" id=3]
 
 [sub_resource type="ShaderMaterial" id=9]

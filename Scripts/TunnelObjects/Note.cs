@@ -16,8 +16,12 @@ public class Note : Spatial
     
     private CSGPolygon notePoly;
     
-    public bool hasBeenInteracted { get; private set; } = false;
+    public bool hasBeenProcessed = false;
     public Accuracy curAccuracy = Accuracy.Miss;
+
+    public bool isEarly = false;
+    public bool noteSwiped = false;
+
     public int pos = 0;
     public int size = 1;
     public int noteIndex = -1;
@@ -52,11 +56,12 @@ public class Note : Spatial
         }
     }
 
-    public void Miss()
+    public void Miss(bool isEarly = false)
     {
-        if (!hasBeenInteracted)
+        if (!hasBeenProcessed)
         {
-            hasBeenInteracted = true;
+            this.isEarly = isEarly;
+            hasBeenProcessed = true;
 
             // HoldStart
             if (type == NoteType.HoldStart && holdSegment != null)
@@ -76,12 +81,14 @@ public class Note : Spatial
         }
     }
 
-    public void Hit(Accuracy acc)
+    public void Hit(Accuracy acc, bool isEarly = false)
     {
-        if (!hasBeenInteracted)
+        if (!hasBeenProcessed)
         {
-            hasBeenInteracted = true;
-            if (acc == Accuracy.Miss) { Miss(); return; }
+            if (acc == Accuracy.Miss) { Miss(isEarly); return; }
+
+            this.isEarly = isEarly;
+            hasBeenProcessed = true;
             
             curAccuracy = acc;
             FullDisable();

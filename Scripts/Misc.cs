@@ -16,11 +16,27 @@ public class Misc : Node
     public static float noteDrawDistance = 10;
 
     public static string currentMer = "";
+    public static Chart currentChart;
     public static AudioStreamMP3 currentAudio;
     public static AudioStreamPlayer songPlayer;
     public static bool paused = false;
     public static List<Song> songList;
-    public static string debugStr = ""; // MAX 5 LINES CAN BE SHOWN AT A TIME
+    public static string debugStr { get; private set; } = "";
+
+    public static void DebugPrintln(params object[] list)
+    {
+        string result = String.Empty;
+        foreach (var obj in list)
+        {
+            result += obj.ToString();
+        }
+        debugStr += $"{result}\n";
+        GD.Print(result);
+    }
+    public static void DebugClear()
+    {
+        debugStr = "";
+    }
 
     public static float Seg2Rad(float seg)
     {
@@ -149,12 +165,12 @@ public class Misc : Node
 
 		if (errChart != Error.Ok)
 		{
-			GD.PrintErr($"Trouble loading {chartPath}!\n{errChart}");
+			DebugPrintln($"Trouble loading {chartPath}!\n{errChart}");
 			return;
 		}
 		if (errAudio != Error.Ok)
 		{
-			GD.PrintErr($"Trouble loading {audioPath}!\n{errAudio}");
+			DebugPrintln($"Trouble loading {audioPath}!\n{errAudio}");
 			return;
 		}
 		Misc.currentMer = chart.GetAsText();

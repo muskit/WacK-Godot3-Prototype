@@ -20,6 +20,7 @@ DebugOverlay="*res://Scenes/DebugOverlay.tscn"
 GEvents="*res://Scripts/GEvents.cs"
 Misc="*res://Scripts/Misc.cs"
 OrientationDetect="*res://Scripts/OrientationDetect.cs"
+ScoreKeeper="*res://Scripts/Play/ScoreKeeper.cs"
 
 [debug]
 

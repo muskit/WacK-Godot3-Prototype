@@ -32,7 +32,7 @@ public class Playfield : Spatial
 
     private Spatial scroll;
     private Node background;
-    private HoldNotesTexture holdTexture;
+    private TextureCone holdTexture;
 
     private AudioStreamPlayer hitTickPlayer;
     private AudioStreamPlayer missTickPlayer;
@@ -70,7 +70,7 @@ public class Playfield : Spatial
         scroll = GetNode<Spatial>(npScroll);
         hitTickPlayer = GetNode<AudioStreamPlayer>(npTickPlayer);
         missTickPlayer = GetNode<AudioStreamPlayer>(npMissTickPlayer);
-        holdTexture = GetNode<HoldNotesTexture>(npHoldTexture);
+        holdTexture = GetNode<TextureCone>(npHoldTexture);
         chartReader = GetNode<ChartReader>(npChartReader);
 
         background = FindNode("Background");
@@ -130,40 +130,62 @@ public class Playfield : Spatial
                 {
                     if (!n.isEvent)
                     {
-                        if (n.type == NoteType.Untimed) continue;
-
-                        if (Misc.NoteIsInSegmentRegion(n, segment) && !n.hasBeenInteracted)
+                        if (Misc.NoteIsInSegmentRegion(n, segment) && !n.hasBeenProcessed)
                         {
                             // early miss
-                            if (-TIMING_WINDOW_EARLYMISS <= curHitDelta && curHitDelta < -TIMING_WINDOW_GOOD && justTouched)
-                            {
-                                n.Miss();
-                                touchInteracted = true;
-                            }
-                            // all encompassing hittable
-                            else if (justTouched && -TIMING_WINDOW_GOOD <= curHitDelta && curHitDelta <= TIMING_WINDOW_GOOD)
-                            {
-                                // TODO: late windows should handle Untimed accordingly
-                                touchInteracted = true;
+                            // if (-TIMING_WINDOW_EARLYMISS <= curHitDelta && curHitDelta < -TIMING_WINDOW_GOOD && justTouched)
+                            // {
+                            //     // ignore untimed and swipes; can't be early
+                            //     if (n.type == NoteType.Untimed) continue;
 
-                                // early good
-                                if (-TIMING_WINDOW_GOOD <= curHitDelta && curHitDelta < -TIMING_WINDOW_GREAT)
-                                    n.Hit(Accuracy.Good);
-                                // early great
-                                if (-TIMING_WINDOW_GREAT <= curHitDelta && curHitDelta < -TIMING_WINDOW_MARVELOUS)
-                                    n.Hit(Accuracy.Great);
-                                // marvelous
-                                if (-TIMING_WINDOW_MARVELOUS <= curHitDelta && curHitDelta <= TIMING_WINDOW_MARVELOUS)
-                                    n.Hit(Accuracy.Marvelous);
-                                // late great
-                                if (TIMING_WINDOW_MARVELOUS < curHitDelta && curHitDelta < TIMING_WINDOW_GREAT)
-                                    n.Hit(Accuracy.Great);
-                                // late good
-                                if (TIMING_WINDOW_GREAT <= curHitDelta && curHitDelta <= TIMING_WINDOW_GOOD)
-                                    n.Hit(Accuracy.Good);
+                            //     n.Miss(true);
+                            //     touchInteracted = true;
+                            // }
+                            // all encompassing hittable
+                            if (-TIMING_WINDOW_GOOD <= curHitDelta && curHitDelta <= TIMING_WINDOW_GOOD)
+                            {
+                                // swipe notes
+                                if (n.type == NoteType.SwipeCCW || n.type == NoteType.SwipeCW ||
+                                    n.type == NoteType.SwipeIn || n.type == NoteType.SwipeOut)
+                                {
+                                    // earlies
+                                    if (-TIMING_WINDOW_GOOD <= curHitDelta && curHitDelta <= TIMING_WINDOW_MARVELOUS)
+                                    {
+                                        n.noteSwiped = true;
+                                        touchInteracted = true;
+                                        continue;
+                                    }
+                                    // lates
+                                    justTouched = true;
+                                }
+                                if (justTouched)
+                                {
+                                    if (n.type == NoteType.Untimed) continue;
+                                    touchInteracted = true;
+
+                                    // early good
+                                    if (-TIMING_WINDOW_GOOD <= curHitDelta && curHitDelta < -TIMING_WINDOW_GREAT)
+                                    {
+                                        n.Hit(Accuracy.Good, true);
+                                    }
+                                    // early great
+                                    if (-TIMING_WINDOW_GREAT <= curHitDelta && curHitDelta < -TIMING_WINDOW_MARVELOUS)
+                                    {
+                                        n.Hit(Accuracy.Great, true);
+                                    }
+
+                                    // marvelous
+                                    if (-TIMING_WINDOW_MARVELOUS <= curHitDelta && curHitDelta <= TIMING_WINDOW_MARVELOUS)
+                                        n.Hit(Accuracy.Marvelous);
+
+                                    // late great
+                                    if (TIMING_WINDOW_MARVELOUS < curHitDelta && curHitDelta < TIMING_WINDOW_GREAT)
+                                        n.Hit(Accuracy.Great);
+                                    // late good
+                                    if (TIMING_WINDOW_GREAT <= curHitDelta && curHitDelta <= TIMING_WINDOW_GOOD)
+                                        n.Hit(Accuracy.Good);
+                                }
                             }
-                            if (touchInteracted)
-                                Misc.debugStr = n.curAccuracy.ToString();
                         }
                     }
                 }
@@ -178,13 +200,11 @@ public class Playfield : Spatial
     private void OnNoteHit(Note note)
     {
         hitTickPlayer.Play();
-        // Misc.debugStr = note.curAccuracy.ToString();
     }
 
     private void OnNoteMiss(Note note)
     {
-        missTickPlayer.Play();
-        // Misc.debugStr = "Miss";
+        // missTickPlayer.Play();
     }
 
     private void ProcessScroll(float delta)
@@ -203,7 +223,7 @@ public class Playfield : Spatial
             // force jerky resync if needed
             if (Mathf.Abs(posTime - audioTime) > 0.05f)
             {
-                GD.Print($"Force resync #{++resyncCount}: {syncRatio}");
+                Misc.DebugPrintln($"Force resync #{++resyncCount}: {syncRatio}");
                 Resync();
             }
         }
@@ -228,6 +248,10 @@ public class Playfield : Spatial
                                 n.Hit(Accuracy.Marvelous);
                         }
                     }
+                    else if (n.noteSwiped && !n.hasBeenProcessed) // swipe note
+                    {
+                        n.Hit(Accuracy.Marvelous);
+                    }
                     else if (n.type == NoteType.HoldEnd) // TODO: associate HoldEnd with HoldStart (the whole hold)
                     {
                         // n.Hit(Accuracy.Marvelous);
@@ -249,7 +273,7 @@ public class Playfield : Spatial
             float curBeatTime = beatTimes[nextHittableBeatIndex];
             foreach (Note n in chartReader.totalNotes[curBeatTime])
             {
-                if (!n.isEvent && n.curAccuracy == Accuracy.Miss && n.type != NoteType.HoldEnd)
+                if (!n.isEvent && !n.hasBeenProcessed && n.curAccuracy == Accuracy.Miss && n.type != NoteType.HoldEnd)
                 {
                     n.Miss();
                 }

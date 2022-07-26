@@ -45,7 +45,6 @@ public class RhythmInput : Control
         }
     }
 
-    // for Touch and HoldStart notes
     private void JustTouched(InputEventScreenTouch touchEv)
     {
         var touchedSeg = Misc.TouchPosToSegmentInt(touchEv.Position, RectSize);
@@ -59,10 +58,11 @@ public class RhythmInput : Control
     {
         var touchedSeg = Misc.TouchPosToSegmentInt(dragEv.Position, RectSize);
 
-        if (touchedSegments[dragEv.Index] != touchedSeg)
-        {
-            feedbackCircle[touchedSeg].Fire(true);
-        }
+        // TODO: allow slide-cheesing with threshold
+        // if (touchedSegments[dragEv.Index] != touchedSeg)
+        // {
+        //     feedbackCircle[touchedSeg].Fire(true);
+        // }
 
         touches[dragEv.Index] = dragEv.Position;
         touchedSegments[dragEv.Index] = touchedSeg;

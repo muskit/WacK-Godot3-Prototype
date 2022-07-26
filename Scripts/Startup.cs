@@ -15,9 +15,9 @@ public class Startup : Node
     private Directory songDir;
     public override void _Ready()
 	{
-		GD.Print($"6 in 4+1: {Misc.IsInSegmentRegion(4, 5, 6)}");
-		GD.Print($"16 in 10+10: {Misc.IsInSegmentRegion(10, 20, 16)}");
-		GD.Print($"39 in 20+50: {Misc.IsInSegmentRegion(20, 70, 39)}");
+		Misc.DebugPrintln($"6 in 4+1: {Misc.IsInSegmentRegion(4, 5, 6)}");
+		Misc.DebugPrintln($"16 in 10+10: {Misc.IsInSegmentRegion(10, 20, 16)}");
+		Misc.DebugPrintln($"39 in 20+50: {Misc.IsInSegmentRegion(20, 70, 39)}");
         // TODO: enable loading screen
 
 		songDir = new Directory();
@@ -26,7 +26,7 @@ public class Startup : Node
 			songDir.MakeDir("user://songs");
 			if (songDir.Open("user://songs") != Error.Ok)
 			{
-				GD.PrintErr("Failed to open songs folder!");
+				Misc.DebugPrintln("Failed to open songs folder!");
 				return;
 			}
 		}
@@ -67,10 +67,10 @@ public class Startup : Node
 			}
 			curObj = songDir.GetNext();
 		}
-        GD.Print("Scanned songs:");
+        Misc.DebugPrintln("Scanned songs:");
         foreach (var song in Misc.songList)
         {
-            GD.Print(song);
+            Misc.DebugPrintln(song);
         }
 	}
 }
