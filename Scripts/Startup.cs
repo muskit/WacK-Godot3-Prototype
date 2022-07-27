@@ -10,67 +10,67 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-public class Startup : Node
+namespace WacK
 {
-    private Directory songDir;
-    public override void _Ready()
+	public class Startup : Node
 	{
-		Misc.DebugPrintln($"6 in 4+1: {Misc.IsInSegmentRegion(4, 5, 6)}");
-		Misc.DebugPrintln($"16 in 10+10: {Misc.IsInSegmentRegion(10, 20, 16)}");
-		Misc.DebugPrintln($"39 in 20+50: {Misc.IsInSegmentRegion(20, 70, 39)}");
-        // TODO: enable loading screen
-
-		songDir = new Directory();
-		if (songDir.Open("user://songs") != Error.Ok)
+		private Directory songDir;
+		public override void _Ready()
 		{
-			songDir.MakeDir("user://songs");
+			// TODO: enable loading screen
+
+			songDir = new Directory();
 			if (songDir.Open("user://songs") != Error.Ok)
 			{
-				Misc.DebugPrintln("Failed to open songs folder!");
-				return;
-			}
-		}
-		
-        // create note
-		var note = "Place song folders here. Nested folders supported for organization.";
-		File f = new File();
-		f.Open(songDir.GetCurrentDir() + "/note.txt", File.ModeFlags.Write);
-		f.StoreString(note);
-		f.Close();
-
-		ScanSongs();
-
-        GetTree().ChangeScene("res://Scenes/Menu.tscn");
-	}
-
-	private void ScanSongs()
-	{
-        Misc.songList = new List<Song>();
-
-		songDir.ListDirBegin(true);
-
-		var curObj = songDir.GetNext();
-		while (curObj != String.Empty)
-		{
-			if (songDir.DirExists(curObj))
-			{
-                var iniPath = $"{curObj}/song.ini";
-				if (songDir.FileExists(iniPath))
-                {
-                    Misc.songList.Add(new Song($"{songDir.GetCurrentDir()}/{curObj}"));
-                }
-				else if (songDir.FileExists($"{curObj}/*.mer"))
+				songDir.MakeDir("user://songs");
+				if (songDir.Open("user://songs") != Error.Ok)
 				{
-					GD.Print("Found song folder without .ini");
+					Misc.DebugPrintln("Failed to open songs folder!");
+					return;
 				}
-
 			}
-			curObj = songDir.GetNext();
+			
+			// create note
+			var note = "Place song folders here. Nested folders supported for organization.";
+			File f = new File();
+			f.Open(songDir.GetCurrentDir() + "/note.txt", File.ModeFlags.Write);
+			f.StoreString(note);
+			f.Close();
+
+			ScanSongs();
+
+			GetTree().ChangeScene("res://Scenes/Menu.tscn");
 		}
-        Misc.DebugPrintln("Scanned songs:");
-        foreach (var song in Misc.songList)
-        {
-            Misc.DebugPrintln(song);
-        }
+
+		private void ScanSongs()
+		{
+			Misc.songList = new List<Song>();
+
+			songDir.ListDirBegin(true);
+
+			var curObj = songDir.GetNext();
+			while (curObj != String.Empty)
+			{
+				if (songDir.DirExists(curObj))
+				{
+					var iniPath = $"{curObj}/song.ini";
+					if (songDir.FileExists(iniPath))
+					{
+						Misc.songList.Add(new Song($"{songDir.GetCurrentDir()}/{curObj}"));
+					}
+					else if (songDir.FileExists($"{curObj}/*.mer"))
+					{
+						GD.Print("Found song folder without .ini");
+					}
+
+				}
+				curObj = songDir.GetNext();
+			}
+			// Misc.DebugPrintln("Scanned songs:");
+			// foreach (var song in Misc.songList)
+			// {
+			//     Misc.DebugPrintln(song);
+			// }
+		}
 	}
 }

@@ -16,11 +16,12 @@ config/icon="res://icon.png"
 
 [autoload]
 
-DebugOverlay="*res://Scenes/DebugOverlay.tscn"
-GEvents="*res://Scripts/GEvents.cs"
+UserSettings="*res://Scripts/UserSettings.cs"
 Misc="*res://Scripts/Misc.cs"
+GEvents="*res://Scripts/GEvents.cs"
 OrientationDetect="*res://Scripts/OrientationDetect.cs"
-ScoreKeeper="*res://Scripts/Play/ScoreKeeper.cs"
+DebugOverlay="*res://Scenes/DebugOverlay.tscn"
+ScoreKeeper="*res://Scripts/Scenes/Play/ScoreKeeper.cs"
 
 [debug]
 

@@ -1,8 +1,9 @@
 [gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Fonts/Futura/Futura Book font.ttf" type="DynamicFontData" id=1]
-[ext_resource path="res://Scripts/2D/AccuracyDisplay.cs" type="Script" id=2]
+[ext_resource path="res://Scripts/Scenes/Play/2D/AccuracyDisplay.cs" type="Script" id=2]
 [ext_resource path="res://Fonts/Futura/futur.ttf" type="DynamicFontData" id=3]
+
 
 [sub_resource type="DynamicFont" id=1]
 size = 32

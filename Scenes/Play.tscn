@@ -3,19 +3,19 @@
 [ext_resource path="res://Things/2D/Play/TouchFeedback/FeedbackCircle.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Materials/CircleMask.tres" type="Material" id=2]
 [ext_resource path="res://Things/3D/TunnelObjects/Background/Background.tscn" type="PackedScene" id=3]
-[ext_resource path="res://Scripts/Play/Playfield.cs" type="Script" id=4]
-[ext_resource path="res://Scripts/Chart/ChartReader.cs" type="Script" id=5]
-[ext_resource path="res://Scripts/Play/Play.cs" type="Script" id=6]
+[ext_resource path="res://Scripts/Scenes/Play/Playfield.cs" type="Script" id=4]
+[ext_resource path="res://Scripts/Scenes/Play/ChartReader.cs" type="Script" id=5]
+[ext_resource path="res://Scripts/Scenes/Play/Play.cs" type="Script" id=6]
 [ext_resource path="res://Fonts/Futura/Futura Medium Italic font.ttf" type="DynamicFontData" id=7]
 [ext_resource path="res://Things/2D/Play/Accuracy Display.tscn" type="PackedScene" id=8]
 [ext_resource path="res://Sounds/tick.wav" type="AudioStream" id=9]
-[ext_resource path="res://Scenes/Pause.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Scenes/Menus/Pause.tscn" type="PackedScene" id=10]
 [ext_resource path="res://Textures/background-placeholder.jpg" type="Texture" id=11]
 [ext_resource path="res://Things/3D/TunnelObjects/MeasureLine.tscn" type="PackedScene" id=12]
-[ext_resource path="res://Scripts/Play/RhythmInput.cs" type="Script" id=13]
-[ext_resource path="res://Scenes/TextureCone.tscn" type="PackedScene" id=14]
+[ext_resource path="res://Scripts/Scenes/Play/RhythmInput.cs" type="Script" id=13]
+[ext_resource path="res://Things/TextureCone.tscn" type="PackedScene" id=14]
 [ext_resource path="res://Things/3D/TunnelObjects/HoldsCone.tscn" type="PackedScene" id=15]
-[ext_resource path="res://Scripts/2D/ScoreInfo.cs" type="Script" id=16]
+[ext_resource path="res://Scripts/Scenes/Play/2D/ScoreInfo.cs" type="Script" id=16]
 [ext_resource path="res://Fonts/Futura/futura medium bt.ttf" type="DynamicFontData" id=17]
 
 [sub_resource type="ViewportTexture" id=10]
@@ -337,7 +337,7 @@ mix_target = 2
 bus = "NoteTick"
 
 [node name="HoldsTextureViewport" type="Viewport" parent="3D"]
-size = Vector2( 600, 600 )
+size = Vector2( 1200, 600 )
 transparent_bg = true
 handle_input_locally = false
 hdr = false

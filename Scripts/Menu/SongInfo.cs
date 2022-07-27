@@ -1,66 +1,69 @@
 using Godot;
 using System;
 
-public class SongInfo : Panel
+namespace WacK
 {
-    [Export]
-    private NodePath npSongTitle;
-    [Export]
-    private NodePath npSongArtist;
-    [Export]
-    private NodePath npTempo;
-    [Export]
-    private NodePath npCharter;
-    [Export]
-    private NodePath npDifficulties;
-    [Export]
-    private NodePath npSongList;
-
-    private Label songTitle;
-    private Label songArtist;
-    private Label tempo;
-    private Label charter;
-    private Node difficulties;
-
-    private PackedScene difficulty = GD.Load<PackedScene>("res://Things/2D/Menu/Difficulty.tscn");
-
-    public override void _Ready()
+    public class SongInfo : Panel
     {
-        songTitle = GetNode<Label>(npSongTitle);
-        songArtist = GetNode<Label>(npSongArtist);
-        tempo = GetNode<Label>(npTempo);
-        charter = GetNode<Label>(npCharter);
-        difficulties = GetNode(npDifficulties);
+        [Export]
+        private NodePath npSongTitle;
+        [Export]
+        private NodePath npSongArtist;
+        [Export]
+        private NodePath npTempo;
+        [Export]
+        private NodePath npCharter;
+        [Export]
+        private NodePath npDifficulties;
+        [Export]
+        private NodePath npSongList;
 
-        GetNode(npSongList).Connect("item_selected", this, nameof(OnSongSelected));
-    }
+        private Label songTitle;
+        private Label songArtist;
+        private Label tempo;
+        private Label charter;
+        private Node difficulties;
 
-    private void OnSongSelected(int idx)
-    {
-        SetSong(Misc.songList[idx]);
-    }
+        private PackedScene difficulty = GD.Load<PackedScene>("res://Things/2D/Menu/Difficulty.tscn");
 
-    public void SetSong(Song song)
-    {
-        songTitle.Text = song.name;
-        songArtist.Text = song.artist;
-        tempo.Text = song.tempo.ToString();
-
-        foreach (Node elem in difficulties.GetChildren())
+        public override void _Ready()
         {
-            elem.QueueFree();
+            songTitle = GetNode<Label>(npSongTitle);
+            songArtist = GetNode<Label>(npSongArtist);
+            tempo = GetNode<Label>(npTempo);
+            charter = GetNode<Label>(npCharter);
+            difficulties = GetNode(npDifficulties);
+
+            GetNode(npSongList).Connect("item_selected", this, nameof(OnSongSelected));
         }
-        for(int i = 0; i < song.difficulty.Length; ++i)
+
+        private void OnSongSelected(int idx)
         {
-            if (song.difficulty[i] != -1)
+            SetSong(Misc.songList[idx]);
+        }
+
+        public void SetSong(Song song)
+        {
+            songTitle.Text = song.name;
+            songArtist.Text = song.artist;
+            tempo.Text = song.tempo.ToString();
+
+            foreach (Node elem in difficulties.GetChildren())
             {
-                var diff = difficulty.Instance<Difficulty>();
-                difficulties.AddChild(diff);
-                diff.Set(song.difficulty[i], (DifficultyLevel)i);
+                elem.QueueFree();
             }
-            // var diff = difficulty.Instance<Difficulty>();
-            // difficulties.AddChild(diff);
-            // diff.Set(song.difficulty[0], (DifficultyLevel)0);
+            for(int i = 0; i < song.difficulty.Length; ++i)
+            {
+                if (song.difficulty[i] != -1)
+                {
+                    var diff = difficulty.Instance<Difficulty>();
+                    difficulties.AddChild(diff);
+                    diff.Set(song.difficulty[i], (DifficultyLevel)i);
+                }
+                // var diff = difficulty.Instance<Difficulty>();
+                // difficulties.AddChild(diff);
+                // diff.Set(song.difficulty[0], (DifficultyLevel)0);
+            }
         }
     }
 }

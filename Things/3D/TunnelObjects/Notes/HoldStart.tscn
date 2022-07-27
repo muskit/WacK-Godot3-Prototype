@@ -8,6 +8,7 @@ albedo_color = Color( 0.623529, 0.572549, 0, 1 )
 
 [node name="HoldStart" type="Spatial"]
 script = ExtResource( 1 )
+requireJustTouched = true
 type = 1
 
 [node name="Note" type="CSGPolygon" parent="."]

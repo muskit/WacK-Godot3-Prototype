@@ -1,6 +1,6 @@
 /**
  * OrientationDetect.cs
- * Emit orientation-related signal when window is resized.
+ * Emits signal when window is resized.
  *
  * by muskit
  * July 9, 2022

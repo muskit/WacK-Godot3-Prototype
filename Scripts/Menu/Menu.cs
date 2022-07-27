@@ -1,38 +1,41 @@
 using Godot;
 using System;
 
-public class Menu : CanvasLayer
+namespace WacK
 {
-	[Export]
-	private NodePath npListSongs;
-	[Export]
-	private NodePath npPlayButton;
-
-	private ItemList listSongs;
-	private Button playButton;
-
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
+	public class Menu : CanvasLayer
 	{
-		listSongs = GetNode<ItemList>(npListSongs);
-		playButton = GetNode<Button>(npPlayButton);
+		[Export]
+		private NodePath npListSongs;
+		[Export]
+		private NodePath npPlayButton;
 
-		playButton.Connect("pressed", this, nameof(OnPlayPressed));
+		private ItemList listSongs;
+		private Button playButton;
 
-		foreach (var song in Misc.songList)
+		// Called when the node enters the scene tree for the first time.
+		public override void _Ready()
 		{
-			listSongs.AddItem($"{song.artist} - {song.name}");
+			listSongs = GetNode<ItemList>(npListSongs);
+			playButton = GetNode<Button>(npPlayButton);
+
+			playButton.Connect("pressed", this, nameof(OnPlayPressed));
+
+			foreach (var song in Misc.songList)
+			{
+				listSongs.AddItem($"{song.artist} - {song.name}");
+			}
 		}
-	}
 
-	private void OnPlayPressed()
-	{
-		var misc = GetNode<Misc>("/root/Misc");
-		misc.LoadSong(Misc.songList[listSongs.GetSelectedItems()[0]].directory.GetCurrentDir(), 2);
-	}
+		private void OnPlayPressed()
+		{
+			var misc = GetNode<Misc>("/root/Misc");
+			misc.LoadSong(Misc.songList[listSongs.GetSelectedItems()[0]].directory.GetCurrentDir(), 2);
+		}
 
-	public override void _Process(float delta)
-	{
-		playButton.Disabled = !listSongs.IsAnythingSelected();
+		public override void _Process(float delta)
+		{
+			playButton.Disabled = !listSongs.IsAnythingSelected();
+		}
 	}
 }
