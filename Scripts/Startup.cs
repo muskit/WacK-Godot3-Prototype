@@ -39,7 +39,7 @@ namespace WacK
 
 			ScanSongs();
 
-			GetTree().ChangeScene("res://Scenes/Menu.tscn");
+			GetTree().ChangeScene("res://Scenes/Menus/SongSelection.tscn");
 		}
 
 		private void ScanSongs()

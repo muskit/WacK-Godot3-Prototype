@@ -15,8 +15,6 @@ namespace WacK
         private NodePath npCharter;
         [Export]
         private NodePath npDifficulties;
-        [Export]
-        private NodePath npSongList;
 
         private Label songTitle;
         private Label songArtist;
@@ -24,7 +22,7 @@ namespace WacK
         private Label charter;
         private Node difficulties;
 
-        private PackedScene difficulty = GD.Load<PackedScene>("res://Things/2D/Menu/Difficulty.tscn");
+        private PackedScene difficulty = GD.Load<PackedScene>("res://Things/2D/Menu/SongSelection/Difficulty.tscn");
 
         public override void _Ready()
         {
@@ -34,7 +32,7 @@ namespace WacK
             charter = GetNode<Label>(npCharter);
             difficulties = GetNode(npDifficulties);
 
-            GetNode(npSongList).Connect("item_selected", this, nameof(OnSongSelected));
+            SetSong(Misc.songList[3]);
         }
 
         private void OnSongSelected(int idx)

@@ -128,5 +128,10 @@ namespace WacK
         {
             return pos / UserSettings.playSpeedMultiplier / UserSettings.SCROLL_MULT;
         }
+
+        public static string DiffNumToString(float diffPoint)
+        {
+            return Mathf.FloorToInt(diffPoint).ToString() + (diffPoint > Mathf.Floor(diffPoint) ? "+" : "");
+        }
     }
 }

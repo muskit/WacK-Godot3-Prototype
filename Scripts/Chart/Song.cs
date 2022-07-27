@@ -16,6 +16,8 @@ public class Song
     public string artist;
     public string category;
     public float tempo;
+    public ImageTexture jacketTexture;
+
     // difficulties: -1 = chart doesn't exist; 0 = no diff info avail.
     public float[] difficulty = {-1, -1, -1, -1};
 
@@ -64,6 +66,26 @@ public class Song
             {
                 var iInferno = songIni.GetValue("ChartInfo", "inferno", 0);
                 difficulty[3] = iInferno is Int32 ? (Int32)iInferno : (float)iInferno;
+            }
+
+            directory.ListDirBegin();
+            var curFile = "a";
+            while (!curFile.Empty())
+            {
+                curFile = directory.GetNext();
+                if (curFile.BeginsWith("jacket"))
+                {
+                    var img = new Image();
+                    var err = img.Load($"{directory.GetCurrentDir()}/{curFile}");
+                    if (err != Error.Ok)
+                        continue;
+                    else
+                    {
+                        jacketTexture = new ImageTexture();
+                        jacketTexture.CreateFromImage(img);
+                        break;
+                    }
+                }
             }
         }
     }

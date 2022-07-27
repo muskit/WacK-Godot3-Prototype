@@ -1,30 +1,29 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://Fonts/Futura/Futura XBlk BT.ttf" type="DynamicFontData" id=1]
-[ext_resource path="res://Fonts/Futura/Futura Book font.ttf" type="DynamicFontData" id=2]
-[ext_resource path="res://Scripts/FontResizeToLabel.cs" type="Script" id=3]
-[ext_resource path="res://Scripts/Menu/Difficulty.cs" type="Script" id=4]
+[ext_resource path="res://Scripts/Menu/Difficulty.cs" type="Script" id=1]
+[ext_resource path="res://Fonts/Futura/Futura XBlk BT.ttf" type="DynamicFontData" id=3]
+[ext_resource path="res://Fonts/Futura/Futura Book font.ttf" type="DynamicFontData" id=4]
 
 [sub_resource type="DynamicFont" id=1]
-size = 96
-font_data = ExtResource( 1 )
+size = 13
+font_data = ExtResource( 3 )
 
 [sub_resource type="DynamicFont" id=2]
 resource_local_to_scene = true
-size = 260
-font_data = ExtResource( 2 )
+size = 43
+font_data = ExtResource( 4 )
 
 [node name="Difficulty" type="AspectRatioContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-script = ExtResource( 4 )
+margin_right = -924.0
+margin_bottom = -500.0
+rect_min_size = Vector2( 100, 100 )
+script = ExtResource( 1 )
 
 [node name="Control" type="Control" parent="."]
-margin_left = 212.0
-margin_right = 812.0
-margin_bottom = 600.0
+margin_right = 100.0
+margin_bottom = 100.0
 
 [node name="Color Header" type="ColorRect" parent="Control"]
 anchor_right = 1.0
@@ -45,7 +44,6 @@ valign = 1
 autowrap = true
 clip_text = true
 uppercase = true
-script = ExtResource( 3 )
 
 [node name="Color Body" type="ColorRect" parent="Control"]
 anchor_top = 0.2
@@ -61,9 +59,8 @@ anchor_bottom = 1.0
 rect_clip_content = true
 size_flags_vertical = 1
 custom_fonts/font = SubResource( 2 )
-text = "12+"
+text = "14+"
 align = 1
 valign = 1
 autowrap = true
 clip_text = true
-script = ExtResource( 3 )

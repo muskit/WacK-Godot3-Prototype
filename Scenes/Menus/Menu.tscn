@@ -57,7 +57,6 @@ npSongArtist = NodePath("MarginContainer/VBox/SongArtist")
 npTempo = NodePath("MarginContainer/VBox/OtherInfo/Tempo")
 npCharter = NodePath("MarginContainer/VBox/OtherInfo/Charter")
 npDifficulties = NodePath("MarginContainer/VBox/DifficultySelect")
-npSongList = NodePath("../SongList")
 
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VSplitContainer/HSplitContainer/SongInfo"]
 anchor_right = 1.0

@@ -1,0 +1,128 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Textures/jacket-placeholder.png" type="Texture" id=1]
+[ext_resource path="res://Scripts/Menu/SongListItem.cs" type="Script" id=2]
+[ext_resource path="res://FontPresets/SongListItem_TitleArtist.tres" type="DynamicFont" id=3]
+[ext_resource path="res://Fonts/Righteous/Righteous-Regular.ttf" type="DynamicFontData" id=4]
+
+[sub_resource type="Gradient" id=5]
+colors = PoolColorArray( 0, 0.507813, 1, 1, 0, 0, 0, 1 )
+
+[sub_resource type="GradientTexture" id=3]
+gradient = SubResource( 5 )
+width = 512
+
+[sub_resource type="DynamicFont" id=6]
+size = 24
+font_data = ExtResource( 4 )
+
+[sub_resource type="StyleBoxFlat" id=7]
+bg_color = Color( 0.117647, 0.117647, 0.117647, 1 )
+
+[node name="SongListItem" type="Control"]
+rect_min_size = Vector2( 300, 100 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource( 2 )
+npLblTitle = NodePath("MarginContainer/HBoxContainer/VBoxContainer/BottomHalf/VBoxContainer/Control/LblTitle")
+npLblArtist = NodePath("MarginContainer/HBoxContainer/VBoxContainer/BottomHalf/VBoxContainer/Control2/LblArtist")
+npLblDifficulty = NodePath("MarginContainer/HBoxContainer/VBoxContainer/TopHalf/HBoxContainer/LblDifficulty")
+npTxtrJacket = NodePath("MarginContainer/HBoxContainer/JacketArt")
+npTxtrGradient = NodePath("MarginContainer/HBoxContainer/VBoxContainer/TopHalf/GradientBG")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+margin_right = 300.0
+margin_bottom = 100.0
+custom_constants/separation = 0
+
+[node name="JacketArt" type="TextureRect" parent="MarginContainer/HBoxContainer"]
+margin_right = 100.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 100, 100 )
+texture = ExtResource( 1 )
+expand = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
+margin_left = 100.0
+margin_right = 300.0
+margin_bottom = 100.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 3.0
+custom_constants/separation = 0
+
+[node name="TopHalf" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+margin_right = 200.0
+margin_bottom = 35.0
+size_flags_vertical = 3
+
+[node name="GradientBG" type="TextureRect" parent="MarginContainer/HBoxContainer/VBoxContainer/TopHalf"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = SubResource( 3 )
+expand = true
+stretch_mode = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/TopHalf"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 10.0
+margin_right = -10.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="LblDifficulty" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/TopHalf/HBoxContainer"]
+margin_right = 33.0
+margin_bottom = 35.0
+size_flags_vertical = 3
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 6 )
+text = "12+"
+valign = 1
+
+[node name="BottomHalf" type="Panel" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+margin_top = 35.0
+margin_right = 200.0
+margin_bottom = 100.0
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.79
+custom_styles/panel = SubResource( 7 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/BottomHalf"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_vertical = 3
+
+[node name="Control" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer/BottomHalf/VBoxContainer"]
+margin_right = 200.0
+margin_bottom = 30.0
+rect_clip_content = true
+size_flags_vertical = 3
+
+[node name="LblTitle" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/BottomHalf/VBoxContainer/Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_vertical = 1
+custom_fonts/font = ExtResource( 3 )
+text = "Name"
+valign = 1
+
+[node name="Control2" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer/BottomHalf/VBoxContainer"]
+margin_top = 34.0
+margin_right = 200.0
+margin_bottom = 65.0
+rect_clip_content = true
+size_flags_vertical = 3
+
+[node name="LblArtist" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/BottomHalf/VBoxContainer/Control2"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_vertical = 1
+custom_fonts/font = ExtResource( 3 )
+text = "Artist"
+valign = 1
