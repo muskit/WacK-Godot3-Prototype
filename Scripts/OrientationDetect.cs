@@ -8,35 +8,49 @@
 
 using Godot;
 
-public class OrientationDetect : Node
+namespace WacK
 {
-    [Signal]
-    public delegate void size_changed(string orientation);
-
-    public static string curOrientation { get; private set; }
-    public static float scaleX { get; private set; }
-    public static float scaleY { get; private set; }
-
-    public static Vector2 minResolution = new Vector2(1024, 600);
-
-    public override void _Ready()
+    public enum ScreenOrientation
     {
-        GetTree().Root.Connect("size_changed",  this, nameof(OnScreenResize));
-        OnScreenResize();
+        Landscape, Portrait
     }
 
-    private void OnScreenResize()
+    public class OrientationDetect : Node
     {
-        var s = OS.WindowSize;
+        [Signal]
+        public delegate void OrientationChange(ScreenOrientation orientation);
 
-        if (s.x > s.y)
-            curOrientation = "landscape";
-        else
-            curOrientation = "portrait";
-        
-        scaleX = s.x / minResolution.x;
-        scaleY = s.y / minResolution.y;
-        
-        EmitSignal(nameof(size_changed), curOrientation);
+        public static OrientationDetect instance { get; private set; }
+        public static ScreenOrientation curOrientation { get; private set; }
+        public static float scaleX { get; private set; }
+        public static float scaleY { get; private set; }
+
+        public static Vector2 minResolution = new Vector2(1024, 600);
+
+        public OrientationDetect()
+        {
+            instance = this;
+        }
+
+        public override void _Ready()
+        {
+            GetTree().Root.Connect("size_changed",  this, nameof(OnScreenResize));
+            OnScreenResize();
+        }
+
+        private void OnScreenResize()
+        {
+            var s = OS.WindowSize;
+
+            if (s.x > s.y)
+                curOrientation = ScreenOrientation.Landscape;
+            else
+                curOrientation = ScreenOrientation.Portrait;
+            
+            scaleX = s.x / minResolution.x;
+            scaleY = s.y / minResolution.y;
+            
+            EmitSignal(nameof(OrientationChange), curOrientation);
+        }
     }
 }

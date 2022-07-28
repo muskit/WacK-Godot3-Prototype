@@ -32,6 +32,7 @@ font_data = ExtResource( 8 )
 margin_right = 180.0
 margin_bottom = 260.0
 rect_min_size = Vector2( 180, 260 )
+mouse_filter = 1
 script = ExtResource( 7 )
 npLblTitle = NodePath("VBoxContainer/TitleArtist/VBoxContainer/Control/Title")
 npLblArtist = NodePath("VBoxContainer/TitleArtist/VBoxContainer/Control2/Artist")

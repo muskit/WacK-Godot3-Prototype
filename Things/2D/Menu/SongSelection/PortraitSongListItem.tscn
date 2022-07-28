@@ -21,6 +21,7 @@ bg_color = Color( 0.117647, 0.117647, 0.117647, 1 )
 
 [node name="SongListItem" type="Control"]
 rect_min_size = Vector2( 400, 150 )
+mouse_filter = 1
 script = ExtResource( 2 )
 npLblTitle = NodePath("MarginContainer/HBoxContainer/VBoxContainer/BottomHalf/VBoxContainer/Control/LblTitle")
 npLblArtist = NodePath("MarginContainer/HBoxContainer/VBoxContainer/BottomHalf/VBoxContainer/Control2/LblArtist")

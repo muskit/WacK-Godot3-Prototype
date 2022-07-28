@@ -31,8 +31,6 @@ namespace WacK
             tempo = GetNode<Label>(npTempo);
             charter = GetNode<Label>(npCharter);
             difficulties = GetNode(npDifficulties);
-
-            SetSong(Misc.songList[3]);
         }
 
         private void OnSongSelected(int idx)
