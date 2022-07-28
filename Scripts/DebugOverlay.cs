@@ -26,7 +26,7 @@ namespace WacK
         public override void _Process(float delta)
         {
             fpsText.Text = $"{Engine.GetFramesPerSecond().ToString()} FPS";
-            orientationText.Text = $"{OrientationDetect.curOrientation}\n{OS.WindowSize}";
+            orientationText.Text = $"{OrientationDetect.curOrientation} ({OS.ScreenOrientation})\n{OS.WindowSize}";
             debugText.Text = Misc.debugStr;
         }
     }

@@ -3,24 +3,27 @@ using System;
 
 namespace WacK
 {
-    public class SongListItem : Control
+    public class LandscapeSongListItem : Control
     {
         [Export]
         private NodePath npLblTitle;
         [Export]
         private NodePath npLblArtist;
         [Export]
+        private NodePath npLblLevel;
+        [Export]
         private NodePath npLblDifficulty;
         [Export]
         private NodePath npTxtrJacket;
         [Export]
-        private NodePath npTxtrGradient;
+        private NodePath npDiffColor;
 
         private Label lblTitle;
         private Label lblArtist;
-        private Label lblDiffNum;
+        private Label lblLevel;
+        private Label lblDifficulty;
         private TextureRect txtrJacket;
-        private TextureRect txtrGradient;
+        private ColorRect diffColor;
 
         public Song song { get; private set; } = null;
         public DifficultyLevel curDiff { get; private set; }
@@ -32,9 +35,12 @@ namespace WacK
         {
             lblTitle = GetNode<Label>(npLblTitle);
             lblArtist = GetNode<Label>(npLblArtist);
-            lblDiffNum = GetNode<Label>(npLblDifficulty);
+            lblLevel = GetNode<Label>(npLblLevel);
+            lblDifficulty = GetNode<Label>(npLblDifficulty);
             txtrJacket = GetNode<TextureRect>(npTxtrJacket);
-            txtrGradient = GetNode<TextureRect>(npTxtrGradient);
+            diffColor = GetNode<ColorRect>(npDiffColor);
+
+            SongSelection.instance.Connect(nameof(SongSelection.ChangeDifficulty), this, nameof(UpdateDifficulty));
 
             isReady = true;
         }
@@ -53,26 +59,27 @@ namespace WacK
             UpdateDifficulty();
         }
 
-        public void UpdateDifficulty(DifficultyLevel? dL = null)
+        public async void UpdateDifficulty(DifficultyLevel? dL = null)
         {
+            if (!isReady)
+                await ToSignal(this, "ready");
+
             if (song == null) return;
 
-            curDiff = dL ?? SongSelection.curDifficulty;
+            curDiff = dL ?? SongSelection.currentDifficulty;
             while (song.difficulty[(int)curDiff] == -1)
             {
                 curDiff--;
             }
 
-            lblDiffNum.Text = Util.DiffNumToString(song.difficulty[(int) (curDiff)]);
+            lblLevel.Text = Util.DiffNumToString(song.difficulty[(int) (curDiff)]);
+            lblDifficulty.Text = curDiff.ToString().ToUpper();
+            diffColor.Color = Difficulty.diffColor[(int)curDiff];
+        }
 
-            // TODO: update gradient based on high score
-            Gradient g = new Gradient();
-            g.SetColor(0, Difficulty.diffColor[(int)curDiff]);
-            g.SetColor(1, new Color(0, 0, 0));
-            GradientTexture gt = new GradientTexture();
-            gt.Width = 256;
-            gt.Gradient = g;
-            txtrGradient.Texture = gt;
+        public override void _Process(float delta)
+        {
         }
     }
+    
 }
