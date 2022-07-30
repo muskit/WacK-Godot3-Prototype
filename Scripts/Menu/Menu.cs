@@ -30,7 +30,7 @@ namespace WacK
 		private void OnPlayPressed()
 		{
 			var misc = GetNode<Misc>("/root/Misc");
-			misc.LoadSong(Misc.songList[listSongs.GetSelectedItems()[0]].directory.GetCurrentDir(), 2);
+			misc.LoadSong(Misc.songList[listSongs.GetSelectedItems()[0]].directory.GetCurrentDir());
 		}
 
 		public override void _Process(float delta)

@@ -3,7 +3,7 @@ using System;
 
 namespace WacK
 {
-    public class PortraitSongListItem : Control
+    public class PortraitSongListItem : SongListItem
     {
         [Export]
         private NodePath npLblTitle;
@@ -22,7 +22,6 @@ namespace WacK
         private TextureRect txtrJacket;
         private TextureRect txtrGradient;
 
-        public Song song { get; private set; } = null;
         public DifficultyLevel curDiff { get; private set; }
 
         private bool isReady = false;
@@ -36,12 +35,12 @@ namespace WacK
             txtrJacket = GetNode<TextureRect>(npTxtrJacket);
             txtrGradient = GetNode<TextureRect>(npTxtrGradient);
 
-            SongSelection.instance.Connect(nameof(SongSelection.ChangeDifficulty), this, nameof(UpdateDifficulty));
+            SongSelectionManager.instance.Connect(nameof(SongSelectionManager.ChangeDifficulty), this, nameof(UpdateDifficulty));
 
             isReady = true;
         }
 
-        public async void SetSong(Song s)
+        public override async void SetSong(Song s)
         {
             if (!isReady)
                 await ToSignal(this, "ready");
@@ -59,7 +58,7 @@ namespace WacK
         {
             if (song == null) return;
 
-            curDiff = dL ?? SongSelection.currentDifficulty;
+            curDiff = dL ?? SongSelectionManager.currentDifficulty;
             while (song.difficulty[(int)curDiff] == -1)
             {
                 curDiff--;

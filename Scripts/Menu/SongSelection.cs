@@ -1,3 +1,11 @@
+/**
+ * SongSelection.cs
+ * The contents of song select interactables.
+ *
+ * by muskit
+ * July 27, 2022
+ **/
+
 using Godot;
 using System;
 
@@ -5,53 +13,47 @@ namespace WacK
 {
     public class SongSelection : Control
     {
-        [Signal]
-        public delegate void ChangeDifficulty(DifficultyLevel diff);
-
         [Export]
-        private NodePath npLandscapeScreen;
+        private bool isPortrait;
         [Export]
-        private NodePath npPortraitScreen;
+        private NodePath npSongScrollContainer;
+        [Export]
+        private NodePath npSongList;
 
-        private Control landscapeScreen;
-        private Control portraitScreen;
+        public SongScrollContainer songScrollContainer { get; private set; }
+        private Control songList;
 
-        public static SongSelection instance { get; private set; }
-        public static DifficultyLevel currentDifficulty = DifficultyLevel.Expert;
+        public static DifficultyLevel curDifficulty = DifficultyLevel.Hard;
 
-
-        public SongSelection()
-        {
-            instance = this;
-        }
+        private static PackedScene landscapeSongItem = GD.Load<PackedScene>("res://Things/2D/Menu/SongSelection/LandscapeSongListItem.tscn");
+        private static PackedScene portraitSongItem = GD.Load<PackedScene>("res://Things/2D/Menu/SongSelection/PortraitSongListItem.tscn");
 
         // Called when the node enters the scene tree for the first time.
         public override void _Ready()
         {
-            landscapeScreen = GetNode<Control>(npLandscapeScreen);
-            portraitScreen = GetNode<Control>(npPortraitScreen);
-            OrientationDetect.instance.Connect(nameof(OrientationDetect.OrientationChange), this, nameof(OnOrientationChange));
+            songScrollContainer = GetNode<SongScrollContainer>(npSongScrollContainer);
+            songList = GetNode<Control>(npSongList);
+            ResetList();
         }
 
-        private void OnOrientationChange(ScreenOrientation or)
+        public void ResetList()
         {
-            switch (or)
+            foreach (Node songItem in songList.GetChildren())
             {
-                case ScreenOrientation.Landscape:
-                    landscapeScreen.Visible = true;
-                    portraitScreen.Visible = false;
-                    break;
-                case ScreenOrientation.Portrait:
-                    landscapeScreen.Visible = false;
-                    portraitScreen.Visible = true;
-                    break;
+                songItem.QueueFree();
+            }
+
+            foreach (Song song in Misc.songList)
+            {
+                var sItem = isPortrait ? portraitSongItem.Instance<SongListItem>() : landscapeSongItem.Instance<SongListItem>();
+                songList.AddChild(sItem);
+                sItem.SetSong(song);
             }
         }
 
-        // Called every frame. 'delta' is the elapsed time since the previous frame.
-        public override void _Process(float delta)
+        public void SetSong(Song song)
         {
-            
+            songScrollContainer.GoToSong(song, true);
         }
     }
 }

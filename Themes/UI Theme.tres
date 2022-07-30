@@ -1,0 +1,33 @@
+[gd_resource type="Theme" load_steps=7 format=2]
+
+[ext_resource path="res://Fonts/Futura/Futura Book font.ttf" type="DynamicFontData" id=1]
+
+[sub_resource type="DynamicFont" id=10]
+size = 20
+font_data = ExtResource( 1 )
+
+[sub_resource type="StyleBoxEmpty" id=12]
+
+[sub_resource type="StyleBoxFlat" id=6]
+content_margin_left = 10.0
+content_margin_right = 10.0
+bg_color = Color( 0, 0, 0, 0.392157 )
+
+[sub_resource type="StyleBoxFlat" id=9]
+content_margin_left = 10.0
+content_margin_right = 10.0
+bg_color = Color( 0, 0, 0, 1 )
+
+[sub_resource type="DynamicFont" id=11]
+size = 28
+font_data = ExtResource( 1 )
+
+[resource]
+Button/fonts/font = SubResource( 10 )
+Button/styles/focus = SubResource( 12 )
+Button/styles/hover = SubResource( 6 )
+Button/styles/normal = SubResource( 6 )
+Button/styles/pressed = SubResource( 9 )
+Fonts/fonts/large = SubResource( 11 )
+Fonts/fonts/normal = SubResource( 10 )
+Label/fonts/font = SubResource( 10 )

@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://Textures/jacket-placeholder.png" type="Texture" id=1]
 [ext_resource path="res://FontPresets/LandscapeSongListItem_TitleArtist.tres" type="DynamicFont" id=2]
@@ -20,6 +20,9 @@ font_data = ExtResource( 6 )
 size = 24
 font_data = ExtResource( 5 )
 
+[sub_resource type="StyleBoxFlat" id=10]
+bg_color = Color( 0, 0, 0, 1 )
+
 [sub_resource type="DynamicFont" id=2]
 font_data = ExtResource( 4 )
 fallback/0 = ExtResource( 3 )
@@ -32,77 +35,86 @@ font_data = ExtResource( 8 )
 margin_right = 180.0
 margin_bottom = 260.0
 rect_min_size = Vector2( 180, 260 )
-mouse_filter = 1
+mouse_filter = 2
 script = ExtResource( 7 )
 npLblTitle = NodePath("VBoxContainer/TitleArtist/VBoxContainer/Control/Title")
 npLblArtist = NodePath("VBoxContainer/TitleArtist/VBoxContainer/Control2/Artist")
-npLblLevel = NodePath("VBoxContainer/Jacket & Difficulty/VBoxContainer/Panel/Control/ColorRect2/LvlNum")
-npLblDifficulty = NodePath("VBoxContainer/Jacket & Difficulty/VBoxContainer/Panel/Control/ColorRect/Difficulty")
-npTxtrJacket = NodePath("VBoxContainer/Jacket & Difficulty/VBoxContainer/Jacket/MarginContainer/TextureRect")
-npDiffColor = NodePath("VBoxContainer/Jacket & Difficulty")
+npLblLevel = NodePath("VBoxContainer/JacketDifficulty/VBoxContainer/Panel/Control/ColorRect2/LvlNum")
+npLblDifficulty = NodePath("VBoxContainer/JacketDifficulty/VBoxContainer/Panel/Control/ColorRect/Difficulty")
+npTxtrJacket = NodePath("VBoxContainer/JacketDifficulty/VBoxContainer/Jacket/MarginContainer/TextureRect")
+npDiffColor = NodePath("VBoxContainer/JacketDifficulty")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
 custom_constants/separation = 0
 
-[node name="Jacket & Difficulty" type="ColorRect" parent="VBoxContainer"]
+[node name="JacketDifficulty" type="ColorRect" parent="VBoxContainer"]
 margin_right = 180.0
 margin_bottom = 182.0
+mouse_filter = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 7.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Jacket & Difficulty"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/JacketDifficulty"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
 custom_constants/separation = 0
 
-[node name="Jacket" type="Control" parent="VBoxContainer/Jacket & Difficulty/VBoxContainer"]
+[node name="Jacket" type="Control" parent="VBoxContainer/JacketDifficulty/VBoxContainer"]
 margin_right = 180.0
 margin_bottom = 148.0
+mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 4.5
 
-[node name="MarginContainer" type="AspectRatioContainer" parent="VBoxContainer/Jacket & Difficulty/VBoxContainer/Jacket"]
+[node name="MarginContainer" type="AspectRatioContainer" parent="VBoxContainer/JacketDifficulty/VBoxContainer/Jacket"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
 margin_top = 10.0
 margin_right = -10.0
 margin_bottom = -10.0
+mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="TextureRect" type="TextureRect" parent="VBoxContainer/Jacket & Difficulty/VBoxContainer/Jacket/MarginContainer"]
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/JacketDifficulty/VBoxContainer/Jacket/MarginContainer"]
 margin_left = 16.0
 margin_right = 144.0
 margin_bottom = 128.0
+mouse_filter = 2
 texture = ExtResource( 1 )
 expand = true
 
-[node name="Panel" type="Panel" parent="VBoxContainer/Jacket & Difficulty/VBoxContainer"]
+[node name="Panel" type="Panel" parent="VBoxContainer/JacketDifficulty/VBoxContainer"]
 margin_top = 148.0
 margin_right = 180.0
 margin_bottom = 182.0
+mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_styles/panel = SubResource( 8 )
 
-[node name="Control" type="HBoxContainer" parent="VBoxContainer/Jacket & Difficulty/VBoxContainer/Panel"]
+[node name="Control" type="HBoxContainer" parent="VBoxContainer/JacketDifficulty/VBoxContainer/Panel"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/separation = 0
 
-[node name="ColorRect2" type="ColorRect" parent="VBoxContainer/Jacket & Difficulty/VBoxContainer/Panel/Control"]
+[node name="ColorRect2" type="ColorRect" parent="VBoxContainer/JacketDifficulty/VBoxContainer/Panel/Control"]
 margin_right = 33.0
 margin_bottom = 34.0
+mouse_filter = 2
 size_flags_horizontal = 3
 color = Color( 0, 0, 0, 0.513726 )
 
-[node name="LvlNum" type="Label" parent="VBoxContainer/Jacket & Difficulty/VBoxContainer/Panel/Control/ColorRect2"]
+[node name="LvlNum" type="Label" parent="VBoxContainer/JacketDifficulty/VBoxContainer/Panel/Control/ColorRect2"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 size_flags_horizontal = 3
@@ -114,15 +126,16 @@ align = 1
 valign = 1
 clip_text = true
 
-[node name="ColorRect" type="ColorRect" parent="VBoxContainer/Jacket & Difficulty/VBoxContainer/Panel/Control"]
+[node name="ColorRect" type="ColorRect" parent="VBoxContainer/JacketDifficulty/VBoxContainer/Panel/Control"]
 margin_left = 33.0
 margin_right = 146.0
 margin_bottom = 34.0
+mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 3.31
 color = Color( 0, 0, 0, 0.513726 )
 
-[node name="Difficulty" type="Label" parent="VBoxContainer/Jacket & Difficulty/VBoxContainer/Panel/Control/ColorRect"]
+[node name="Difficulty" type="Label" parent="VBoxContainer/JacketDifficulty/VBoxContainer/Panel/Control/ColorRect"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 size_flags_vertical = 1
@@ -132,28 +145,33 @@ text = "NORMAL"
 align = 1
 valign = 1
 
-[node name="Panel" type="ColorRect" parent="VBoxContainer/Jacket & Difficulty/VBoxContainer/Panel/Control"]
+[node name="Panel" type="ColorRect" parent="VBoxContainer/JacketDifficulty/VBoxContainer/Panel/Control"]
 margin_left = 146.0
 margin_right = 180.0
 margin_bottom = 34.0
+mouse_filter = 2
 size_flags_horizontal = 3
 color = Color( 0, 0, 0, 0.513726 )
 
-[node name="Favorite status" type="TextureRect" parent="VBoxContainer/Jacket & Difficulty/VBoxContainer/Panel/Control/Panel"]
+[node name="Favorite status" type="TextureRect" parent="VBoxContainer/JacketDifficulty/VBoxContainer/Panel/Control/Panel"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
 size_flags_horizontal = 3
 
 [node name="TitleArtist" type="Panel" parent="VBoxContainer"]
 margin_top = 182.0
 margin_right = 180.0
 margin_bottom = 234.0
+mouse_filter = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 2.0
+custom_styles/panel = SubResource( 10 )
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/TitleArtist"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
 size_flags_vertical = 3
 custom_constants/separation = 0
 alignment = 1
@@ -162,6 +180,7 @@ alignment = 1
 margin_right = 180.0
 margin_bottom = 26.0
 rect_clip_content = true
+mouse_filter = 2
 size_flags_vertical = 3
 
 [node name="Title" type="Label" parent="VBoxContainer/TitleArtist/VBoxContainer/Control"]
@@ -178,6 +197,7 @@ margin_top = 26.0
 margin_right = 180.0
 margin_bottom = 52.0
 rect_clip_content = true
+mouse_filter = 2
 size_flags_vertical = 3
 
 [node name="Artist" type="Label" parent="VBoxContainer/TitleArtist/VBoxContainer/Control2"]
@@ -193,12 +213,14 @@ valign = 1
 margin_top = 234.0
 margin_right = 180.0
 margin_bottom = 260.0
+mouse_filter = 2
 size_flags_vertical = 3
 color = Color( 0.894118, 0.713726, 0.0156863, 1 )
 
 [node name="Control" type="HBoxContainer" parent="VBoxContainer/Scores"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
 size_flags_vertical = 3
 custom_constants/separation = 0
 

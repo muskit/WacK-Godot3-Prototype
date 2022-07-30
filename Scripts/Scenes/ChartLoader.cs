@@ -56,7 +56,7 @@ namespace WacK
 		public void PlayBtnPressed()
 		{
 			var misc = GetNode<Misc>("/root/Misc");
-			misc.LoadSong(textPath.Text, dropLevelSelect.Selected);
+			misc.LoadSong(textPath.Text, (DifficultyLevel)dropLevelSelect.Selected);
 		}
 	}
 }

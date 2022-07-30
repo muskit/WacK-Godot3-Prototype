@@ -83,7 +83,7 @@ namespace WacK
         private void OnSongEnd()
         {
             if (!Misc.paused)
-                GetTree().ChangeScene("res://Scenes/Menu.tscn");
+                GetTree().ChangeScene("res://Scenes/Menus/SongSelection.tscn");
         }
 
         public override void _Process(float delta)

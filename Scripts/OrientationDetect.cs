@@ -32,9 +32,11 @@ namespace WacK
             instance = this;
         }
 
-        public override void _Ready()
+        public async override void _Ready()
         {
             GetTree().Root.Connect("size_changed",  this, nameof(OnScreenResize));
+            
+            await ToSignal(GetTree().Root, "ready");
             OnScreenResize();
         }
 

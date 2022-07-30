@@ -21,7 +21,7 @@ bg_color = Color( 0.117647, 0.117647, 0.117647, 1 )
 
 [node name="SongListItem" type="Control"]
 rect_min_size = Vector2( 400, 150 )
-mouse_filter = 1
+mouse_filter = 2
 script = ExtResource( 2 )
 npLblTitle = NodePath("MarginContainer/HBoxContainer/VBoxContainer/BottomHalf/VBoxContainer/Control/LblTitle")
 npLblArtist = NodePath("MarginContainer/HBoxContainer/VBoxContainer/BottomHalf/VBoxContainer/Control2/LblArtist")
@@ -32,16 +32,19 @@ npTxtrGradient = NodePath("MarginContainer/HBoxContainer/VBoxContainer/TopHalf/G
 [node name="MarginContainer" type="MarginContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
 margin_right = 400.0
 margin_bottom = 150.0
+mouse_filter = 2
 custom_constants/separation = 0
 
 [node name="JacketArt" type="TextureRect" parent="MarginContainer/HBoxContainer"]
 margin_right = 150.0
 margin_bottom = 150.0
 rect_min_size = Vector2( 150, 150 )
+mouse_filter = 2
 texture = ExtResource( 1 )
 expand = true
 
@@ -49,6 +52,7 @@ expand = true
 margin_left = 150.0
 margin_right = 400.0
 margin_bottom = 150.0
+mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 3.0
 custom_constants/separation = 0
@@ -56,11 +60,13 @@ custom_constants/separation = 0
 [node name="TopHalf" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 margin_right = 250.0
 margin_bottom = 53.0
+mouse_filter = 2
 size_flags_vertical = 3
 
 [node name="GradientBG" type="TextureRect" parent="MarginContainer/HBoxContainer/VBoxContainer/TopHalf"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 texture = SubResource( 3 )
@@ -72,6 +78,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
 margin_right = -10.0
+mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -88,6 +95,7 @@ valign = 1
 margin_top = 53.0
 margin_right = 250.0
 margin_bottom = 150.0
+mouse_filter = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 1.79
 custom_styles/panel = SubResource( 7 )
@@ -95,12 +103,14 @@ custom_styles/panel = SubResource( 7 )
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/BottomHalf"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
 size_flags_vertical = 3
 
 [node name="Control" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer/BottomHalf/VBoxContainer"]
 margin_right = 250.0
 margin_bottom = 46.0
 rect_clip_content = true
+mouse_filter = 2
 size_flags_vertical = 3
 
 [node name="LblTitle" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/BottomHalf/VBoxContainer/Control"]
@@ -116,6 +126,7 @@ margin_top = 50.0
 margin_right = 250.0
 margin_bottom = 97.0
 rect_clip_content = true
+mouse_filter = 2
 size_flags_vertical = 3
 
 [node name="LblArtist" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/BottomHalf/VBoxContainer/Control2"]

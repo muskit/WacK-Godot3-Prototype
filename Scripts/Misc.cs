@@ -30,7 +30,7 @@ namespace WacK
             string result = String.Empty;
             foreach (var obj in list)
             {
-                result += obj.ToString();
+                result += obj?.ToString();
             }
             debugStr += $"{result}\n";
             GD.Print(result);
@@ -39,13 +39,18 @@ namespace WacK
         {
             debugStr = "";
         }
+        public static void DebugSetStr(params object[] list)
+        {
+            debugStr = "";
+            DebugPrintln(list);
+        }
 
-        public void LoadSong(string path, int difficulty = 0)
+        public void LoadSong(string path, DifficultyLevel difficulty = DifficultyLevel.Normal)
         {
             var chart = new File();
             var audio = new File();
 
-            var chartPath = path + $"/{difficulty}.mer";
+            var chartPath = path + $"/{(int)difficulty}.mer";
             var audioPath = path + "/music.mp3";
             Error errChart = chart.Open(chartPath, File.ModeFlags.Read);
             Error errAudio = audio.Open(audioPath, File.ModeFlags.Read);

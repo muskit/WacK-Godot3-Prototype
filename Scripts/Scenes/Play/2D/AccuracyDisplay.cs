@@ -37,7 +37,6 @@ namespace WacK
         private void OnNoteInteract(Note n)
         {
             tween.Seek(1);
-            tween.StopAll();
             tween.RemoveAll();
             
             lblAcc.Text = n.curAccuracy.ToString();
