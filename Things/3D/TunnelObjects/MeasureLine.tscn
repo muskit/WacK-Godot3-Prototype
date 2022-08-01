@@ -1,12 +1,18 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=5 format=2]
 
+[ext_resource path="res://Fonts/Futura/unicode.futurab.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://Scripts/TunnelObjects/MeasureLine.cs" type="Script" id=2]
 
 [sub_resource type="SpatialMaterial" id=1]
 flags_unshaded = true
 albedo_color = Color( 0.678431, 0.678431, 0.678431, 1 )
 
+[sub_resource type="DynamicFont" id=2]
+size = 84
+font_data = ExtResource( 1 )
+
 [node name="MeasureLine" type="Spatial"]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0 )
 script = ExtResource( 2 )
 
 [node name="CSGTorus" type="CSGTorus" parent="."]
@@ -17,3 +23,8 @@ outer_radius = 0.57
 sides = 64
 ring_sides = 3
 material = SubResource( 1 )
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0 )
+pixel_size = 0.001
+font = SubResource( 2 )

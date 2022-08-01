@@ -71,7 +71,7 @@ namespace WacK
                 curDiff--;
             }
 
-            lblLevel.Text = Util.DiffNumToString(song.difficulty[(int) (curDiff)]);
+            lblLevel.Text = Util.DifficultyValueToString(song.difficulty[(int) (curDiff)]);
             lblDifficulty.Text = curDiff.ToString().ToUpper();
             diffColor.Color = Difficulty.diffColor[(int)curDiff];
         }

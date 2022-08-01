@@ -9,6 +9,13 @@ namespace WacK
     }
     public class Note : Spatial
     {
+        private bool isReady = false;
+
+        [Export]
+        private NodePath npNoteSprite;
+        [Export]
+        private NodePath npNoteProgressBar;
+
         [Export]
         public bool isEvent;
         [Export]
@@ -18,10 +25,11 @@ namespace WacK
         [Export]
         public Node2D holdSegment = null;
         
-        private CSGPolygon notePoly;
+        private Sprite3D noteSprite;
+        private TextureProgress noteProgress;
         
-        public bool hasBeenProcessed = false;
         public Accuracy curAccuracy = Accuracy.Miss;
+        public bool hasBeenProcessed = false;
 
         public bool isEarly = false;
         public bool noteSwiped = false;
@@ -38,25 +46,37 @@ namespace WacK
         // Called when the node enters the scene tree for the first time.
         public override void _Ready()
         {
-            notePoly = GetChild<CSGPolygon>(0);
+            isReady = false;
+
             gEvents = GetNode<GEvents>("/root/GEvents");
+            if (npNoteSprite != null)
+                noteSprite = GetNode<Sprite3D>(npNoteSprite);
+            if (npNoteProgressBar != null)
+                noteProgress = GetNode<TextureProgress>(npNoteProgressBar);
+
+            isReady = true;
         }
 
         public async void SetPosSize(int pos = 0, int size = 1)
         {
-            await ToSignal(this, "ready");
+            if (!isReady)
+                await ToSignal(this, "ready");
 
             this.pos = pos;
             this.size = size;
-            if (size >= 3 && size <= 59)
+            
+            if (noteSprite != null && noteProgress != null)
             {
-                notePoly.Transform = notePoly.Transform.Rotated(Vector3.Forward, Mathf.Deg2Rad(6f * (pos + 1)));
-                notePoly.SpinDegrees = 6f * (size - 2);
-            }
-            else
-            {
-                notePoly.Transform = notePoly.Transform.Rotated(Vector3.Forward, Mathf.Deg2Rad(6f * pos));
-                notePoly.SpinDegrees = 6f * size;
+                if (size >= 3 && size <= 59)
+                {
+                    noteSprite.Transform = noteSprite.Transform.Rotated(Vector3.Forward, Mathf.Deg2Rad(6f * (pos + 1)));
+                    noteProgress.Value = size - 2;
+                }
+                else
+                {
+                    noteSprite.Transform = noteSprite.Transform.Rotated(Vector3.Forward, Mathf.Deg2Rad(6f * pos));
+                    noteProgress.Value = size;
+                }
             }
         }
 

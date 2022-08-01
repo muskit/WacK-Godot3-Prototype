@@ -106,6 +106,23 @@ namespace WacK
             return TimeToPosition(60f / tempo * beatsPerMeasure * ((float)measure + (float)beat / 1920f));
         }
 
+        public static float NoteTime(int measure, int beat, float tempo, int beatsPerMeasure)
+        {
+            if (tempo == 0) return 0; // avoid divide by 0
+
+            return 60f / tempo * beatsPerMeasure * ((float)measure + (float)beat / 1920f);
+        }
+
+        public static float TimeToPosition(float time)
+        {
+            return time * UserSettings.playSpeedMultiplier * UserSettings.SCROLL_MULT;
+        }
+
+        public static float PositionToTime(float pos)
+        {
+            return pos / UserSettings.playSpeedMultiplier / UserSettings.SCROLL_MULT;
+        }
+
         // TODO: notes scale to scroll position instead of strikeline
         // (where calibration offsets can be applied)
         public static Vector3 NoteScale(float zPos, float zOrigin = 0)
@@ -119,17 +136,7 @@ namespace WacK
             return Vector3.Zero;
         }
 
-        public static float TimeToPosition(float time)
-        {
-            return time * UserSettings.playSpeedMultiplier * UserSettings.SCROLL_MULT;
-        }
-
-        public static float PositionToTime(float pos)
-        {
-            return pos / UserSettings.playSpeedMultiplier / UserSettings.SCROLL_MULT;
-        }
-
-        public static string DiffNumToString(float diffPoint)
+        public static string DifficultyValueToString(float diffPoint)
         {
             return Mathf.FloorToInt(diffPoint).ToString() + (diffPoint > Mathf.Floor(diffPoint) ? "+" : "");
         }

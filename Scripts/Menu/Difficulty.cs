@@ -20,7 +20,7 @@ namespace WacK
         {
             FindNode("Color Header").GetChild<Label>(0).Text = level.ToString();
             (FindNode("Color Header") as ColorRect).Color = diffColor[(int)level] * 0.7f;
-            FindNode("Color Body").GetChild<Label>(0).Text = Util.DiffNumToString(diffPoint);
+            FindNode("Color Body").GetChild<Label>(0).Text = Util.DifficultyValueToString(diffPoint);
             (FindNode("Color Body") as ColorRect).Color = diffColor[(int)level];
 
         }

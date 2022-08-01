@@ -31,7 +31,7 @@ namespace WacK
 
         private void OnMenuKeyPress()
         {
-            GetTree().ChangeScene("res://Scenes/Menu.tscn");
+            GetTree().ChangeScene("res://Scenes/Menus/SongSelection.tscn");
         }
 
     //  // Called every frame. 'delta' is the elapsed time since the previous frame.

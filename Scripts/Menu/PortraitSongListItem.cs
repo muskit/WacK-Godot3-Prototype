@@ -64,7 +64,7 @@ namespace WacK
                 curDiff--;
             }
 
-            lblDiffNum.Text = Util.DiffNumToString(song.difficulty[(int) (curDiff)]);
+            lblDiffNum.Text = Util.DifficultyValueToString(song.difficulty[(int) (curDiff)]);
 
             // TODO: update gradient based on high score
             Gradient g = new Gradient();

@@ -102,6 +102,7 @@ namespace WacK
             int queuedBPM = -1;
 
             // timing info of the previous beat
+            float prevTime = 0;
             float prevPosition = 0;
             int prevMeasure = 0;
             int prevBeat = 0; // (/1920 beats per measure)
@@ -116,6 +117,7 @@ namespace WacK
             {
                 foreach (var chartNote in measure.Value) // List<beat, ChartNote>
                 {
+                    var curTime = prevTime + Util.NoteTime(measure.Key - prevMeasure, chartNote.Item1 - prevBeat, tempo.Last<float>(), beatsPerMeasure.Last<int>());
                     var curPos = prevPosition + Util.NotePosition(measure.Key - prevMeasure, chartNote.Item1 - prevBeat, tempo.Last<float>(), beatsPerMeasure.Last<int>());
 
                     if (prevMeasure != measure.Key && prevBeat != chartNote.Item1)
@@ -177,7 +179,7 @@ namespace WacK
                             nextHoldNote[chartNote.Item2.holdNextIdx] = curNote;
                             curHoldSegment[chartNote.Item2.holdNextIdx] = curHoldSegment[chartNote.Item2.holdIdx];
                             break;
-                        case NoteType.HoldEnd:
+                        case NoteType.HoldEnd: // TODO: draw end note on cone texture
                             curNote = noteHoldEnd.Instance<Note>();
                             curNote.noteIndex = chartNote.Item2.holdIdx;
                             break;
@@ -213,6 +215,7 @@ namespace WacK
                         prevNote = curNote;
 
                         // update "previous timing" info to place next note/event properly
+                        prevTime = curTime;
                         prevPosition = curPos;
                         prevBeat = chartNote.Item1;
                         prevMeasure = measure.Key;
@@ -230,13 +233,11 @@ namespace WacK
                             curHoldSegment[curNote.noteIndex].holdSegment = holdTexture.CreateLongNote(curHoldSegment[curNote.noteIndex], curNote);
                         }
 
-                        // int key = 1920 * measure.Key + chartNote.Item1;
-                        float key = Util.PositionToTime(curPos);
-                        if (!totalNotes.ContainsKey(key))
+                        if (!totalNotes.ContainsKey(curTime))
                         {
-                            totalNotes[key] = new List<Note>();
+                            totalNotes[curTime] = new List<Note>();
                         }
-                        totalNotes[key].Add(curNote);
+                        totalNotes[curTime].Add(curNote);
                     }
                 }
             }
@@ -258,42 +259,44 @@ namespace WacK
 
             // Measure Lines //
             // TODO: adapt to tempo changes in the middle of a measure
-            int tempoIdx = 1;
-            int bpmIdx = 1;
-            for (int curMeasure = 0; curMeasure < chart.notes.Count; curMeasure++)
-            {
-                while (curMeasure >= bpmChangeMeasures[bpmIdx] && bpmIdx < bpmChangeMeasures.Count - 1)
-                    ++bpmIdx;
-                GD.Print($"{curMeasure}: {bpmIdx}");
+            // int tempoIdx = 1;
+            // int bpmIdx = 1;
+            // for (int curMeasure = 0; curMeasure < chart.notes.Count; curMeasure++)
+            // {
+            //     while (curMeasure >= bpmChangeMeasures[bpmIdx] && bpmIdx < bpmChangeMeasures.Count - 1)
+            //         ++bpmIdx;
+            //     GD.Print($"{curMeasure}: {bpmIdx}");
 
-                // last tempo change / only one tempo change exists
-                if (tempoIdx == tempoChangeMeasures.Count - 1)
-                {
-                    float pos = tempoChangePositions[tempoIdx] + Util.NotePosition(curMeasure - tempoChangeMeasures[tempoIdx], 0, tempo.Last(), beatsPerMeasure[bpmIdx]);
-                    var ml = measureLine.Instance<Spatial>();
-                    measureScroll.AddChild(ml);
-                    ml.Translation = new Vector3(0, 0, pos);
-                }
-                else if (tempoIdx < tempoChangeMeasures.Count)
-                {
-                    // TODO: adapt to key signature changes
-                    while (curMeasure == tempoChangeMeasures[tempoIdx])
-                    {
-                        int measuresToCreate = tempoChangeMeasures[tempoIdx] - tempoChangeMeasures[tempoIdx - 1];
-                        for (int i = 0; i < measuresToCreate; ++i)
-                        {
-                            int measureNum = tempoChangeMeasures[tempoIdx - 1] + i;
-                            // GD.Print($"{tempoIdx} / {tempoChangePositions.Count}, {tempo.Count}");
-                            float pos = Util.InterpFloat(tempoChangePositions[tempoIdx - 1], tempoChangePositions[tempoIdx], (float)i/measuresToCreate);
+            //     // last tempo change / only one tempo change exists
+            //     if (tempoIdx == tempoChangeMeasures.Count - 1)
+            //     {
+            //         float pos = tempoChangePositions[tempoIdx] + Util.NotePosition(curMeasure - tempoChangeMeasures[tempoIdx], 0, tempo.Last(), beatsPerMeasure[bpmIdx]);
+            //         var ml = measureLine.Instance<MeasureLine>();
+            //         measureScroll.AddChild(ml);
+            //         ml.Translation = new Vector3(0, 0, pos);
+            //         ml.Text = $"{curMeasure}";
+            //     }
+            //     else if (tempoIdx < tempoChangeMeasures.Count)
+            //     {
+            //         // TODO: adapt to key signature changes
+            //         while (curMeasure == tempoChangeMeasures[tempoIdx])
+            //         {
+            //             int measuresToCreate = tempoChangeMeasures[tempoIdx] - tempoChangeMeasures[tempoIdx - 1];
+            //             for (int i = 0; i < measuresToCreate; ++i)
+            //             {
+            //                 int measureNum = tempoChangeMeasures[tempoIdx - 1] + i;
+            //                 // GD.Print($"{tempoIdx} / {tempoChangePositions.Count}, {tempo.Count}");
+            //                 float pos = Util.InterpFloat(tempoChangePositions[tempoIdx - 1], tempoChangePositions[tempoIdx], (float)i/measuresToCreate);
 
-                            var ml = measureLine.Instance<Spatial>();
-                            measureScroll.AddChild(ml);
-                            ml.Translation = new Vector3(0, 0, pos);
-                        }
-                        tempoIdx = Mathf.Clamp(tempoIdx + 1, 0, tempo.Count - 1);
-                    }
-                }
-            }
+            //                 var ml = measureLine.Instance<MeasureLine>();
+            //                 measureScroll.AddChild(ml);
+            //                 ml.Translation = new Vector3(0, 0, pos);
+            //                 ml.Text = $"{curMeasure}";
+            //             }
+            //             tempoIdx = Mathf.Clamp(tempoIdx + 1, 0, tempo.Count - 1);
+            //         }
+            //     }
+            // }
 
             doneLoading = true;
         }
