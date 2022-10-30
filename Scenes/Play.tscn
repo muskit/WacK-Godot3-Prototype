@@ -18,6 +18,22 @@
 [ext_resource path="res://Scripts/Scenes/Play/2D/ScoreInfo.cs" type="Script" id=16]
 [ext_resource path="res://Fonts/Futura/futura medium bt.ttf" type="DynamicFontData" id=17]
 
+[sub_resource type="ViewportTexture" id=16]
+flags = 64
+viewport_path = NodePath("3D/HoldsTextureViewport")
+
+[sub_resource type="SpatialMaterial" id=17]
+resource_local_to_scene = true
+render_priority = 1
+flags_transparent = true
+flags_unshaded = true
+flags_no_depth_test = true
+flags_do_not_receive_shadows = true
+flags_disable_ambient_light = true
+params_specular_mode = 4
+params_depth_draw_mode = 2
+albedo_texture = SubResource( 16 )
+
 [sub_resource type="ViewportTexture" id=10]
 viewport_path = NodePath("3D/TunnelViewport")
 
@@ -46,26 +62,140 @@ font_data = ExtResource( 7 )
 [sub_resource type="ViewportTexture" id=18]
 viewport_path = NodePath("3D/HoldsTextureViewport")
 
-[sub_resource type="ViewportTexture" id=16]
-flags = 64
-viewport_path = NodePath("3D/HoldsTextureViewport")
-
-[sub_resource type="SpatialMaterial" id=17]
-resource_local_to_scene = true
-render_priority = 1
-flags_transparent = true
-flags_unshaded = true
-flags_no_depth_test = true
-flags_do_not_receive_shadows = true
-flags_disable_ambient_light = true
-params_specular_mode = 4
-params_depth_draw_mode = 2
-albedo_texture = SubResource( 16 )
-
 [node name="Play" type="Node"]
 script = ExtResource( 6 )
 npAudioPlayer = NodePath("3D/BGMPlayer")
 npPauseText = NodePath("2D/Foreground/UICenterContainer/Label")
+
+[node name="3D" type="Spatial" parent="."]
+
+[node name="NotesViewport" type="Viewport" parent="3D"]
+size = Vector2( 1200, 1200 )
+transparent_bg = true
+handle_input_locally = false
+msaa = 1
+hdr = false
+gui_disable_input = true
+
+[node name="NotesCamera" type="Camera" parent="3D/NotesViewport"]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -1.1 )
+cull_mask = 1
+current = true
+fov = 60.0
+far = 11.0
+
+[node name="Debug" type="Camera" parent="3D/NotesViewport"]
+transform = Transform( -0.767613, 0.287305, -0.57291, 0, 0.893896, 0.448274, 0.640914, 0.344101, -0.686166, -2.768, 2, -0.381 )
+fov = 63.7
+far = 176.2
+
+[node name="HoldsViewport" type="Viewport" parent="3D"]
+size = Vector2( 1200, 1200 )
+transparent_bg = true
+handle_input_locally = false
+hdr = false
+gui_disable_input = true
+
+[node name="HoldsCamera" type="Camera" parent="3D/HoldsViewport"]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -1.1 )
+cull_mask = 8
+current = true
+fov = 60.0
+far = 11.0
+
+[node name="StrikelineViewport" type="Viewport" parent="3D"]
+size = Vector2( 1200, 1200 )
+transparent_bg = true
+handle_input_locally = false
+msaa = 1
+hdr = false
+gui_disable_input = true
+
+[node name="StrikelineCamera" type="Camera" parent="3D/StrikelineViewport"]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -1.1 )
+cull_mask = 2
+current = true
+fov = 60.0
+far = 35.0
+
+[node name="TunnelViewport" type="Viewport" parent="3D"]
+size = Vector2( 1200, 1200 )
+transparent_bg = true
+handle_input_locally = false
+msaa = 1
+hdr = false
+gui_disable_input = true
+
+[node name="TunnelCamera" type="Camera" parent="3D/TunnelViewport"]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -1.1 )
+cull_mask = 4
+current = true
+fov = 60.0
+size = 0.1
+far = 35.0
+
+[node name="HoldsTextureViewport" type="Viewport" parent="3D"]
+size = Vector2( 1200, 600 )
+transparent_bg = true
+handle_input_locally = false
+hdr = false
+disable_3d = true
+usage = 0
+render_target_v_flip = true
+gui_disable_input = true
+
+[node name="TextureCone" parent="3D/HoldsTextureViewport" instance=ExtResource( 14 )]
+
+[node name="Playfield" type="Spatial" parent="3D"]
+script = ExtResource( 4 )
+npChartReader = NodePath("../ChartReader")
+npScroll = NodePath("Spatial/Scroll")
+npTickPlayer = NodePath("../TickPlayer")
+npMissTickPlayer = NodePath("../MissTickPlayer")
+npFeedbackCircle = NodePath("../../2D/CirclePlayView/Circle/Play/FeedbackCircle")
+npHoldTexture = NodePath("../HoldsTextureViewport/TextureCone")
+
+[node name="Background" parent="3D/Playfield" instance=ExtResource( 3 )]
+DrawLength = 3.0
+
+[node name="Spatial" type="Spatial" parent="3D/Playfield"]
+
+[node name="Scroll" type="Spatial" parent="3D/Playfield/Spatial"]
+
+[node name="Notes" type="Spatial" parent="3D/Playfield/Spatial/Scroll"]
+
+[node name="MeasureLines" type="Spatial" parent="3D/Playfield/Spatial/Scroll"]
+
+[node name="MeasureLine" parent="3D/Playfield/Spatial/Scroll/MeasureLines" instance=ExtResource( 12 )]
+
+[node name="Cylinder" parent="3D/Playfield/Spatial" instance=ExtResource( 15 )]
+transform = Transform( -8.74228e-06, 4.37114e-06, -100, -100, 4.37114e-06, 8.74228e-06, 4.37114e-06, 100, 4.37114e-06, 0, 0, 0 )
+layers = 8
+cast_shadow = 0
+generate_lightmap = false
+software_skinning_transform_normals = false
+material/0 = SubResource( 17 )
+
+[node name="ChartReader" type="Node" parent="3D"]
+script = ExtResource( 5 )
+npNoteScroll = NodePath("../Playfield/Spatial/Scroll/Notes")
+npMeasureScroll = NodePath("../Playfield/Spatial/Scroll/MeasureLines")
+npHoldTexture = NodePath("../HoldsTextureViewport/TextureCone")
+
+[node name="BGMPlayer" type="AudioStreamPlayer" parent="3D"]
+bus = "BGM"
+
+[node name="TickPlayer" type="AudioStreamPlayer" parent="3D"]
+stream = ExtResource( 9 )
+mix_target = 2
+bus = "NoteTick"
+
+[node name="MissTickPlayer" type="AudioStreamPlayer" parent="3D"]
+stream = ExtResource( 9 )
+volume_db = -5.353
+pitch_scale = 0.5
+mix_target = 2
+bus = "NoteTick"
 
 [node name="2D" type="Node" parent="."]
 
@@ -217,133 +347,3 @@ script = ExtResource( 13 )
 npFeedbackCircle = NodePath("../../CirclePlayView/Circle/Play/FeedbackCircle")
 
 [node name="PauseLayer" parent="2D/Interactions" instance=ExtResource( 10 )]
-
-[node name="3D" type="Spatial" parent="."]
-
-[node name="NotesViewport" type="Viewport" parent="3D"]
-size = Vector2( 1200, 1200 )
-transparent_bg = true
-handle_input_locally = false
-msaa = 1
-hdr = false
-gui_disable_input = true
-
-[node name="NotesCamera" type="Camera" parent="3D/NotesViewport"]
-transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -1.1 )
-cull_mask = 1
-current = true
-fov = 60.0
-far = 11.0
-
-[node name="Debug" type="Camera" parent="3D/NotesViewport"]
-transform = Transform( -0.767613, 0.287305, -0.57291, 0, 0.893896, 0.448274, 0.640914, 0.344101, -0.686166, -2.768, 2, -0.381 )
-fov = 63.7
-far = 176.2
-
-[node name="HoldsViewport" type="Viewport" parent="3D"]
-size = Vector2( 1200, 1200 )
-transparent_bg = true
-handle_input_locally = false
-hdr = false
-gui_disable_input = true
-
-[node name="HoldsCamera" type="Camera" parent="3D/HoldsViewport"]
-transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -1.1 )
-cull_mask = 8
-current = true
-fov = 60.0
-far = 11.0
-
-[node name="StrikelineViewport" type="Viewport" parent="3D"]
-size = Vector2( 1200, 1200 )
-transparent_bg = true
-handle_input_locally = false
-msaa = 1
-hdr = false
-gui_disable_input = true
-
-[node name="StrikelineCamera" type="Camera" parent="3D/StrikelineViewport"]
-transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -1.1 )
-cull_mask = 2
-current = true
-fov = 60.0
-far = 35.0
-
-[node name="TunnelViewport" type="Viewport" parent="3D"]
-size = Vector2( 1200, 1200 )
-transparent_bg = true
-handle_input_locally = false
-msaa = 1
-hdr = false
-gui_disable_input = true
-
-[node name="TunnelCamera" type="Camera" parent="3D/TunnelViewport"]
-transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -1.1 )
-cull_mask = 4
-current = true
-fov = 60.0
-size = 0.1
-far = 35.0
-
-[node name="Playfield" type="Spatial" parent="3D"]
-script = ExtResource( 4 )
-npChartReader = NodePath("../ChartReader")
-npScroll = NodePath("Spatial/Scroll")
-npTickPlayer = NodePath("../TickPlayer")
-npMissTickPlayer = NodePath("../MissTickPlayer")
-npFeedbackCircle = NodePath("../../2D/CirclePlayView/Circle/Play/FeedbackCircle")
-npHoldTexture = NodePath("../HoldsTextureViewport/TextureCone")
-
-[node name="Background" parent="3D/Playfield" instance=ExtResource( 3 )]
-DrawLength = 3.0
-
-[node name="Spatial" type="Spatial" parent="3D/Playfield"]
-
-[node name="Scroll" type="Spatial" parent="3D/Playfield/Spatial"]
-
-[node name="Notes" type="Spatial" parent="3D/Playfield/Spatial/Scroll"]
-
-[node name="MeasureLines" type="Spatial" parent="3D/Playfield/Spatial/Scroll"]
-
-[node name="MeasureLine" parent="3D/Playfield/Spatial/Scroll/MeasureLines" instance=ExtResource( 12 )]
-
-[node name="Cylinder" parent="3D/Playfield/Spatial" instance=ExtResource( 15 )]
-transform = Transform( -8.74228e-06, 4.37114e-06, -100, -100, 4.37114e-06, 8.74228e-06, 4.37114e-06, 100, 4.37114e-06, 0, 0, 0 )
-layers = 8
-cast_shadow = 0
-generate_lightmap = false
-software_skinning_transform_normals = false
-material/0 = SubResource( 17 )
-
-[node name="ChartReader" type="Node" parent="3D"]
-script = ExtResource( 5 )
-npNoteScroll = NodePath("../Playfield/Spatial/Scroll/Notes")
-npMeasureScroll = NodePath("../Playfield/Spatial/Scroll/MeasureLines")
-npHoldTexture = NodePath("../HoldsTextureViewport/TextureCone")
-
-[node name="BGMPlayer" type="AudioStreamPlayer" parent="3D"]
-bus = "BGM"
-
-[node name="TickPlayer" type="AudioStreamPlayer" parent="3D"]
-stream = ExtResource( 9 )
-mix_target = 2
-bus = "NoteTick"
-
-[node name="MissTickPlayer" type="AudioStreamPlayer" parent="3D"]
-stream = ExtResource( 9 )
-volume_db = -5.353
-pitch_scale = 0.5
-mix_target = 2
-bus = "NoteTick"
-
-[node name="HoldsTextureViewport" type="Viewport" parent="3D"]
-size = Vector2( 1200, 600 )
-transparent_bg = true
-handle_input_locally = false
-hdr = false
-disable_3d = true
-usage = 0
-render_target_v_flip = true
-gui_disable_input = true
-
-[node name="TextureCone" parent="3D/HoldsTextureViewport" instance=ExtResource( 14 )]

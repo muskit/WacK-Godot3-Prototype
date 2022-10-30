@@ -13,14 +13,6 @@ npNoteSprite = NodePath("Sprite3D")
 npNoteProgressBar = NodePath("Viewport/TextureProgress")
 type = 8
 
-[node name="Sprite3D" type="Sprite3D" parent="."]
-transform = Transform( 4.37114e-08, -1, -8.74228e-08, -1, -4.37114e-08, 0, -3.82137e-15, 8.74228e-08, -1, 0, 0, 0 )
-cast_shadow = 0
-generate_lightmap = false
-pixel_size = 0.001
-double_sided = false
-texture = SubResource( 2 )
-
 [node name="Viewport" type="Viewport" parent="."]
 size = Vector2( 1160, 1160 )
 transparent_bg = true
@@ -38,3 +30,11 @@ value = 10.0
 texture_progress = ExtResource( 2 )
 fill_mode = 5
 nine_patch_stretch = true
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform( 4.37114e-08, -1, -8.74228e-08, -1, -4.37114e-08, 0, -3.82137e-15, 8.74228e-08, -1, 0, 0, 0 )
+cast_shadow = 0
+generate_lightmap = false
+pixel_size = 0.001
+double_sided = false
+texture = SubResource( 2 )

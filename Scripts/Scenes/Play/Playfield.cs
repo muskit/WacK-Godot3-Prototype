@@ -95,6 +95,7 @@ namespace WacK
             }
 
             beatTimes = new float[chartReader.totalNotes.Keys.Count];
+            GD.Print($"totalNotes={chartReader.totalNotes}");
             chartReader.totalNotes.Keys.CopyTo(beatTimes, 0);
             nextTickBeatIndex = 0;
 
@@ -111,7 +112,7 @@ namespace WacK
         private void OnCircleInputFire(int segment, bool justTouched)
         {
             int curIndex = nextHittableBeatIndex;
-
+            GD.Print($"{curIndex}, {beatTimes}");
             if (curIndex < beatTimes.Length)
             {
                 int extraCheckIndex = 0;
@@ -130,45 +131,42 @@ namespace WacK
                 {
                     foreach (Note n in chartReader.totalNotes.Values[curIndex])
                     {
-                        if (!n.isEvent)
+                        if (!n.isEvent && Misc.NoteIsInSegmentRegion(n, segment) && !n.hasBeenProcessed) // non-event + region check
                         {
-                            if (Misc.NoteIsInSegmentRegion(n, segment) && !n.hasBeenProcessed) // region check
+                            // all encompassing hittable (interactable timing range)
+                            if (-TIMING_WINDOW_GOOD <= curHitDelta && curHitDelta <= TIMING_WINDOW_GOOD)
                             {
-                                // all encompassing hittable (interactable timing range)
-                                if (-TIMING_WINDOW_GOOD <= curHitDelta && curHitDelta <= TIMING_WINDOW_GOOD)
+                                switch (n.type)
                                 {
-                                    switch (n.type)
-                                    {
-                                        case NoteType.Touch: case NoteType.HoldStart:
-                                            if (justTouched)
-                                            {
-                                                touchInteracted = true;
-                                                n.Hit(curHitDelta);
-                                            }
-                                            break;
-                                        case NoteType.SwipeCCW: case NoteType.SwipeCW:
-                                        case NoteType.SwipeIn: case NoteType.SwipeOut:
+                                    case NoteType.Touch: case NoteType.HoldStart:
+                                        if (justTouched)
+                                        {
                                             touchInteracted = true;
-                                            // TODO: check for swipe motion
-                                            // early to marvelous
-                                            if (-TIMING_WINDOW_GOOD <= curHitDelta && curHitDelta <= TIMING_WINDOW_MARVELOUS)
-                                            {
-                                                n.noteSwiped = true;
-                                            }
-                                            else
-                                            {
-                                                n.Hit(curHitDelta);
-                                            }
-                                            break;
-                                        case NoteType.Untimed:
-                                            // late
-                                            if (TIMING_WINDOW_MARVELOUS < curHitDelta && curHitDelta <= TIMING_WINDOW_GOOD)
-                                            {
-                                                touchInteracted = true;
-                                                n.Hit(curHitDelta);
-                                            }
-                                            break;
-                                    }
+                                            n.Hit(curHitDelta);
+                                        }
+                                        break;
+                                    case NoteType.SwipeCCW: case NoteType.SwipeCW:
+                                    case NoteType.SwipeIn: case NoteType.SwipeOut:
+                                        touchInteracted = true;
+                                        // TODO: check for swipe motion
+                                        // early to marvelous
+                                        if (-TIMING_WINDOW_GOOD <= curHitDelta && curHitDelta <= TIMING_WINDOW_MARVELOUS)
+                                        {
+                                            n.noteSwiped = true;
+                                        }
+                                        else
+                                        {
+                                            n.Hit(curHitDelta);
+                                        }
+                                        break;
+                                    case NoteType.Untimed:
+                                        // late
+                                        if (TIMING_WINDOW_MARVELOUS < curHitDelta && curHitDelta <= TIMING_WINDOW_GOOD)
+                                        {
+                                            touchInteracted = true;
+                                            n.Hit(curHitDelta);
+                                        }
+                                        break;
                                 }
                             }
                         }

@@ -49,18 +49,18 @@ namespace WacK
             doneLoading = false;
         }
 
-        public async override void _Ready()
+        public override void _Ready()
         {
             noteScroll = GetNode<Spatial>(npNoteScroll);
             measureScroll = GetNode<Spatial>(npMeasureScroll);
             holdTexture = GetNode<TextureCone>(npHoldTexture);
 
-            await ToSignal(holdTexture, "ready");
             doneLoading = false;
             Misc.currentChart = new Chart(Misc.currentMer);
             var scoreKeeper = GetNode<ScoreKeeper>("/root/ScoreKeeper");
             scoreKeeper.NewChart(Misc.currentChart);
             Load(new Chart(Misc.currentMer));
+            GD.Print("Finished placing notes!");
         }
 
         // place notes and events relative to the previous

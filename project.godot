@@ -52,6 +52,10 @@ reset={
 pointing/ios/touch_delay=0.0
 pointing/emulate_touch_from_mouse=true
 
+[mono]
+
+project/assembly_name="WacK"
+
 [network]
 
 limits/debugger_stdout/max_chars_per_second=4096
