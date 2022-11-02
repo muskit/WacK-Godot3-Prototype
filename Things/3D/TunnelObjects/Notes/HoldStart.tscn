@@ -1,41 +1,20 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://Scripts/TunnelObjects/Note.cs" type="Script" id=1]
-[ext_resource path="res://Textures/Notes/holdstart.png" type="Texture" id=2]
 
-[sub_resource type="ViewportTexture" id=2]
-flags = 16
-viewport_path = NodePath("Viewport")
+[sub_resource type="SpatialMaterial" id=1]
+flags_unshaded = true
+albedo_color = Color( 0.623529, 0.572549, 0, 1 )
 
 [node name="HoldStart" type="Spatial"]
 script = ExtResource( 1 )
-npNoteSprite = NodePath("Sprite3D")
-npNoteProgressBar = NodePath("Viewport/TextureProgress")
 requireJustTouched = true
 type = 1
 
-[node name="Viewport" type="Viewport" parent="."]
-size = Vector2( 1160, 1160 )
-transparent_bg = true
-handle_input_locally = false
-hdr = false
-usage = 0
-render_target_v_flip = true
-
-[node name="TextureProgress" type="TextureProgress" parent="Viewport"]
-margin_right = 1160.0
-margin_bottom = 1160.0
-rect_min_size = Vector2( 1160, 1160 )
-max_value = 60.0
-value = 10.0
-texture_progress = ExtResource( 2 )
-fill_mode = 5
-nine_patch_stretch = true
-
-[node name="Sprite3D" type="Sprite3D" parent="."]
-transform = Transform( 4.37114e-08, -1, -8.74228e-08, -1, -4.37114e-08, 0, -3.82137e-15, 8.74228e-08, -1, 0, 0, 0 )
-cast_shadow = 0
-generate_lightmap = false
-pixel_size = 0.001
-double_sided = false
-texture = SubResource( 2 )
+[node name="Note" type="CSGPolygon" parent="."]
+transform = Transform( -1, -1.50996e-07, 6.60024e-15, 0, -4.37114e-08, -1, 1.50996e-07, -1, 4.37114e-08, 0, 0, 0 )
+polygon = PoolVector2Array( 0.555, 0, 0.555, -0.01, 0.58, -0.01, 0.58, 0 )
+mode = 1
+spin_degrees = 6.0
+spin_sides = 64
+material = SubResource( 1 )
