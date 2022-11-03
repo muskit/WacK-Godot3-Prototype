@@ -78,6 +78,7 @@ namespace WacK
             if (Misc.songList.Count > 0 && CurrentSong == null)
             {
                 CurrentSong = Misc.songList[0];
+                startButton.Disabled = false;
             }
 
             UpdateDifficulty();
@@ -132,8 +133,8 @@ namespace WacK
             g2D.FillTo = Vector2.Zero;
             diffLabelBG.Texture = g2D;
 
-            difficultyDecButton.Visible = currentDifficulty > CurrentSong.MinDifficulty;
-            difficultyIncButton.Visible = currentDifficulty < CurrentSong.MaxDifficulty;
+            difficultyDecButton.Visible = currentDifficulty > CurrentSong?.MinDifficulty;
+            difficultyIncButton.Visible = currentDifficulty < CurrentSong?.MaxDifficulty;
 
             EmitSignal(nameof(ChangeDifficulty), currentDifficulty);
         }
@@ -155,6 +156,7 @@ namespace WacK
 
         public override void _Process(float delta)
         {
+            startButton.Disabled = _currentSong == null;
             if (IsQueuedForDeletion())
             {
                 instance = null;

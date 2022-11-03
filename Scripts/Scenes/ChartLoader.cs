@@ -43,7 +43,7 @@ namespace WacK
 			fd.Connect("dir_selected", this, "SetTextPath");
 			fd.SetPosition(this.RectSize / 2);
 			fd.SetSize(new Vector2(400, 300));
-			fd.CurrentDir = "user:///";
+			fd.CurrentDir = Misc.userDirectory;
 			fd.Resizable = true;
 			fd.Visible = true;
 		}

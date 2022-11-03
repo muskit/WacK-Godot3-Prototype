@@ -312,5 +312,6 @@ focus_mode = 0
 size_flags_horizontal = 0
 size_flags_vertical = 0
 theme = ExtResource( 2 )
+disabled = true
 enabled_focus_mode = 0
 text = "Start"

@@ -13,6 +13,7 @@ namespace WacK
 {
     public class Misc : Node
     {
+        public static string userDirectory;
         public static float cameraOffset = 0;
         public static float strikelineZPos = 0;
         public static float noteDrawDistance = 10;
@@ -24,6 +25,14 @@ namespace WacK
         public static bool paused = false;
         public static List<Song> songList;
         public static string debugStr { get; private set; } = "";
+
+        static Misc()
+        {
+            if (OS.GetName() == "Android")
+                userDirectory = "/storage/emulated/0/Android/data/net.muskit.WacK/files";
+            else
+                userDirectory = OS.GetUserDataDir();
+        }
 
         public static void DebugPrintln(params object[] list)
         {

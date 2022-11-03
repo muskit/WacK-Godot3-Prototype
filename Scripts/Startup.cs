@@ -20,10 +20,10 @@ namespace WacK
 			// TODO: enable loading screen
 
 			songDir = new Directory();
-			if (songDir.Open("user://songs") != Error.Ok)
+			if (songDir.Open($"{Misc.userDirectory}/songs") != Error.Ok)
 			{
-				songDir.MakeDir("user://songs");
-				if (songDir.Open("user://songs") != Error.Ok)
+				songDir.MakeDir($"{Misc.userDirectory}/songs");
+				if (songDir.Open($"{Misc.userDirectory}/songs") != Error.Ok)
 				{
 					Misc.DebugPrintln("Failed to open songs folder!");
 					return;
@@ -34,6 +34,7 @@ namespace WacK
 			var note = "Place song folders here. Nested folders supported for organization.";
 			File f = new File();
 			f.Open(songDir.GetCurrentDir() + "/note.txt", File.ModeFlags.Write);
+			Misc.DebugPrintln(f.GetPathAbsolute());
 			f.StoreString(note);
 			f.Close();
 
