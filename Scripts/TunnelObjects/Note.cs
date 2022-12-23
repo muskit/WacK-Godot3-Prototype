@@ -7,7 +7,7 @@ namespace WacK
     {
         Miss, Good, Great, Marvelous
     }
-    public class Note : Spatial
+    public partial class Note : Node3D
     {
         [Export]
         public bool isEvent;
@@ -18,7 +18,7 @@ namespace WacK
         [Export]
         public Node2D holdSegment = null;
         
-        private CSGPolygon notePoly;
+        private CSGPolygon3D notePoly;
         
         public bool hasBeenProcessed = false;
         public Accuracy curAccuracy = Accuracy.Miss;
@@ -38,7 +38,7 @@ namespace WacK
         // Called when the node enters the scene tree for the first time.
         public override void _Ready()
         {
-            notePoly = GetChild<CSGPolygon>(0);
+            notePoly = GetChild<CSGPolygon3D>(0);
             gEvents = GetNode<GEvents>("/root/GEvents");
         }
 
@@ -50,12 +50,12 @@ namespace WacK
             this.size = size;
             if (size >= 3 && size <= 59)
             {
-                notePoly.Transform = notePoly.Transform.Rotated(Vector3.Forward, Mathf.Deg2Rad(6f * (pos + 1)));
+                notePoly.Transform3D = notePoly.Transform3D.Rotated(Vector3.Forward, Mathf.DegToRad(6f * (pos + 1)));
                 notePoly.SpinDegrees = 6f * (size - 2);
             }
             else
             {
-                notePoly.Transform = notePoly.Transform.Rotated(Vector3.Forward, Mathf.Deg2Rad(6f * pos));
+                notePoly.Transform3D = notePoly.Transform3D.Rotated(Vector3.Forward, Mathf.DegToRad(6f * pos));
                 notePoly.SpinDegrees = 6f * size;
             }
         }
@@ -81,7 +81,7 @@ namespace WacK
                 }
 
                 FullDisable();
-                gEvents.EmitSignal(nameof(GEvents.NoteMiss), this);
+                gEvents.EmitSignal(nameof(GEvents.NoteMissEventHandler), this);
             }
         }
 
@@ -96,7 +96,7 @@ namespace WacK
                 
                 curAccuracy = acc;
                 FullDisable();
-                gEvents.EmitSignal(nameof(GEvents.NoteHit), this);
+                gEvents.EmitSignal(nameof(GEvents.NoteHitEventHandler), this);
             }
         }
 
@@ -137,7 +137,7 @@ namespace WacK
             SetProcess(true);
         }
 
-        public override void _Process(float delta)
+        public override void _Process(double delta)
         {
             this.Scale = Util.NoteScale(this.GlobalTransform.origin.z, Misc.strikelineZPos);
         }

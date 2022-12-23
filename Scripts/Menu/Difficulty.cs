@@ -7,7 +7,7 @@ namespace WacK
         Normal, Hard, Expert, Inferno
     }
 
-    public class Difficulty : AspectRatioContainer
+    public partial class Difficulty : AspectRatioContainer
     {
         public static Color[] diffColor = {
             new Color(24f/256, 98f/256, 255f/256),
@@ -18,10 +18,10 @@ namespace WacK
 
         public void Set(float diffPoint, DifficultyLevel level)
         {
-            FindNode("Color Header").GetChild<Label>(0).Text = level.ToString();
-            (FindNode("Color Header") as ColorRect).Color = diffColor[(int)level] * 0.7f;
-            FindNode("Color Body").GetChild<Label>(0).Text = Util.DifficultyValueToString(diffPoint);
-            (FindNode("Color Body") as ColorRect).Color = diffColor[(int)level];
+            FindChild("Color Header").GetChild<Label>(0).Text = level.ToString();
+            (FindChild("Color Header") as ColorRect).Color = diffColor[(int)level] * 0.7f;
+            FindChild("Color Body").GetChild<Label>(0).Text = Util.DifficultyValueToString(diffPoint);
+            (FindChild("Color Body") as ColorRect).Color = diffColor[(int)level];
 
         }
     }

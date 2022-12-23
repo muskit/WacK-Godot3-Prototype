@@ -2,17 +2,17 @@
 
 [ext_resource path="res://Scripts/TunnelObjects/Note.cs" type="Script" id=1]
 
-[sub_resource type="SpatialMaterial" id=1]
+[sub_resource type="StandardMaterial3D" id=1]
 flags_unshaded = true
 albedo_color = Color( 1, 1, 0, 1 )
 
-[node name="Untimed" type="Spatial"]
+[node name="Untimed" type="Node3D"]
 script = ExtResource( 1 )
 type = 4
 
-[node name="Note" type="CSGPolygon" parent="."]
-transform = Transform( -1, -1.50996e-07, 6.60024e-15, 0, -4.37114e-08, -1, 1.50996e-07, -1, 4.37114e-08, 0, 0, 0 )
-polygon = PoolVector2Array( 0.555, 0, 0.555, -0.01, 0.58, -0.01, 0.58, 0 )
+[node name="Note" type="CSGPolygon3D" parent="."]
+transform = Transform3D( -1, -1.50996e-07, 6.60024e-15, 0, -4.37114e-08, -1, 1.50996e-07, -1, 4.37114e-08, 0, 0, 0 )
+polygon = PackedVector2Array( 0.555, 0, 0.555, -0.01, 0.58, -0.01, 0.58, 0 )
 mode = 1
 spin_degrees = 6.0
 spin_sides = 64

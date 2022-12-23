@@ -1,8 +1,8 @@
 [gd_resource type="Theme" load_steps=7 format=2]
 
-[ext_resource path="res://Fonts/Futura/Futura Book font.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://Fonts/Futura/Futura Book font.ttf" type="FontFile" id=1]
 
-[sub_resource type="DynamicFont" id=10]
+[sub_resource type="FontFile" id=10]
 size = 20
 font_data = ExtResource( 1 )
 
@@ -18,7 +18,7 @@ content_margin_left = 10.0
 content_margin_right = 10.0
 bg_color = Color( 0, 0, 0, 1 )
 
-[sub_resource type="DynamicFont" id=11]
+[sub_resource type="FontFile" id=11]
 size = 28
 font_data = ExtResource( 1 )
 

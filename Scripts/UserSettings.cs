@@ -11,7 +11,7 @@ using System;
 
 namespace WacK
 {
-    public class UserSettings: Node
+    public partial class UserSettings: Node
     {
         public const float SCROLL_MULT = 3f;
         public static float playSpeedMultiplier = 4f;

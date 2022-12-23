@@ -3,7 +3,7 @@ using System;
 
 namespace WacK
 {
-    public class SongInfo : Panel
+    public partial class SongInfo : Panel
     {
         [Export]
         private NodePath npSongTitle;

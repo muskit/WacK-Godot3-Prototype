@@ -10,7 +10,7 @@ using Godot;
 using System.Collections.Generic;
 namespace WacK
 {
-    public class Playfield : Spatial
+    public partial class Playfield : Node3D
     {
         [Export]
         private NodePath npChartReader;
@@ -31,7 +31,7 @@ namespace WacK
         private int nextHittableBeatIndex;
         private float[] beatTimes;
 
-        private Spatial scroll;
+        private Node3D scroll;
         private Node background;
         private TextureCone holdTexture;
 
@@ -59,25 +59,25 @@ namespace WacK
 
         public override async void _Ready()
         {
-            Misc.cameraOffset = Translation.z;
+            Misc.cameraOffset = Position.z;
             Misc.strikelineZPos = GlobalTransform.origin.z;
 
             gEvents = GetNode<GEvents>("/root/GEvents");
-            gEvents.Connect(nameof(GEvents.Resume), this, nameof(Resync));
-            gEvents.Connect(nameof(GEvents.RhythmInputFire), this, nameof(OnCircleInputFire));
-            gEvents.Connect(nameof(GEvents.NoteHit), this, nameof(OnNoteHit));
-            gEvents.Connect(nameof(GEvents.NoteMiss), this, nameof(OnNoteMiss));
+            gEvents.Connect(nameof(GEvents.ResumeEventHandler),new Callable(this,nameof(Resync)));
+            gEvents.Connect(nameof(GEvents.RhythmInputFireEventHandler),new Callable(this,nameof(OnCircleInputFire)));
+            gEvents.Connect(nameof(GEvents.NoteHitEventHandler),new Callable(this,nameof(OnNoteHit)));
+            gEvents.Connect(nameof(GEvents.NoteMissEventHandler),new Callable(this,nameof(OnNoteMiss)));
 
-            scroll = GetNode<Spatial>(npScroll);
+            scroll = GetNode<Node3D>(npScroll);
             hitTickPlayer = GetNode<AudioStreamPlayer>(npTickPlayer);
             missTickPlayer = GetNode<AudioStreamPlayer>(npMissTickPlayer);
             holdTexture = GetNode<TextureCone>(npHoldTexture);
             chartReader = GetNode<ChartReader>(npChartReader);
 
-            background = FindNode("Background");
+            background = FindChild("Background");
             foreach (var seg in background.GetChildren())
             {
-                (seg as Spatial).Visible = false;
+                (seg as Node3D).Visible = false;
             }
 
             var feedbackSegmentsNode = GetNode(npFeedbackCircle);
@@ -106,7 +106,7 @@ namespace WacK
         {
             var audioTime = (float)(Misc.songPlayer.GetPlaybackPosition() + AudioServer.GetTimeSinceLastMix() - AudioServer.GetOutputLatency()); // audio time with lag compensation
             
-            scroll.Translation = new Vector3(0, 0, -Util.TimeToPosition(audioTime));
+            scroll.Position = new Vector3(0, 0, -Util.TimeToPosition(audioTime));
         }
 
         private void OnCircleInputFire(int segment, bool justTouched)
@@ -197,7 +197,7 @@ namespace WacK
 
                 // calculate scroll multiplier for keeping in sync
                 var audioTime = (float)(Misc.songPlayer.GetPlaybackPosition() + AudioServer.GetTimeSinceLastMix() - AudioServer.GetOutputLatency()); // audio time with lag compensation
-                var posTime = -Util.PositionToTime(scroll.Translation.z);
+                var posTime = -Util.PositionToTime(scroll.Position.z);
                 Play.playbackTime = posTime;
 
                 syncRatio = audioTime/posTime;
@@ -209,7 +209,7 @@ namespace WacK
                     Resync();
                 }
             }
-            holdTexture.SetPosition(-scroll.Translation.z);
+            holdTexture.SetPosition(-scroll.Position.z);
         }
 
         private void ProcessNoteTiming()
@@ -264,7 +264,7 @@ namespace WacK
             }
         }
 
-        public override void _Process(float delta)
+        public override void _Process(double delta)
         {
             if (setupDone)
             {

@@ -15,11 +15,11 @@ namespace WacK
     {
         public static float Seg2Rad(float seg)
         {
-            return Mathf.Deg2Rad(6f * seg);
+            return Mathf.DegToRad(6f * seg);
         }
         public static float Rad2Seg(float angle)
         {
-            return Mathf.Rad2Deg(angle) / 6f;
+            return Mathf.RadToDeg(angle) / 6f;
         }
 
         public static int InterpInt(int a, int b, float ratio)

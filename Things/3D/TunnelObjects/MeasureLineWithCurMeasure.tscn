@@ -1,24 +1,24 @@
 [gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://Fonts/Futura/Futura Bold font.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://Fonts/Futura/Futura Bold font.ttf" type="FontFile" id=1]
 [ext_resource path="res://Scripts/TunnelObjects/MeasureLine.cs" type="Script" id=2]
 
-[sub_resource type="SpatialMaterial" id=1]
+[sub_resource type="StandardMaterial3D" id=1]
 flags_unshaded = true
 albedo_color = Color( 0.678431, 0.678431, 0.678431, 1 )
 
 [sub_resource type="ViewportTexture" id=4]
-viewport_path = NodePath("Viewport")
+viewport_path = NodePath("SubViewport")
 
-[sub_resource type="DynamicFont" id=3]
+[sub_resource type="FontFile" id=3]
 size = 200
 font_data = ExtResource( 1 )
 
-[node name="MeasureLine" type="Spatial"]
+[node name="MeasureLine" type="Node3D"]
 script = ExtResource( 2 )
 
-[node name="CSGTorus" type="CSGTorus" parent="."]
-transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0.01 )
+[node name="CSGTorus3D" type="CSGTorus3D" parent="."]
+transform = Transform3D( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0.01 )
 generate_lightmap = false
 inner_radius = 0.56
 outer_radius = 0.57
@@ -27,18 +27,18 @@ ring_sides = 3
 material = SubResource( 1 )
 
 [node name="Sprite3D" type="Sprite3D" parent="."]
-transform = Transform( 0.1, 0, 0, 0, 0.1, 0, 0, 0, 1, 0, -0.312047, 0 )
+transform = Transform3D( 0.1, 0, 0, 0, 0.1, 0, 0, 0, 1, 0, -0.312047, 0 )
 visible = false
 flip_h = true
 flip_v = true
 texture = SubResource( 4 )
 
-[node name="Viewport" type="Viewport" parent="."]
+[node name="SubViewport" type="SubViewport" parent="."]
 size = Vector2( 300, 300 )
 transparent_bg = true
 usage = 1
 
-[node name="Label" type="Label" parent="Viewport"]
+[node name="Label" type="Label" parent="SubViewport"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 custom_fonts/font = SubResource( 3 )

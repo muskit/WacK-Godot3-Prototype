@@ -14,7 +14,7 @@ using System.Collections.Generic;
 
 namespace WacK
 {
-    public class ChartReader : Node
+    public partial class ChartReader : Node
     {
         [Export]
         private NodePath npNoteScroll;
@@ -23,8 +23,8 @@ namespace WacK
         [Export]
         private NodePath npHoldTexture;
 
-        private Spatial noteScroll;
-        private Spatial measureScroll;
+        private Node3D noteScroll;
+        private Node3D measureScroll;
         private TextureCone holdTexture;
 
         public static bool doneLoading { get; private set; } = false;
@@ -42,7 +42,7 @@ namespace WacK
         private static PackedScene noteSwipeOut = GD.Load<PackedScene>("res://Things/3D/TunnelObjects/Notes/SwipeOut.tscn");
         private static PackedScene noteSwipeCW = GD.Load<PackedScene>("res://Things/3D/TunnelObjects/Notes/SwipeCW.tscn");
         private static PackedScene noteSwipeCCW = GD.Load<PackedScene>("res://Things/3D/TunnelObjects/Notes/SwipeCCW.tscn");
-        private static SpatialMaterial matHoldLine = GD.Load<SpatialMaterial>("res://Materials/HoldLine.tres");
+        private static StandardMaterial3D matHoldLine = GD.Load<StandardMaterial3D>("res://Materials/HoldLine.tres");
 
         public ChartReader()
         {
@@ -51,8 +51,8 @@ namespace WacK
 
         public override void _Ready()
         {
-            noteScroll = GetNode<Spatial>(npNoteScroll);
-            measureScroll = GetNode<Spatial>(npMeasureScroll);
+            noteScroll = GetNode<Node3D>(npNoteScroll);
+            measureScroll = GetNode<Node3D>(npMeasureScroll);
             holdTexture = GetNode<TextureCone>(npHoldTexture);
 
             doneLoading = false;
@@ -211,7 +211,7 @@ namespace WacK
                         curNote.SetPosSize(chartNote.Item2.position, chartNote.Item2.size);
                         noteScroll.AddChild(curNote);
 
-                        curNote.Translation = new Vector3(0, 0, curPos);
+                        curNote.Position = new Vector3(0, 0, curPos);
                         prevNote = curNote;
 
                         // update "previous timing" info to place next note/event properly
@@ -273,7 +273,7 @@ namespace WacK
             //         float pos = tempoChangePositions[tempoIdx] + Util.NotePosition(curMeasure - tempoChangeMeasures[tempoIdx], 0, tempo.Last(), beatsPerMeasure[bpmIdx]);
             //         var ml = measureLine.Instance<MeasureLine>();
             //         measureScroll.AddChild(ml);
-            //         ml.Translation = new Vector3(0, 0, pos);
+            //         ml.Position = new Vector3(0, 0, pos);
             //         ml.Text = $"{curMeasure}";
             //     }
             //     else if (tempoIdx < tempoChangeMeasures.Count)
@@ -290,7 +290,7 @@ namespace WacK
 
             //                 var ml = measureLine.Instance<MeasureLine>();
             //                 measureScroll.AddChild(ml);
-            //                 ml.Translation = new Vector3(0, 0, pos);
+            //                 ml.Position = new Vector3(0, 0, pos);
             //                 ml.Text = $"{curMeasure}";
             //             }
             //             tempoIdx = Mathf.Clamp(tempoIdx + 1, 0, tempo.Count - 1);

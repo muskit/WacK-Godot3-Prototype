@@ -4,10 +4,10 @@ using System.Diagnostics;
 namespace WacK
 {    
     // TODO: automatically appropriately resize to fit child list
-    public class SongScrollContainer : Container
+    public partial class SongScrollContainer : Container
     {
         [Signal]
-        public delegate void SongSelected(Song song);
+        public delegate void SongSelectedEventHandler(Song song);
 
         [Export]
         private bool isPortrait;
@@ -71,7 +71,7 @@ namespace WacK
             private set
             {
                 _songIndex = value;
-                EmitSignal(nameof(SongSelected), isPortrait ?
+                EmitSignal(nameof(SongSelectedEventHandler), isPortrait ?
                         songList.GetChild<PortraitSongListItem>(_songIndex).song :
                         songList.GetChild<LandscapeSongListItem>(_songIndex).song);
             }    
@@ -109,11 +109,11 @@ namespace WacK
             isReady = false;
 
             // a container of SongListItems should be our only child
-            songList = FindNode("SongList") as Control;
+            songList = FindChild("SongList") as Control;
             tween = new Tween();
             AddChild(tween);
 
-            Connect("resized", this, nameof(OnResize));
+            Connect("resized",new Callable(this,nameof(OnResize)));
             OnResize();
     
             isReady = true;
@@ -221,7 +221,7 @@ namespace WacK
             }
         }
 
-        public override void _Process(float delta)
+        public override void _Process(double delta)
         {
             // Misc.DebugPrintln($"[{isPortrait}]\n{(isPortrait ? songList.RectPosition.y : songList.RectPosition.x)}\nMin: {uiFirstSongScrollPoint}\nMax: {uiLastSongScrollPoint}\n");
 

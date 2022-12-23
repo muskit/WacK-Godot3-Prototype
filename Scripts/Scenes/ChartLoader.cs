@@ -11,7 +11,7 @@ using System;
 
 namespace WacK
 {
-	public class ChartLoader : Control
+	public partial class ChartLoader : Control
 	{
 		[Export]
 		private NodePath npPath;
@@ -40,7 +40,7 @@ namespace WacK
 			AddChild(fd);
 			fd.Mode = FileDialog.ModeEnum.OpenDir;
 			fd.Access = FileDialog.AccessEnum.Filesystem;
-			fd.Connect("dir_selected", this, "SetTextPath");
+			fd.Connect("dir_selected",new Callable(this,"SetTextPath"));
 			fd.SetPosition(this.RectSize / 2);
 			fd.SetSize(new Vector2(400, 300));
 			fd.CurrentDir = Misc.userDirectory;

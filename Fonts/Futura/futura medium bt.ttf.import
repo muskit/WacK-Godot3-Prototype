@@ -1,0 +1,33 @@
+[remap]
+
+importer="font_data_dynamic"
+type="FontFile"
+uid="uid://bjmb4gtp2jhfc"
+path="res://.godot/imported/futura medium bt.ttf-630a2045f2962b2aee4911c82fdbde9f.fontdata"
+
+[deps]
+
+source_file="res://Fonts/Futura/futura medium bt.ttf"
+dest_files=["res://.godot/imported/futura medium bt.ttf-630a2045f2962b2aee4911c82fdbde9f.fontdata"]
+
+[params]
+
+Rendering=null
+antialiasing=1
+generate_mipmaps=false
+multichannel_signed_distance_field=false
+msdf_pixel_range=8
+msdf_size=48
+allow_system_fallback=true
+force_autohinter=false
+hinting=1
+subpixel_positioning=1
+oversampling=0.0
+Fallbacks=null
+fallbacks=[]
+Compress=null
+compress=true
+preload=[]
+language_support={}
+script_support={}
+opentype_features={}

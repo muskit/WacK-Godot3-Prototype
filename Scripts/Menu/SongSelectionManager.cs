@@ -3,10 +3,10 @@ using System;
 
 namespace WacK
 {
-    public class SongSelectionManager : Control
+    public partial class SongSelectionManager : Control
     {
         [Signal]
-        public delegate void ChangeDifficulty(DifficultyLevel diff);
+        public delegate void ChangeDifficultyEventHandler(DifficultyLevel diff);
 
         [Export]
         private NodePath npLandscapeScreen;
@@ -61,19 +61,19 @@ namespace WacK
         {
             landscapeScreen = GetNode<SongSelection>(npLandscapeScreen);
             portraitScreen = GetNode<SongSelection>(npPortraitScreen);
-            landscapeScreen.songScrollContainer.Connect(nameof(SongScrollContainer.SongSelected), this, nameof(OnContainerSongSelected));
-            portraitScreen.songScrollContainer.Connect(nameof(SongScrollContainer.SongSelected), this, nameof(OnContainerSongSelected));
+            landscapeScreen.songScrollContainer.Connect(nameof(SongScrollContainer.SongSelectedEventHandler),new Callable(this,nameof(OnContainerSongSelected)));
+            portraitScreen.songScrollContainer.Connect(nameof(SongScrollContainer.SongSelectedEventHandler),new Callable(this,nameof(OnContainerSongSelected)));
             
             startButton = GetNode<Button>(npStartButton);
             difficultyIncButton = GetNode<Button>(npDifficultyIncButton);
             difficultyDecButton = GetNode<Button>(npDifficultyDecButton);
             difficultyLabel = GetNode<Label>(npDifficultyLabel);
             diffLabelBG = GetNode<TextureRect>(npDifficultyLabelBackgroundTexture);
-            startButton.Connect("pressed", this, nameof(OnStartPressed));
-            difficultyIncButton.Connect("pressed", this, nameof(OnDifficultyIncPressed));
-            difficultyDecButton.Connect("pressed", this, nameof(OnDifficultyDecPressed));
+            startButton.Connect("pressed",new Callable(this,nameof(OnStartPressed)));
+            difficultyIncButton.Connect("pressed",new Callable(this,nameof(OnDifficultyIncPressed)));
+            difficultyDecButton.Connect("pressed",new Callable(this,nameof(OnDifficultyDecPressed)));
             
-            OrientationDetect.instance.Connect(nameof(OrientationDetect.OrientationChange), this, nameof(OnOrientationChange));
+            OrientationDetect.instance.Connect(nameof(OrientationDetect.OrientationChangeEventHandler),new Callable(this,nameof(OnOrientationChange)));
 
             if (Misc.songList.Count > 0 && CurrentSong == null)
             {
@@ -131,12 +131,12 @@ namespace WacK
             g2D.Gradient = g;
             g2D.FillFrom = Vector2.Down;
             g2D.FillTo = Vector2.Zero;
-            diffLabelBG.Texture = g2D;
+            diffLabelBG.Texture2D = g2D;
 
             difficultyDecButton.Visible = currentDifficulty > CurrentSong?.MinDifficulty;
             difficultyIncButton.Visible = currentDifficulty < CurrentSong?.MaxDifficulty;
 
-            EmitSignal(nameof(ChangeDifficulty), currentDifficulty);
+            EmitSignal(nameof(ChangeDifficultyEventHandler), currentDifficulty);
         }
 
         private void OnOrientationChange(ScreenOrientation or)
@@ -154,7 +154,7 @@ namespace WacK
             }
         }
 
-        public override void _Process(float delta)
+        public override void _Process(double delta)
         {
             startButton.Disabled = _currentSong == null;
             if (IsQueuedForDeletion())

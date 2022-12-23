@@ -6,23 +6,23 @@
 [ext_resource path="res://Scripts/Scenes/Play/Playfield.cs" type="Script" id=4]
 [ext_resource path="res://Scripts/Scenes/Play/ChartReader.cs" type="Script" id=5]
 [ext_resource path="res://Scripts/Scenes/Play/Play.cs" type="Script" id=6]
-[ext_resource path="res://Fonts/Futura/Futura Medium Italic font.ttf" type="DynamicFontData" id=7]
+[ext_resource path="res://Fonts/Futura/Futura Medium Italic font.ttf" type="FontFile" id=7]
 [ext_resource path="res://Things/2D/Play/Accuracy Display.tscn" type="PackedScene" id=8]
 [ext_resource path="res://Sounds/tick.wav" type="AudioStream" id=9]
 [ext_resource path="res://Scenes/Menus/Pause.tscn" type="PackedScene" id=10]
-[ext_resource path="res://Textures/background-placeholder.jpg" type="Texture" id=11]
+[ext_resource path="res://Textures/background-placeholder.jpg" type="Texture2D" id=11]
 [ext_resource path="res://Things/3D/TunnelObjects/MeasureLine.tscn" type="PackedScene" id=12]
 [ext_resource path="res://Scripts/Scenes/Play/RhythmInput.cs" type="Script" id=13]
 [ext_resource path="res://Things/TextureCone.tscn" type="PackedScene" id=14]
 [ext_resource path="res://Things/3D/TunnelObjects/HoldsCone.tscn" type="PackedScene" id=15]
 [ext_resource path="res://Scripts/Scenes/Play/2D/ScoreInfo.cs" type="Script" id=16]
-[ext_resource path="res://Fonts/Futura/futura medium bt.ttf" type="DynamicFontData" id=17]
+[ext_resource path="res://Fonts/Futura/futura medium bt.ttf" type="FontFile" id=17]
 
 [sub_resource type="ViewportTexture" id=16]
 flags = 64
 viewport_path = NodePath("3D/HoldsTextureViewport")
 
-[sub_resource type="SpatialMaterial" id=17]
+[sub_resource type="StandardMaterial3D" id=17]
 resource_local_to_scene = true
 render_priority = 1
 flags_transparent = true
@@ -46,16 +46,16 @@ viewport_path = NodePath("3D/StrikelineViewport")
 [sub_resource type="ViewportTexture" id=11]
 viewport_path = NodePath("3D/NotesViewport")
 
-[sub_resource type="DynamicFont" id=20]
+[sub_resource type="FontFile" id=20]
 size = 28
 extra_spacing_char = 9
 font_data = ExtResource( 17 )
 
-[sub_resource type="DynamicFont" id=19]
+[sub_resource type="FontFile" id=19]
 size = 32
 font_data = ExtResource( 7 )
 
-[sub_resource type="DynamicFont" id=5]
+[sub_resource type="FontFile" id=5]
 size = 46
 font_data = ExtResource( 7 )
 
@@ -67,9 +67,9 @@ script = ExtResource( 6 )
 npAudioPlayer = NodePath("3D/BGMPlayer")
 npPauseText = NodePath("2D/Foreground/UICenterContainer/Label")
 
-[node name="3D" type="Spatial" parent="."]
+[node name="3D" type="Node3D" parent="."]
 
-[node name="NotesViewport" type="Viewport" parent="3D"]
+[node name="NotesViewport" type="SubViewport" parent="3D"]
 size = Vector2( 1200, 1200 )
 transparent_bg = true
 handle_input_locally = false
@@ -77,33 +77,33 @@ msaa = 1
 hdr = false
 gui_disable_input = true
 
-[node name="NotesCamera" type="Camera" parent="3D/NotesViewport"]
-transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -1.1 )
+[node name="NotesCamera" type="Camera3D" parent="3D/NotesViewport"]
+transform = Transform3D( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -1.1 )
 cull_mask = 1
 current = true
 fov = 60.0
 far = 11.0
 
-[node name="Debug" type="Camera" parent="3D/NotesViewport"]
-transform = Transform( -0.767613, 0.287305, -0.57291, 0, 0.893896, 0.448274, 0.640914, 0.344101, -0.686166, -2.768, 2, -0.381 )
+[node name="Debug" type="Camera3D" parent="3D/NotesViewport"]
+transform = Transform3D( -0.767613, 0.287305, -0.57291, 0, 0.893896, 0.448274, 0.640914, 0.344101, -0.686166, -2.768, 2, -0.381 )
 fov = 63.7
 far = 176.2
 
-[node name="HoldsViewport" type="Viewport" parent="3D"]
+[node name="HoldsViewport" type="SubViewport" parent="3D"]
 size = Vector2( 1200, 1200 )
 transparent_bg = true
 handle_input_locally = false
 hdr = false
 gui_disable_input = true
 
-[node name="HoldsCamera" type="Camera" parent="3D/HoldsViewport"]
-transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -1.1 )
+[node name="HoldsCamera" type="Camera3D" parent="3D/HoldsViewport"]
+transform = Transform3D( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -1.1 )
 cull_mask = 8
 current = true
 fov = 60.0
 far = 11.0
 
-[node name="StrikelineViewport" type="Viewport" parent="3D"]
+[node name="StrikelineViewport" type="SubViewport" parent="3D"]
 size = Vector2( 1200, 1200 )
 transparent_bg = true
 handle_input_locally = false
@@ -111,14 +111,14 @@ msaa = 1
 hdr = false
 gui_disable_input = true
 
-[node name="StrikelineCamera" type="Camera" parent="3D/StrikelineViewport"]
-transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -1.1 )
+[node name="StrikelineCamera" type="Camera3D" parent="3D/StrikelineViewport"]
+transform = Transform3D( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -1.1 )
 cull_mask = 2
 current = true
 fov = 60.0
 far = 35.0
 
-[node name="TunnelViewport" type="Viewport" parent="3D"]
+[node name="TunnelViewport" type="SubViewport" parent="3D"]
 size = Vector2( 1200, 1200 )
 transparent_bg = true
 handle_input_locally = false
@@ -126,15 +126,15 @@ msaa = 1
 hdr = false
 gui_disable_input = true
 
-[node name="TunnelCamera" type="Camera" parent="3D/TunnelViewport"]
-transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -1.1 )
+[node name="TunnelCamera" type="Camera3D" parent="3D/TunnelViewport"]
+transform = Transform3D( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -1.1 )
 cull_mask = 4
 current = true
 fov = 60.0
 size = 0.1
 far = 35.0
 
-[node name="HoldsTextureViewport" type="Viewport" parent="3D"]
+[node name="HoldsTextureViewport" type="SubViewport" parent="3D"]
 size = Vector2( 1200, 600 )
 transparent_bg = true
 handle_input_locally = false
@@ -146,10 +146,10 @@ gui_disable_input = true
 
 [node name="TextureCone" parent="3D/HoldsTextureViewport" instance=ExtResource( 14 )]
 
-[node name="Playfield" type="Spatial" parent="3D"]
+[node name="Playfield" type="Node3D" parent="3D"]
 script = ExtResource( 4 )
 npChartReader = NodePath("../ChartReader")
-npScroll = NodePath("Spatial/Scroll")
+npScroll = NodePath("Node3D/Scroll")
 npTickPlayer = NodePath("../TickPlayer")
 npMissTickPlayer = NodePath("../MissTickPlayer")
 npFeedbackCircle = NodePath("../../2D/CirclePlayView/Circle/Play/FeedbackCircle")
@@ -158,18 +158,18 @@ npHoldTexture = NodePath("../HoldsTextureViewport/TextureCone")
 [node name="Background" parent="3D/Playfield" instance=ExtResource( 3 )]
 DrawLength = 3.0
 
-[node name="Spatial" type="Spatial" parent="3D/Playfield"]
+[node name="Node3D" type="Node3D" parent="3D/Playfield"]
 
-[node name="Scroll" type="Spatial" parent="3D/Playfield/Spatial"]
+[node name="Scroll" type="Node3D" parent="3D/Playfield/Node3D"]
 
-[node name="Notes" type="Spatial" parent="3D/Playfield/Spatial/Scroll"]
+[node name="Notes" type="Node3D" parent="3D/Playfield/Node3D/Scroll"]
 
-[node name="MeasureLines" type="Spatial" parent="3D/Playfield/Spatial/Scroll"]
+[node name="MeasureLines" type="Node3D" parent="3D/Playfield/Node3D/Scroll"]
 
-[node name="MeasureLine" parent="3D/Playfield/Spatial/Scroll/MeasureLines" instance=ExtResource( 12 )]
+[node name="MeasureLine" parent="3D/Playfield/Node3D/Scroll/MeasureLines" instance=ExtResource( 12 )]
 
-[node name="Cylinder" parent="3D/Playfield/Spatial" instance=ExtResource( 15 )]
-transform = Transform( -8.74228e-06, 4.37114e-06, -100, -100, 4.37114e-06, 8.74228e-06, 4.37114e-06, 100, 4.37114e-06, 0, 0, 0 )
+[node name="Cylinder" parent="3D/Playfield/Node3D" instance=ExtResource( 15 )]
+transform = Transform3D( -8.74228e-06, 4.37114e-06, -100, -100, 4.37114e-06, 8.74228e-06, 4.37114e-06, 100, 4.37114e-06, 0, 0, 0 )
 layers = 8
 cast_shadow = 0
 generate_lightmap = false
@@ -178,8 +178,8 @@ material/0 = SubResource( 17 )
 
 [node name="ChartReader" type="Node" parent="3D"]
 script = ExtResource( 5 )
-npNoteScroll = NodePath("../Playfield/Spatial/Scroll/Notes")
-npMeasureScroll = NodePath("../Playfield/Spatial/Scroll/MeasureLines")
+npNoteScroll = NodePath("../Playfield/Node3D/Scroll/Notes")
+npMeasureScroll = NodePath("../Playfield/Node3D/Scroll/MeasureLines")
 npHoldTexture = NodePath("../HoldsTextureViewport/TextureCone")
 
 [node name="BGMPlayer" type="AudioStreamPlayer" parent="3D"]
@@ -253,7 +253,7 @@ use_parent_material = true
 use_parent_material = true
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_bottom = -1.0
+offset_bottom = -1.0
 size_flags_horizontal = 5
 size_flags_vertical = 5
 texture = SubResource( 12 )
@@ -288,7 +288,7 @@ script = ExtResource( 16 )
 anchor_top = 0.314
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_bottom = -0.200012
+offset_bottom = -0.200012
 custom_fonts/font = SubResource( 20 )
 text = "0000000"
 align = 1
@@ -308,27 +308,27 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="Label" type="Label" parent="2D/Foreground/UICenterContainer"]
-margin_left = 338.0
-margin_top = 272.0
-margin_right = 686.0
-margin_bottom = 328.0
+offset_left = 338.0
+offset_top = 272.0
+offset_right = 686.0
+offset_bottom = 328.0
 custom_fonts/font = SubResource( 5 )
 text = "Game is paused."
 align = 1
 valign = 1
 
-[node name="Holds Texture" type="AspectRatioContainer" parent="2D/Foreground"]
+[node name="Holds Texture2D" type="AspectRatioContainer" parent="2D/Foreground"]
 visible = false
 anchor_right = 0.2
 anchor_bottom = 1.0
 
-[node name="ColorRect" type="ColorRect" parent="2D/Foreground/Holds Texture"]
-margin_top = 197.6
-margin_right = 204.8
-margin_bottom = 402.4
+[node name="ColorRect" type="ColorRect" parent="2D/Foreground/Holds Texture2D"]
+offset_top = 197.6
+offset_right = 204.8
+offset_bottom = 402.4
 color = Color( 0, 0, 0, 0.752941 )
 
-[node name="Holds Texture" type="TextureRect" parent="2D/Foreground/Holds Texture/ColorRect"]
+[node name="Holds Texture2D" type="TextureRect" parent="2D/Foreground/Holds Texture2D/ColorRect"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 size_flags_horizontal = 0

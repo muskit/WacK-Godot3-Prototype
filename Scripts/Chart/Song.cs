@@ -11,9 +11,9 @@ using System;
 
 namespace WacK
 {
-    public class Song : Godot.Object
+    public partial class Song : Godot.Object
     {
-        public Directory directory;
+        public DirAccess directory;
         public string name;
         public string artist;
         public string category;
@@ -49,13 +49,13 @@ namespace WacK
         /// path: path to song folder (must contain song.ini)
         public Song(string path)
         {
-            directory = new Directory();
-            if (directory.Open(path) != Error.Ok) return;
+            directory = DirAccess.Open(path);
+            if (directory == null) return;
 
             if (directory.FileExists("song.ini"))
             {
-                File fileIni = new File();
-                if (fileIni.Open($"{directory.GetCurrentDir()}/song.ini", File.ModeFlags.Read) != Error.Ok)
+                using FileAccess fileIni = FileAccess.Open($"{directory.GetCurrentDir()}/song.ini", FileAccess.ModeFlags.Read);
+                if (fileIni == null)
                     return;
                 
                 var songIni = new ConfigFile();
@@ -94,7 +94,7 @@ namespace WacK
 
                 directory.ListDirBegin();
                 var curFile = "a";
-                while (!curFile.Empty())
+                while (!curFile.Empty)
                 {
                     curFile = directory.GetNext();
                     if (curFile.BeginsWith("jacket"))
@@ -105,8 +105,7 @@ namespace WacK
                             continue;
                         else
                         {
-                            jacketTexture = new ImageTexture();
-                            jacketTexture.CreateFromImage(img);
+                            jacketTexture = ImageTexture.CreateFromImage(img);
                             break;
                         }
                     }

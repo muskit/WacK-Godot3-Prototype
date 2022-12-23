@@ -12,7 +12,7 @@ using System;
 namespace WacK
 {
 
-    public class TextureCone : Node2D
+    public partial class TextureCone : Node2D
     {
         private float holdCalibrationOffset = 0;
         private float minuteSize;
@@ -32,8 +32,8 @@ namespace WacK
             scrollScale = textureSize.y / Misc.noteDrawDistance;
             startPos = textureSize.y;
 
-            scroll2D = FindNode("Scroll") as Node2D;
-            cam2D = FindNode("Camera2D") as Camera2D;
+            scroll2D = FindChild("Scroll") as Node2D;
+            cam2D = FindChild("Camera2D") as Camera2D;
             SetPosition(0);
         }
 
@@ -41,10 +41,10 @@ namespace WacK
         // known as "segments."
         public Node2D CreateLongNote(Note holdStart, Note holdEnd)
         {
-            // GD.Print($"Creating long note {holdStart.noteIndex} that's {holdEnd.Translation.z - holdStart.Translation.z} long.");
+            // GD.Print($"Creating long note {holdStart.noteIndex} that's {holdEnd.Position.z - holdStart.Position.z} long.");
             var holdNote = new Node2D();
             scroll2D.AddChild(holdNote);
-            holdNote.Position = new Vector2(0, -holdStart.Translation.z * scrollScale);
+            holdNote.Position = new Vector2(0, -holdStart.Position.z * scrollScale);
 
             if (holdStart.GetChildCount() > 2)
             {

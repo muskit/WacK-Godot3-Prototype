@@ -11,7 +11,7 @@ using System;
 
 namespace WacK
 {
-    public class AccuracyDisplay : Control
+    public partial class AccuracyDisplay : Control
     {
         private Label lblAcc;
         private Label lblOffset;
@@ -21,14 +21,14 @@ namespace WacK
         public override void _Ready()
         {
             var gEvents = GetNode<GEvents>("/root/GEvents");
-            gEvents.Connect(nameof(GEvents.NoteHit), this, nameof(OnNoteInteract));
-            gEvents.Connect(nameof(GEvents.NoteMiss), this, nameof(OnNoteInteract));
+            gEvents.Connect(nameof(GEvents.NoteHitEventHandler),new Callable(this,nameof(OnNoteInteract)));
+            gEvents.Connect(nameof(GEvents.NoteMissEventHandler),new Callable(this,nameof(OnNoteInteract)));
 
-            lblAcc = FindNode("LblAccuracy") as Label;
-            lblOffset = FindNode("LblOffset") as Label;
+            lblAcc = FindChild("LblAccuracy") as Label;
+            lblOffset = FindChild("LblOffset") as Label;
             lblAcc.Modulate = new Color();
             lblOffset.Modulate = new Color();
-            tween = FindNode("Tween") as Tween;
+            tween = FindChild("Tween") as Tween;
         }
 
         // 2/60 frame fade in (.033s)
@@ -52,7 +52,7 @@ namespace WacK
         }
 
         // Called every frame. 'delta' is the elapsed time since the previous frame.
-        public override void _Process(float delta)
+        public override void _Process(double delta)
         {
             
         }

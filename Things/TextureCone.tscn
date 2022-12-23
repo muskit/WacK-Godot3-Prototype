@@ -1,10 +1,10 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://Fonts/Futura/Futura Bold font.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://Fonts/Futura/Futura Bold font.ttf" type="FontFile" id=1]
 [ext_resource path="res://Scripts/Scenes/Play/TextureCone.cs" type="Script" id=2]
 
 
-[sub_resource type="DynamicFont" id=1]
+[sub_resource type="FontFile" id=1]
 size = 978
 font_data = ExtResource( 1 )
 
@@ -16,33 +16,33 @@ anchor_mode = 0
 current = true
 
 [node name="Region" type="ColorRect" parent="."]
-margin_right = 1200.0
-margin_bottom = 1200.0
+offset_right = 1200.0
+offset_bottom = 1200.0
 color = Color( 1, 0, 0, 0 )
 
 [node name="ColorRect" type="ColorRect" parent="."]
 visible = false
-margin_top = 1120.0
-margin_right = 600.0
-margin_bottom = 1140.0
+offset_top = 1120.0
+offset_right = 600.0
+offset_bottom = 1140.0
 color = Color( 0.2, 0, 0.635294, 1 )
 
 [node name="ColorRect2" type="ColorRect" parent="."]
 visible = false
-margin_left = 600.0
-margin_top = 1120.0
-margin_right = 1200.0
-margin_bottom = 1140.0
+offset_left = 600.0
+offset_top = 1120.0
+offset_right = 1200.0
+offset_bottom = 1140.0
 color = Color( 0.556863, 0, 0.635294, 1 )
 
 [node name="Label" type="Label" parent="."]
 visible = false
 modulate = Color( 1, 1, 1, 0.388235 )
-margin_left = 1209.0
-margin_top = 220.0
-margin_right = 2418.0
-margin_bottom = 1393.0
-rect_scale = Vector2( -1, 1 )
+offset_left = 1209.0
+offset_top = 220.0
+offset_right = 2418.0
+offset_bottom = 1393.0
+scale = Vector2( -1, 1 )
 custom_fonts/font = SubResource( 1 )
 text = "Abc"
 align = 2

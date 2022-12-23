@@ -9,7 +9,7 @@
 using System;
 using System.Collections.Generic;
 
-public class Chart
+public partial class Chart
 {
     /// <summary>
     /// All playable Notes in this Chart.

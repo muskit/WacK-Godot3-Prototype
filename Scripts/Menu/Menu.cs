@@ -3,7 +3,7 @@ using System;
 
 namespace WacK
 {
-	public class Menu : CanvasLayer
+	public partial class Menu : CanvasLayer
 	{
 		[Export]
 		private NodePath npListSongs;
@@ -19,7 +19,7 @@ namespace WacK
 			listSongs = GetNode<ItemList>(npListSongs);
 			playButton = GetNode<Button>(npPlayButton);
 
-			playButton.Connect("pressed", this, nameof(OnPlayPressed));
+			playButton.Connect("pressed",new Callable(this,nameof(OnPlayPressed)));
 
 			foreach (var song in Misc.songList)
 			{
@@ -33,7 +33,7 @@ namespace WacK
 			misc.LoadSong(Misc.songList[listSongs.GetSelectedItems()[0]].directory.GetCurrentDir());
 		}
 
-		public override void _Process(float delta)
+		public override void _Process(double delta)
 		{
 			playButton.Disabled = !listSongs.IsAnythingSelected();
 		}

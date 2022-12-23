@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace WacK
 {
-    public class Misc : Node
+    public partial class Misc : Node
     {
         public static string userDirectory;
         public static float cameraOffset = 0;
@@ -76,8 +76,8 @@ namespace WacK
             }
             Misc.currentMer = chart.GetAsText();
             Misc.currentAudio = new AudioStreamMP3();
-            Misc.currentAudio.Data = audio.GetBuffer((long)audio.GetLen());
-            GetTree().ChangeScene("res://Scenes/Play.tscn");
+            Misc.currentAudio.Data = audio.GetBuffer((long)audio.GetLength());
+            GetTree().ChangeSceneToFile("res://Scenes/Play.tscn");
         }
 
         public static bool NoteIsInSegmentRegion(Note n, int segment)

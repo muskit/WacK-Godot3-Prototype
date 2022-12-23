@@ -2,7 +2,7 @@
 
 [ext_resource path="res://Shaders/spritemask.gdshader" type="Shader" id=1]
 [ext_resource path="res://Things/2D/Play/TouchFeedback/FeedbackSegment.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Textures/mask.png" type="Texture" id=3]
+[ext_resource path="res://Textures/mask.png" type="Texture2D" id=3]
 
 [sub_resource type="ShaderMaterial" id=9]
 shader = ExtResource( 1 )
@@ -12,7 +12,7 @@ shader_param/mask_texture = ExtResource( 3 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="TextureProgress" parent="." instance=ExtResource( 2 )]
+[node name="TextureProgressBar" parent="." instance=ExtResource( 2 )]
 material = SubResource( 9 )
 
 [node name="TextureProgress2" parent="." instance=ExtResource( 2 )]

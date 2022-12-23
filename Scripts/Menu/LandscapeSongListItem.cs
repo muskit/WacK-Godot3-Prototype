@@ -3,7 +3,7 @@ using System;
 
 namespace WacK
 {
-    public class LandscapeSongListItem : SongListItem
+    public partial class LandscapeSongListItem : SongListItem
     {
         [Export]
         private NodePath npLblTitle;
@@ -39,7 +39,7 @@ namespace WacK
             txtrJacket = GetNode<TextureRect>(npTxtrJacket);
             diffColor = GetNode<ColorRect>(npDiffColor);
 
-            SongSelectionManager.instance.Connect(nameof(SongSelectionManager.ChangeDifficulty), this, nameof(UpdateDifficulty));
+            SongSelectionManager.instance.Connect(nameof(SongSelectionManager.ChangeDifficultyEventHandler),new Callable(this,nameof(UpdateDifficulty)));
 
             isReady = true;
         }
@@ -53,7 +53,7 @@ namespace WacK
             lblTitle.Text = s.name;
             lblArtist.Text = s.artist;
             if (song.jacketTexture != null)
-                txtrJacket.Texture = song.jacketTexture;
+                txtrJacket.Texture2D = song.jacketTexture;
             
             UpdateDifficulty();
         }
@@ -76,7 +76,7 @@ namespace WacK
             diffColor.Color = Difficulty.diffColor[(int)curDiff];
         }
 
-        public override void _Process(float delta)
+        public override void _Process(double delta)
         {
         }
     }

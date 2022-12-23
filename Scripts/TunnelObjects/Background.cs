@@ -15,12 +15,12 @@ namespace WacK
     public enum DrawDirection {
         CounterClockwise, Clockwise, Center
     }
-    public class Background : Node
+    public partial class Background : Node
     {
         private bool isReady = false;
         private float _drawLength;
-        private List<Spatial> segments = new List<Spatial>();
-        private SpatialMaterial bgMaterial;
+        private List<Node3D> segments = new List<Node3D>();
+        private StandardMaterial3D bgMaterial;
         [Export]
         public float DrawLength
         {
@@ -33,7 +33,7 @@ namespace WacK
                 bgMaterial.DistanceFadeMaxDistance = 0;
                 foreach (Node segment in segments)
                 {
-                    segment.GetChild<Spatial>(1).Scale = new Vector3(1, _drawLength, 1);
+                    segment.GetChild<Node3D>(1).Scale = new Vector3(1, _drawLength, 1);
                 }
             }
             get { return _drawLength; }
@@ -42,11 +42,11 @@ namespace WacK
         // Called when the node enters the scene tree for the first time.
         public override void _Ready()
         {
-            foreach (Spatial segment in GetChildren())
+            foreach (Node3D segment in GetChildren())
             {
                 segments.Add(segment);
             }
-            bgMaterial = (SpatialMaterial) segments[0].GetChild<CSGPolygon>(1).Material;
+            bgMaterial = (StandardMaterial3D) segments[0].GetChild<CSGPolygon3D>(1).Material;
 
             isReady = true;
             DrawLength = DrawLength;
@@ -97,7 +97,7 @@ namespace WacK
         }
 
         // Called every frame. 'delta' is the elapsed time since the previous frame.
-        public override void _Process(float delta)
+        public override void _Process(double delta)
         {
             
         }

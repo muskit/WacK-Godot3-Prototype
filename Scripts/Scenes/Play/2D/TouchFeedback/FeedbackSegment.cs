@@ -3,7 +3,7 @@ using System;
 
 namespace WacK
 {
-    public class FeedbackSegment : TextureProgress
+    public partial class FeedbackSegment : TextureProgressBar
     {
         [Export]
         private float LingerTime;
@@ -17,7 +17,7 @@ namespace WacK
 
         public async void Fire(bool justTouched = true)
         {
-            gEvents.EmitSignal(nameof(GEvents.RhythmInputFire), GetIndex(), justTouched);
+            gEvents.EmitSignal(nameof(GEvents.RhythmInputFireEventHandler), GetIndex(), justTouched);
             Visible = true;
             timer = -GetProcessDeltaTime();
             while (timer < LingerTime)

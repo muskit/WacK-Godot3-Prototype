@@ -11,7 +11,7 @@ using System;
 
 namespace WacK
 {
-    public class SongSelection : Control
+    public partial class SongSelection : Control
     {
         [Export]
         private bool isPortrait;

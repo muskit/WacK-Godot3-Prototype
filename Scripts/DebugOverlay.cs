@@ -4,7 +4,7 @@ using System;
 namespace WacK
 {
 
-    public class DebugOverlay : CanvasLayer
+    public partial class DebugOverlay : CanvasLayer
     {
         private OrientationDetect orientationDetect;
 
@@ -17,13 +17,13 @@ namespace WacK
         {
             orientationDetect = GetNode<OrientationDetect>("/root/OrientationDetect");
             
-            fpsText = FindNode("FPSLabel") as Label;
-            orientationText = FindNode("OrientationLabel") as Label;
-            debugText = FindNode("DebugLabel") as RichTextLabel;
+            fpsText = FindChild("FPSLabel") as Label;
+            orientationText = FindChild("OrientationLabel") as Label;
+            debugText = FindChild("DebugLabel") as RichTextLabel;
         }
 
         // Called every frame. 'delta' is the elapsed time since the previous frame.
-        public override void _Process(float delta)
+        public override void _Process(double delta)
         {
             fpsText.Text = $"{Engine.GetFramesPerSecond().ToString()} FPS";
             orientationText.Text = $"{OrientationDetect.curOrientation} ({OS.ScreenOrientation})\n{OS.WindowSize}";

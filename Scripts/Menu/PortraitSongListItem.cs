@@ -3,7 +3,7 @@ using System;
 
 namespace WacK
 {
-    public class PortraitSongListItem : SongListItem
+    public partial class PortraitSongListItem : SongListItem
     {
         [Export]
         private NodePath npLblTitle;
@@ -35,7 +35,7 @@ namespace WacK
             txtrJacket = GetNode<TextureRect>(npTxtrJacket);
             txtrGradient = GetNode<TextureRect>(npTxtrGradient);
 
-            SongSelectionManager.instance.Connect(nameof(SongSelectionManager.ChangeDifficulty), this, nameof(UpdateDifficulty));
+            SongSelectionManager.instance.Connect(nameof(SongSelectionManager.ChangeDifficultyEventHandler),new Callable(this,nameof(UpdateDifficulty)));
 
             isReady = true;
         }
@@ -49,7 +49,7 @@ namespace WacK
             lblTitle.Text = s.name;
             lblArtist.Text = s.artist;
             if (song.jacketTexture != null)
-                txtrJacket.Texture = song.jacketTexture;
+                txtrJacket.Texture2D = song.jacketTexture;
             
             UpdateDifficulty();
         }
@@ -70,10 +70,10 @@ namespace WacK
             Gradient g = new Gradient();
             g.SetColor(0, Difficulty.diffColor[(int)curDiff]);
             g.SetColor(1, new Color(0, 0, 0));
-            GradientTexture gt = new GradientTexture();
+            GradientTexture2D gt = new GradientTexture2D();
             gt.Width = 256;
             gt.Gradient = g;
-            txtrGradient.Texture = gt;
+            txtrGradient.Texture2D = gt;
         }
     }
 }

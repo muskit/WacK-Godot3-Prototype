@@ -2,9 +2,9 @@ using Godot;
 
 namespace WacK
 {
-    public class MeasureLine : Spatial
+    public partial class MeasureLine : Node3D
     {
-        public override void _Process(float delta)
+        public override void _Process(double delta)
         {
             this.Scale = Util.NoteScale(this.GlobalTransform.origin.z, Misc.strikelineZPos);
         }

@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace WacK
 {
-    public class RhythmInput : Control
+    public partial class RhythmInput : Control
     {
         [Export]
         private NodePath npFeedbackCircle;
@@ -49,7 +49,7 @@ namespace WacK
 
         private void JustTouched(InputEventScreenTouch touchEv)
         {
-            var touchedSeg = Util.TouchPosToSegmentInt(touchEv.Position, RectSize);
+            var touchedSeg = Util.TouchPosToSegmentInt(touchEv.Position, Size);
 
             touches[touchEv.Index] = touchEv.Position;
             touchedSegments[touchEv.Index] = touchedSeg;
@@ -58,7 +58,7 @@ namespace WacK
         }
         private void DragTouch(InputEventScreenDrag dragEv)
         {
-            var touchedSeg = Util.TouchPosToSegmentInt(dragEv.Position, RectSize);
+            var touchedSeg = Util.TouchPosToSegmentInt(dragEv.Position, Size);
 
             // TODO: allow slide-cheesing with threshold
             // if (touchedSegments[dragEv.Index] != touchedSeg)
@@ -77,7 +77,7 @@ namespace WacK
         }
 
         // Called every frame. 'delta' is the elapsed time since the previous frame.
-        public override void _Process(float delta)
+        public override void _Process(double delta)
         {
             foreach (var touch in touchedSegments)
             {

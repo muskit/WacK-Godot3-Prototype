@@ -11,12 +11,12 @@ using System;
 
 namespace WacK
 {
-    public class ScoreKeeper : Node
+    public partial class ScoreKeeper : Node
     {
         [Signal]
-        public delegate void ScoreUpdated(int score);
+        public delegate void ScoreUpdatedEventHandler(int score);
         [Signal]
-        public delegate void ComboUpdated(int combo);
+        public delegate void ComboUpdatedEventHandler(int combo);
         private Chart curChart;
         private float pointsPerMarv;
 
@@ -41,8 +41,8 @@ namespace WacK
         {
             Reset();
             var gEvents = GetNode<GEvents>("/root/GEvents");
-            gEvents.Connect(nameof(GEvents.NoteHit), this, nameof(OnNoteSignal));
-            gEvents.Connect(nameof(GEvents.NoteMiss), this, nameof(OnNoteSignal));
+            gEvents.Connect(nameof(GEvents.NoteHitEventHandler),new Callable(this,nameof(OnNoteSignal)));
+            gEvents.Connect(nameof(GEvents.NoteMissEventHandler),new Callable(this,nameof(OnNoteSignal)));
         }
 
         private void OnNoteSignal(Note n)
@@ -75,8 +75,8 @@ namespace WacK
             else
                 curCombo = 0;
 
-            EmitSignal(nameof(ScoreUpdated), CurrentScore);
-            EmitSignal(nameof(ComboUpdated), curCombo);
+            EmitSignal(nameof(ScoreUpdatedEventHandler), CurrentScore);
+            EmitSignal(nameof(ComboUpdatedEventHandler), curCombo);
         }
 
         private void Reset()

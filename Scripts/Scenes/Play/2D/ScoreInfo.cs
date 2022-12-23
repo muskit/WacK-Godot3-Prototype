@@ -10,7 +10,7 @@ using System;
 
 namespace WacK
 {
-    public class ScoreInfo : Control
+    public partial class ScoreInfo : Control
     {
         private Label lblScore;
         private Label lblCombo;
@@ -18,12 +18,12 @@ namespace WacK
         // Called when the node enters the scene tree for the first time.
         public override void _Ready()
         {
-            lblScore = FindNode("LblScore") as Label;
-            lblCombo = FindNode("LblCombo") as Label;
+            lblScore = FindChild("LblScore") as Label;
+            lblCombo = FindChild("LblCombo") as Label;
 
             var scoreKeeper = GetNode<ScoreKeeper>("/root/ScoreKeeper");
-            scoreKeeper.Connect(nameof(ScoreKeeper.ScoreUpdated), this, nameof(SetScore));
-            scoreKeeper.Connect(nameof(ScoreKeeper.ComboUpdated), this, nameof(SetCombo));
+            scoreKeeper.Connect(nameof(ScoreKeeper.ScoreUpdatedEventHandler),new Callable(this,nameof(SetScore)));
+            scoreKeeper.Connect(nameof(ScoreKeeper.ComboUpdatedEventHandler),new Callable(this,nameof(SetCombo)));
             SetScore(scoreKeeper.CurrentScore);
             SetCombo(scoreKeeper.curCombo);
         }
@@ -39,7 +39,7 @@ namespace WacK
         }
 
     //  // Called every frame. 'delta' is the elapsed time since the previous frame.
-    //  public override void _Process(float delta)
+    //  public override void _Process(double delta)
     //  {
     //      
     //  }

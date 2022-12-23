@@ -3,7 +3,7 @@ using System;
 
 namespace WacK
 {
-    public class Pause : CanvasLayer
+    public partial class Pause : CanvasLayer
     {
         [Export]
         private NodePath npPauseBtn;
@@ -19,9 +19,9 @@ namespace WacK
         {
             gEvents = GetNode<GEvents>("/root/GEvents");
             pauseBtn = GetNode<TextureButton>(npPauseBtn);
-            pauseBtn.Connect("pressed", this, nameof(OnPauseKeyPress));
+            pauseBtn.Connect("pressed",new Callable(this,nameof(OnPauseKeyPress)));
             menuBtn = GetNode<TextureButton>(npMenuBtn);
-            menuBtn.Connect("pressed", this, nameof(OnMenuKeyPress));
+            menuBtn.Connect("pressed",new Callable(this,nameof(OnMenuKeyPress)));
         }
 
         private void OnPauseKeyPress()
@@ -31,11 +31,11 @@ namespace WacK
 
         private void OnMenuKeyPress()
         {
-            GetTree().ChangeScene("res://Scenes/Menus/SongSelection.tscn");
+            GetTree().ChangeSceneToFile("res://Scenes/Menus/SongSelection.tscn");
         }
 
     //  // Called every frame. 'delta' is the elapsed time since the previous frame.
-    //  public override void _Process(float delta)
+    //  public override void _Process(double delta)
     //  {
     //      
     //  }

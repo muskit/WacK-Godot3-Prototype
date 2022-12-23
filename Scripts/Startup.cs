@@ -12,18 +12,18 @@ using System.Collections.Generic;
 
 namespace WacK
 {
-	public class Startup : Node
+	public partial class Startup : Node
 	{
-		private Directory songDir;
+		private DirAccess songDir;
 		public override void _Ready()
 		{
 			// TODO: enable loading screen
-
-			songDir = new Directory();
-			if (songDir.Open($"{Misc.userDirectory}/songs") != Error.Ok)
+			songDir = DirAccess.Open($"{Misc.userDirectory}/songs");
+			if (songDir == null)
 			{
-				songDir.MakeDir($"{Misc.userDirectory}/songs");
-				if (songDir.Open($"{Misc.userDirectory}/songs") != Error.Ok)
+				var userDir = DirAccess.Open(Misc.userDirectory);
+				var err = userDir.MakeDir($"songs");
+				if (err != Error.Ok)
 				{
 					Misc.DebugPrintln("Failed to open songs folder!");
 					return;
@@ -32,22 +32,20 @@ namespace WacK
 			
 			// create note
 			var note = "Place song folders here. Nested folders supported for organization.";
-			File f = new File();
-			f.Open(songDir.GetCurrentDir() + "/note.txt", File.ModeFlags.Write);
+			using FileAccess f = FileAccess.Open(songDir.GetCurrentDir() + "/note.txt", FileAccess.ModeFlags.Write);
 			Misc.DebugPrintln(f.GetPathAbsolute());
 			f.StoreString(note);
-			f.Close();
 
 			ScanSongs();
 
-			GetTree().ChangeScene("res://Scenes/Menus/SongSelection.tscn");
+			GetTree().ChangeSceneToFile("res://Scenes/Menus/SongSelection.tscn");
 		}
 
 		private void ScanSongs()
 		{
 			Misc.songList = new List<Song>();
 
-			songDir.ListDirBegin(true);
+			songDir.ListDirBegin();
 
 			var curObj = songDir.GetNext();
 			while (curObj != String.Empty)

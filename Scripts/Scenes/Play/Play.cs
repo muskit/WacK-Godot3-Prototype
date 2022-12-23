@@ -2,7 +2,7 @@ using Godot;
 
 namespace WacK
 {
-    public class Play : Node
+    public partial class Play : Node
     {
         [Export]
         private NodePath npAudioPlayer;
@@ -22,18 +22,18 @@ namespace WacK
         
         public override void _Ready()
         {
-            Physics2DServer.SetActive(false);
-            PhysicsServer.SetActive(false);
+            PhysicsServer2D.SetActive(false);
+            PhysicsServer3D.SetActive(false);
             
             Misc.songPlayer = GetNode<AudioStreamPlayer>(npAudioPlayer);
             Misc.songPlayer.Stream = Misc.currentAudio;
-            Misc.songPlayer.Connect("finished", this, nameof(OnSongEnd));
+            Misc.songPlayer.Connect("finished",new Callable(this,nameof(OnSongEnd)));
 
             pauseText = GetNode<Label>(npPauseText);
 
             gEvents = GetNode<GEvents>("/root/GEvents");
-            gEvents.Connect(nameof(GEvents.Pause), this, nameof(OnPauseEv));
-            gEvents.Connect(nameof(GEvents.Resume), this, nameof(OnUnpauseEv));
+            gEvents.Connect(nameof(GEvents.PauseEventHandler),new Callable(this,nameof(OnPauseEv)));
+            gEvents.Connect(nameof(GEvents.ResumeEventHandler),new Callable(this,nameof(OnUnpauseEv)));
 
             gEvents.SetPause(true);
         }
@@ -82,10 +82,10 @@ namespace WacK
         private void OnSongEnd()
         {
             if (!Misc.paused)
-                GetTree().ChangeScene("res://Scenes/Menus/SongSelection.tscn");
+                GetTree().ChangeSceneToFile("res://Scenes/Menus/SongSelection.tscn");
         }
 
-        public override void _Process(float delta)
+        public override void _Process(double delta)
         {
             if (Input.IsActionJustPressed("pause"))
             {

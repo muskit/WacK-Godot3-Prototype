@@ -2,11 +2,11 @@ using Godot;
 using System;
 using System.Diagnostics;
 
-public class FontResizeToLabel : Label
+public partial class FontResizeToLabel : Label
 {
     public override void _Ready()
     {
-        Connect("resized", this, nameof(OnResize));
+        Connect("resized",new Callable(this,nameof(OnResize)));
     }
 
     private async void OnResize()
@@ -16,7 +16,7 @@ public class FontResizeToLabel : Label
             await ToSignal(GetTree(), "idle_frame");
 
             var parentName = GetParent().GetParent().GetParent().Name;
-            var font = GetFont("font") as DynamicFont;
+            var font = GetFont("font") as FontFile;
             font.Size = Mathf.FloorToInt(this.RectSize.y);
 
             // var swTotal = new Stopwatch();
