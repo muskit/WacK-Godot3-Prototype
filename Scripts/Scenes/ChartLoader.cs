@@ -34,18 +34,19 @@ namespace WacK
 			dropLevelSelect.Selected = 2;
 		}
 
+		// FIXME
 		public void SelDirBtnPressed()
 		{
-			FileDialog fd = new FileDialog();
-			AddChild(fd);
-			fd.Mode = FileDialog.ModeEnum.OpenDir;
-			fd.Access = FileDialog.AccessEnum.Filesystem;
-			fd.Connect("dir_selected",new Callable(this,"SetTextPath"));
-			fd.SetPosition(this.RectSize / 2);
-			fd.SetSize(new Vector2(400, 300));
-			fd.CurrentDir = Misc.userDirectory;
-			fd.Resizable = true;
-			fd.Visible = true;
+			// FileDialog fd = new FileDialog();
+			// AddChild(fd);
+			// fd.Mode = FileDialog.ModeEnum.OpenDir;
+			// fd.Access = FileDialog.AccessEnum.Filesystem;
+			// fd.Connect("dir_selected",new Callable(this,"SetTextPath"));
+			// fd.SetPosition(this.RectSize / 2);
+			// fd.SetSize(new Vector2(400, 300));
+			// fd.CurrentDir = Misc.userDirectory;
+			// fd.Resizable = true;
+			// fd.Visible = true;
 		}
 
 		public void SetTextPath(string path)

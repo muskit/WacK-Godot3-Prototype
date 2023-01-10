@@ -28,7 +28,7 @@ namespace WacK
             lblOffset = FindChild("LblOffset") as Label;
             lblAcc.Modulate = new Color();
             lblOffset.Modulate = new Color();
-            tween = FindChild("Tween") as Tween;
+            tween = CreateTween();
         }
 
         // 2/60 frame fade in (.033s)
@@ -36,19 +36,19 @@ namespace WacK
         // 11/60 frame fade out (.183s)
         private void OnNoteInteract(Note n)
         {
-            tween.Seek(1);
-            tween.RemoveAll();
+            tween.Kill();
+            tween = CreateTween();
             
             lblAcc.Text = n.curAccuracy.ToString();
             lblAcc.Modulate = new Color(1, 1, 1);
-            tween.InterpolateProperty(lblAcc, new NodePath("modulate:a"), null, 0f, 0.18f, delay: 0.1f);
+            tween.TweenProperty(lblAcc, new NodePath("modulate:a"), 0f, 0.18f).SetDelay(0.1f);
             if (n.curAccuracy != Accuracy.Miss && n.curAccuracy != Accuracy.Marvelous)
             {
                 lblOffset.Text = n.isEarly ? "Fast" : "Slow";
                 lblOffset.Modulate = new Color(1, 1, 1);
-                tween.InterpolateProperty(lblOffset, new NodePath("modulate:a"), null, 0f, 0.18f, delay: 0.1f);
+                tween.TweenProperty(lblOffset, new NodePath("modulate:a"), 0f, 0.18f).SetDelay(0.1f);
             }
-            tween.Start();
+            tween.Play();
         }
 
         // Called every frame. 'delta' is the elapsed time since the previous frame.

@@ -42,7 +42,7 @@ namespace WacK
 
 		private void OnScreenResize()
 		{
-			var s = OS.WindowSize;
+			var s = DisplayServer.WindowGetSize();
 
 			if (s.x > s.y)
 				curOrientation = ScreenOrientation.Landscape;
@@ -52,7 +52,7 @@ namespace WacK
 			scaleX = s.x / minResolution.x;
 			scaleY = s.y / minResolution.y;
 			
-			EmitSignal(nameof(OrientationChangeEventHandler), curOrientation);
+			EmitSignal(SignalName.OrientationChange, (int)curOrientation);
 		}
 	}
 }

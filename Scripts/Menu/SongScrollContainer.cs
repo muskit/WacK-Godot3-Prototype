@@ -1,5 +1,6 @@
 using Godot;
 using System.Diagnostics;
+using System;
 
 namespace WacK
 {    
@@ -26,8 +27,8 @@ namespace WacK
                 if (songList.GetChildCount() > 0)
                 {
                     var s = songList.GetChild<Control>(0);
-                    var pos = s.RectPosition;
-                    var size = s.RectSize;
+                    var pos = s.Position;
+                    var size = s.Size;
                     return uiCenterPoint - (isPortrait ? (pos.y + size.y/2) : (pos.x + size.x/2));
                 }
                 return 0;
@@ -40,8 +41,8 @@ namespace WacK
                 if (songList.GetChildCount() > 0)
                 {
                     var s = songList.GetChild<Control>(songList.GetChildCount() - 1);
-                    var pos = s.RectPosition;
-                    var size = s.RectSize;
+                    var pos = s.Position;
+                    var size = s.Size;
                     return uiCenterPoint - (isPortrait ? (pos.y + size.y/2) : (pos.x + size.x/2));
                 }
                 return 0;
@@ -52,13 +53,13 @@ namespace WacK
         private Vector2 lastInput = Vector2.Zero;
         private Vector2 followingLastInput = Vector2.Zero;
         private bool isTouching = false;
-        private const float FLICK_DECELERATION = 10000f;
-        private float flickVelocity = 0f;
-        private float FlickSpeed
+        private const double FLICK_DECELERATION = 10000f;
+        private double flickVelocity = 0f;
+        private double FlickSpeed
         {
             get
             {
-                return Mathf.Abs(flickVelocity);
+                return Math.Abs(flickVelocity);
             }
         }
 
@@ -71,7 +72,7 @@ namespace WacK
             private set
             {
                 _songIndex = value;
-                EmitSignal(nameof(SongSelectedEventHandler), isPortrait ?
+                EmitSignal(SignalName.SongSelected, isPortrait ?
                         songList.GetChild<PortraitSongListItem>(_songIndex).song :
                         songList.GetChild<LandscapeSongListItem>(_songIndex).song);
             }    
@@ -89,8 +90,8 @@ namespace WacK
                 foreach (Control song in songList.GetChildren())
                 {
                     float songPos = isPortrait ?
-                        (song.RectGlobalPosition.y + song.RectSize.y/2) :
-                        (song.RectGlobalPosition.x + song.RectSize.x/2);
+                        (song.GlobalPosition.y + song.Size.y/2) :
+                        (song.GlobalPosition.x + song.Size.x/2);
 
                     float delta = Mathf.Abs(songPos - uiCenterPoint);
 
@@ -110,8 +111,7 @@ namespace WacK
 
             // a container of SongListItems should be our only child
             songList = FindChild("SongList") as Control;
-            tween = new Tween();
-            AddChild(tween);
+            tween = CreateTween();
 
             Connect("resized",new Callable(this,nameof(OnResize)));
             OnResize();
@@ -127,7 +127,8 @@ namespace WacK
                 {
                     isTouching = true;
 
-                    tween.RemoveAll();
+                    tween.Kill();
+                    tween = CreateTween();
                     lockedSelection = false;
                     flickVelocity = 0;
                     lastInput = followingLastInput = evTouch.Position;
@@ -137,8 +138,7 @@ namespace WacK
                     isTouching = false;
 
                     var delta = evTouch.Position - followingLastInput;
-                    flickVelocity = Engine.GetFramesPerSecond() *
-                        (float)(isPortrait ? delta.y : delta.x);
+                    flickVelocity = Engine.GetFramesPerSecond() * (double)(isPortrait ? delta.y : delta.x);
 
                     if (FlickSpeed == 0)
                         GoToSong(NearestSong);
@@ -153,18 +153,18 @@ namespace WacK
                 followingLastInput = lastInput;
                 lastInput = evDrag.Position;
 
-                var p = songList.RectPosition;
+                var p = songList.Position;
                 if (isPortrait)
                     p.y += delta.y;
                 else
                     p.x += delta.x;
-                songList.RectPosition = p;
+                songList.Position = p;
             }
         }
 
         public void OnResize()
         {
-            uiCenterPoint = isPortrait ? RectSize.y/2 : RectSize.x/2;
+            uiCenterPoint = isPortrait ? Size.y/2 : Size.x/2;
             GoToSong(SongSelectionManager.CurrentSong, true);
         }
 
@@ -181,12 +181,12 @@ namespace WacK
             var song = songList.GetChild<Control>(idx);
 
             float songPos = isPortrait ?
-                (song.RectPosition.y + song.RectSize.y/2) :
-                (song.RectPosition.x + song.RectSize.x/2);
+                (song.Position.y + song.Size.y/2) :
+                (song.Position.x + song.Size.x/2);
 
             var scrollPos = uiCenterPoint - songPos;
 
-            var listPos = songList.RectPosition;
+            var listPos = songList.Position;
 
             // apply calculated values
             if (isPortrait)
@@ -198,15 +198,16 @@ namespace WacK
                 listPos.x = scrollPos;
             }
 
-            tween.RemoveAll();
+            tween.Kill();
+            tween = CreateTween();
             if (snapTo)
             {
-                songList.RectPosition = listPos;
+                songList.Position = listPos;
             }
             else
             {
-                tween.InterpolateProperty(songList, "rect_position", songList.RectPosition, listPos, 0.3f, Tween.TransitionType.Quart, Tween.EaseType.Out);
-                tween.Start();
+                tween.TweenProperty(songList, "rect_position", listPos, 0.3f).SetTrans(Tween.TransitionType.Quart).SetEase(Tween.EaseType.Out);
+                tween.Play();
             }
         }
 
@@ -226,23 +227,23 @@ namespace WacK
             // Misc.DebugPrintln($"[{isPortrait}]\n{(isPortrait ? songList.RectPosition.y : songList.RectPosition.x)}\nMin: {uiFirstSongScrollPoint}\nMax: {uiLastSongScrollPoint}\n");
 
             flickVelocity = flickVelocity > 0 ?
-                Mathf.Clamp(flickVelocity - FLICK_DECELERATION*delta, 0, flickVelocity) :
-                Mathf.Clamp(flickVelocity + FLICK_DECELERATION*delta, flickVelocity, 0);
+                Math.Clamp(flickVelocity - FLICK_DECELERATION*delta, 0, flickVelocity) :
+                Math.Clamp(flickVelocity + FLICK_DECELERATION*delta, flickVelocity, 0);
 
             if (!lockedSelection && !isTouching)
             {
-                var r = songList.RectPosition;
+                var p = songList.Position;
                 // out of bounds
                 if (isPortrait)
                 {
-                    if (r.y < uiLastSongScrollPoint || r.y > uiFirstSongScrollPoint)
+                    if (p.y < uiLastSongScrollPoint || p.y > uiFirstSongScrollPoint)
                     {
                         flickVelocity = 0;
                     }
                 }
                 else
                 {
-                    if (r.x < uiLastSongScrollPoint || r.x > uiFirstSongScrollPoint)
+                    if (p.x < uiLastSongScrollPoint || p.x > uiFirstSongScrollPoint)
                     {
                         flickVelocity = 0;
                     }
@@ -256,13 +257,13 @@ namespace WacK
                 {
                     if (isPortrait)
                     {
-                        r.y += flickVelocity*delta;
+                        p.y += (float) (flickVelocity*delta);
                     }
                     else
                     {
-                        r.x += flickVelocity*delta;
+                        p.x += (float) (flickVelocity*delta);
                     }
-                    songList.RectPosition = r;
+                    songList.Position = p;
                 }
             }
         }

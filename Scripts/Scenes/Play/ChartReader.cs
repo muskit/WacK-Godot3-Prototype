@@ -164,42 +164,42 @@ namespace WacK
                                 queuedBPM = (int)chartNote.Item2.value;
                             break;
                         case NoteType.Touch:
-                            curNote = noteTouch.Instance<Note>();
+                            curNote = noteTouch.Instantiate<Note>();
                             break;
                         case NoteType.HoldStart:
-                            curNote = noteHoldStart.Instance<Note>();
+                            curNote = noteHoldStart.Instantiate<Note>();
                             curNote.noteIndex = chartNote.Item2.holdIdx;
                             nextHoldNote[chartNote.Item2.holdNextIdx] = curNote;
                             curHoldSegment[chartNote.Item2.holdNextIdx] = curNote;
                             break;
                         case NoteType.HoldMid:
-                            curNote = noteInvisible.Instance<Note>();
+                            curNote = noteInvisible.Instantiate<Note>();
                             curNote.type = NoteType.HoldMid;
                             curNote.noteIndex = chartNote.Item2.holdIdx;
                             nextHoldNote[chartNote.Item2.holdNextIdx] = curNote;
                             curHoldSegment[chartNote.Item2.holdNextIdx] = curHoldSegment[chartNote.Item2.holdIdx];
                             break;
                         case NoteType.HoldEnd: // TODO: draw end note on cone texture
-                            curNote = noteHoldEnd.Instance<Note>();
+                            curNote = noteHoldEnd.Instantiate<Note>();
                             curNote.noteIndex = chartNote.Item2.holdIdx;
                             break;
                         case NoteType.Untimed:
-                            curNote = noteUntimed.Instance<Note>();
+                            curNote = noteUntimed.Instantiate<Note>();
                             break;
                         case NoteType.SwipeIn:
-                            curNote = noteSwipeIn.Instance<Note>();;
+                            curNote = noteSwipeIn.Instantiate<Note>();;
                             break;
                         case NoteType.SwipeOut:
-                            curNote = noteSwipeOut.Instance<Note>();;
+                            curNote = noteSwipeOut.Instantiate<Note>();;
                             break;
                         case NoteType.SwipeCW:
-                            curNote = noteSwipeCW.Instance<Note>();;
+                            curNote = noteSwipeCW.Instantiate<Note>();;
                             break;
                         case NoteType.SwipeCCW:
-                            curNote = noteSwipeCCW.Instance<Note>();;
+                            curNote = noteSwipeCCW.Instantiate<Note>();;
                             break;
                         default: // invisible modifier notes (aka events)
-                            curNote = noteInvisible.Instance<Note>();
+                            curNote = noteInvisible.Instantiate<Note>();
                             curNote.type = chartNote.Item2.noteType;
                             curNote.value = (int)chartNote.Item2.value;
                             break;
@@ -207,7 +207,7 @@ namespace WacK
 
                     if (curNote != null && curNote != prevNote)
                     {
-                        // curNote.AddChild(noteHitDetection.Instance());
+                        // curNote.AddChild(noteHitDetection.Instantiate());
                         curNote.SetPosSize(chartNote.Item2.position, chartNote.Item2.size);
                         noteScroll.AddChild(curNote);
 
@@ -271,7 +271,7 @@ namespace WacK
             //     if (tempoIdx == tempoChangeMeasures.Count - 1)
             //     {
             //         float pos = tempoChangePositions[tempoIdx] + Util.NotePosition(curMeasure - tempoChangeMeasures[tempoIdx], 0, tempo.Last(), beatsPerMeasure[bpmIdx]);
-            //         var ml = measureLine.Instance<MeasureLine>();
+            //         var ml = measureLine.Instantiate<MeasureLine>();
             //         measureScroll.AddChild(ml);
             //         ml.Position = new Vector3(0, 0, pos);
             //         ml.Text = $"{curMeasure}";
@@ -288,7 +288,7 @@ namespace WacK
             //                 // GD.Print($"{tempoIdx} / {tempoChangePositions.Count}, {tempo.Count}");
             //                 float pos = Util.InterpFloat(tempoChangePositions[tempoIdx - 1], tempoChangePositions[tempoIdx], (float)i/measuresToCreate);
 
-            //                 var ml = measureLine.Instance<MeasureLine>();
+            //                 var ml = measureLine.Instantiate<MeasureLine>();
             //                 measureScroll.AddChild(ml);
             //                 ml.Position = new Vector3(0, 0, pos);
             //                 ml.Text = $"{curMeasure}";

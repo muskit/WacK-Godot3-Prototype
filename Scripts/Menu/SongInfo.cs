@@ -52,11 +52,11 @@ namespace WacK
             {
                 if (song.difficulty[i] != -1)
                 {
-                    var diff = difficulty.Instance<Difficulty>();
+                    var diff = difficulty.Instantiate<Difficulty>();
                     difficulties.AddChild(diff);
                     diff.Set(song.difficulty[i], (DifficultyLevel)i);
                 }
-                // var diff = difficulty.Instance<Difficulty>();
+                // var diff = difficulty.Instantiate<Difficulty>();
                 // difficulties.AddChild(diff);
                 // diff.Set(song.difficulty[0], (DifficultyLevel)0);
             }

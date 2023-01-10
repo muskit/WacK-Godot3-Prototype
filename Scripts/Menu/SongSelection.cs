@@ -45,7 +45,7 @@ namespace WacK
 
             foreach (Song song in Misc.songList)
             {
-                var sItem = isPortrait ? portraitSongItem.Instance<SongListItem>() : landscapeSongItem.Instance<SongListItem>();
+                var sItem = isPortrait ? portraitSongItem.Instantiate<SongListItem>() : landscapeSongItem.Instantiate<SongListItem>();
                 songList.AddChild(sItem);
                 sItem.SetSong(song);
             }

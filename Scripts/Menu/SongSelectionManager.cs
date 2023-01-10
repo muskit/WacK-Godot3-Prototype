@@ -131,12 +131,12 @@ namespace WacK
             g2D.Gradient = g;
             g2D.FillFrom = Vector2.Down;
             g2D.FillTo = Vector2.Zero;
-            diffLabelBG.Texture2D = g2D;
+            diffLabelBG.Texture = g2D;
 
             difficultyDecButton.Visible = currentDifficulty > CurrentSong?.MinDifficulty;
             difficultyIncButton.Visible = currentDifficulty < CurrentSong?.MaxDifficulty;
 
-            EmitSignal(nameof(ChangeDifficultyEventHandler), currentDifficulty);
+            EmitSignal(SignalName.ChangeDifficulty, (int)currentDifficulty);
         }
 
         private void OnOrientationChange(ScreenOrientation or)

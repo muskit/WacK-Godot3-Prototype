@@ -39,7 +39,7 @@ namespace WacK
         private AudioStreamPlayer missTickPlayer;
         private List<FeedbackSegment> feedbackCircle = new List<FeedbackSegment>();
 
-        private float syncRatio = 1;
+        private double syncRatio = 1;
         private int resyncCount = 0;
 
         private bool setupDone = false;
@@ -189,7 +189,7 @@ namespace WacK
             // missTickPlayer.Play();
         }
 
-        private void ProcessScroll(float delta)
+        private void ProcessScroll(double delta)
         {
             if (!Misc.paused && ChartReader.doneLoading && Misc.songPlayer.Playing)
             {

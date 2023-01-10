@@ -61,43 +61,43 @@ namespace WacK
                 var songIni = new ConfigFile();
                 songIni.Load(fileIni.GetPath());
 
-                name = songIni.GetValue("SongInfo", "name", "???") as string;
-                artist = songIni.GetValue("SongInfo", "artist", "???") as string;
-                category = songIni.GetValue("SongInfo", "category", "???") as string;
+                name = (string)songIni.GetValue("SongInfo", "name", "???");
+                artist = (string)songIni.GetValue("SongInfo", "artist", "???");
+                category = (string)songIni.GetValue("SongInfo", "category", "???");
                 
                 var iTempo = songIni.GetValue("SongInfo", "tempo", -1f);
-                tempo = iTempo is Int32 ? (Int32)iTempo : (float)iTempo;
+                tempo = (float)iTempo;
 
                 if (directory.FileExists("0.mer"))
                 {
                     var iNormal = songIni.GetValue("ChartInfo", "normal", 0);
-                    difficulty[0] = iNormal is Int32 ? (Int32)iNormal : (float)iNormal;
+                    difficulty[0] = (float)iNormal;
                 }
 
                 if (directory.FileExists("1.mer"))
                 {
                     var iHard = songIni.GetValue("ChartInfo", "hard", 0);
-                    difficulty[1] = iHard is Int32 ? (Int32)iHard : (float)iHard;
+                    difficulty[1] = (float)iHard;
                 }
 
                 if (directory.FileExists("2.mer"))
                 {
                     var iExpert = songIni.GetValue("ChartInfo", "expert", 0);
-                    difficulty[2] = iExpert is Int32 ? (Int32)iExpert : (float)iExpert;
+                    difficulty[2] = (float)iExpert;
                 }
 
                 if (directory.FileExists("3.mer"))
                 {
                     var iInferno = songIni.GetValue("ChartInfo", "inferno", 0);
-                    difficulty[3] = iInferno is Int32 ? (Int32)iInferno : (float)iInferno;
+                    difficulty[3] = (float)iInferno;
                 }
 
                 directory.ListDirBegin();
                 var curFile = "a";
-                while (!curFile.Empty)
+                while (curFile != "")
                 {
                     curFile = directory.GetNext();
-                    if (curFile.BeginsWith("jacket"))
+                    if (curFile.StartsWith("jacket"))
                     {
                         var img = new Image();
                         var err = img.Load($"{directory.GetCurrentDir()}/{curFile}");

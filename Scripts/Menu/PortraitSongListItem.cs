@@ -49,7 +49,7 @@ namespace WacK
             lblTitle.Text = s.name;
             lblArtist.Text = s.artist;
             if (song.jacketTexture != null)
-                txtrJacket.Texture2D = song.jacketTexture;
+                txtrJacket.Texture = song.jacketTexture;
             
             UpdateDifficulty();
         }
@@ -73,7 +73,7 @@ namespace WacK
             GradientTexture2D gt = new GradientTexture2D();
             gt.Width = 256;
             gt.Gradient = g;
-            txtrGradient.Texture2D = gt;
+            txtrGradient.Texture = gt;
         }
     }
 }

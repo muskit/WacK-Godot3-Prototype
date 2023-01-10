@@ -53,7 +53,7 @@ namespace WacK
             lblTitle.Text = s.name;
             lblArtist.Text = s.artist;
             if (song.jacketTexture != null)
-                txtrJacket.Texture2D = song.jacketTexture;
+                txtrJacket.Texture = song.jacketTexture;
             
             UpdateDifficulty();
         }

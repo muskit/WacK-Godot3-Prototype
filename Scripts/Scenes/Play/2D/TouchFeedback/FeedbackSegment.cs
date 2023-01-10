@@ -7,7 +7,7 @@ namespace WacK
     {
         [Export]
         private float LingerTime;
-        private float timer;
+        private double timer;
         private GEvents gEvents;
 
         public override void _Ready()

@@ -63,7 +63,7 @@ namespace WacK
             int centerSeg = pos + size/2;
             while (timer < 0.1f)
             {
-                timer = Mathf.Clamp(timer + GetProcessDeltaTime(), 0, time);
+                timer = Mathf.Clamp(timer + (float)GetProcessDeltaTime(), 0, time);
                 float timerRatio = timer / time;
                 int steps = Mathf.CeilToInt((float)size*timerRatio);
 

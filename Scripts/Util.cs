@@ -74,7 +74,7 @@ namespace WacK
 
         public static float ScreenPixelToRad(Vector2 pos)
         {
-            var resolution = OS.WindowSize;
+            var resolution = DisplayServer.WindowGetSize();
             var origin = new Vector2(resolution.x / 2 - 1, resolution.y / 2 - 1);
 
             return Mathf.Atan2(pos.y - origin.y, pos.x - origin.x);
@@ -113,9 +113,9 @@ namespace WacK
             return 60f / tempo * beatsPerMeasure * ((float)measure + (float)beat / 1920f);
         }
 
-        public static float TimeToPosition(float time)
+        public static float TimeToPosition(double time)
         {
-            return time * UserSettings.playSpeedMultiplier * UserSettings.SCROLL_MULT;
+            return (float)time * UserSettings.playSpeedMultiplier * UserSettings.SCROLL_MULT;
         }
 
         public static float PositionToTime(float pos)

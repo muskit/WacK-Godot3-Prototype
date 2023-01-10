@@ -56,13 +56,13 @@ namespace WacK
 
         public void LoadSong(string path, DifficultyLevel difficulty = DifficultyLevel.Normal)
         {
-            var chart = new File();
-            var audio = new File();
 
             var chartPath = path + $"/{(int)difficulty}.mer";
             var audioPath = path + "/music.mp3";
-            Error errChart = chart.Open(chartPath, File.ModeFlags.Read);
-            Error errAudio = audio.Open(audioPath, File.ModeFlags.Read);
+            using FileAccess chart = FileAccess.Open(chartPath, FileAccess.ModeFlags.Read);
+            using FileAccess audio = FileAccess.Open(chartPath, FileAccess.ModeFlags.Read);
+            Error errChart = chart.GetError();
+            Error errAudio = audio.GetError();
 
             if (errChart != Error.Ok)
             {

@@ -50,12 +50,14 @@ namespace WacK
             this.size = size;
             if (size >= 3 && size <= 59)
             {
-                notePoly.Transform3D = notePoly.Transform3D.Rotated(Vector3.Forward, Mathf.DegToRad(6f * (pos + 1)));
+                // notePoly.Transform3D = notePoly.Transform3D.Rotated(Vector3.Forward, Mathf.DegToRad(6f * (pos + 1)));
+                notePoly.RotateZ(Mathf.DegToRad(6f * (pos + 1)));
                 notePoly.SpinDegrees = 6f * (size - 2);
             }
             else
             {
-                notePoly.Transform3D = notePoly.Transform3D.Rotated(Vector3.Forward, Mathf.DegToRad(6f * pos));
+                // notePoly.Transform3D = notePoly.Transform3D.Rotated(Vector3.Forward, Mathf.DegToRad(6f * pos));
+                notePoly.RotateZ(Mathf.DegToRad(6f * pos));
                 notePoly.SpinDegrees = 6f * size;
             }
         }

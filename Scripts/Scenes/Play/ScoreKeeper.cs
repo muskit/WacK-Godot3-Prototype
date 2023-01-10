@@ -75,8 +75,8 @@ namespace WacK
             else
                 curCombo = 0;
 
-            EmitSignal(nameof(ScoreUpdatedEventHandler), CurrentScore);
-            EmitSignal(nameof(ComboUpdatedEventHandler), curCombo);
+            EmitSignal(SignalName.ScoreUpdated, CurrentScore);
+            EmitSignal(SignalName.ComboUpdated, curCombo);
         }
 
         private void Reset()

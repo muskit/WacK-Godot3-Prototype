@@ -3,7 +3,6 @@ using System;
 
 namespace WacK
 {
-
 	public partial class GEvents : Node
 	{
 		[Signal]
